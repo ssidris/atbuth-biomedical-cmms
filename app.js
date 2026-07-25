@@ -238,7 +238,7 @@ async function loadUserProfile(
     .from("tblUsers")
 
     .select(
-      "FullName, UserRole, Status"
+      "Full name, UserRole, Status"
     )
 
     .eq(
@@ -309,7 +309,7 @@ async function showApp(
   welcomeText.textContent =
 
     `Welcome, ${
-      profile.FullName ||
+      profile . Full name ||
       user.email
     } (${
       profile.UserRole ||
