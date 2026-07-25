@@ -3,17 +3,21 @@
 // Supabase Mobile Web Application
 // ==========================================
 
-// Your Supabase Project URL
+// Supabase Project URL
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
-// Your Supabase Publishable Key
-// Replace the text below with your actual sb_publishable_... key
+// Supabase Publishable Key
+// IMPORTANT: Use your sb_publishable_... key here.
+// NEVER use an sb_secret_... key.
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_O058LKa9owIjewDHfC84Yg_lMVdXD95";
 
 
-// Create Supabase connection
+// ==========================================
+// CREATE SUPABASE CONNECTION
+// ==========================================
+
 const client = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
@@ -83,7 +87,8 @@ async function loadLookup(
   if (error) {
 
     console.error(
-      "Error loading " + table,
+      "Error loading table:",
+      table,
       error
     );
 
@@ -118,12 +123,14 @@ async function loadLookup(
 
 
 // ==========================================
-// LOAD ALL FORM DATA
+// LOAD FORM DATA
 // ==========================================
 
 async function loadFormData() {
 
-  // Equipment
+  // ----------------------------------------
+  // EQUIPMENT
+  // ----------------------------------------
 
   await loadLookup(
 
@@ -137,17 +144,22 @@ async function loadFormData() {
 
     "Select equipment",
 
-    row =>
-      `${row.EquipmentName}${
+    row => {
+
+      return `${row.EquipmentName}${
         row.BMENumber
           ? " — " + row.BMENumber
           : ""
-      }`
+      }`;
+
+    }
 
   );
 
 
-  // Engineers
+  // ----------------------------------------
+  // ENGINEERS
+  // ----------------------------------------
 
   await loadLookup(
 
@@ -161,15 +173,20 @@ async function loadFormData() {
 
     "Select engineer",
 
-    row =>
-      `${row.FirstName || ""} ${
+    row => {
+
+      return `${row.FirstName || ""} ${
         row.LastName || ""
-      }`.trim()
+      }`.trim();
+
+    }
 
   );
 
 
-  // Maintenance Type
+  // ----------------------------------------
+  // MAINTENANCE TYPE
+  // ----------------------------------------
 
   await loadLookup(
 
@@ -186,7 +203,9 @@ async function loadFormData() {
   );
 
 
-  // Part Requested Status
+  // ----------------------------------------
+  // PART REQUESTED STATUS
+  // ----------------------------------------
 
   await loadLookup(
 
@@ -203,7 +222,9 @@ async function loadFormData() {
   );
 
 
-  // Equipment Status
+  // ----------------------------------------
+  // EQUIPMENT STATUS
+  // ----------------------------------------
 
   await loadLookup(
 
@@ -231,14 +252,17 @@ async function loadUserProfile(
 ) {
 
   const {
+
     data,
+
     error
+
   } = await client
 
     .from("tblUsers")
 
     .select(
-      "Full name, UserRole, Status"
+      'UserID, Username, "Full name", UserRole, Status, AuthUserID'
     )
 
     .eq(
@@ -251,6 +275,11 @@ async function loadUserProfile(
 
   if (error) {
 
+    console.error(
+      "User profile error:",
+      error
+    );
+
     throw error;
 
   }
@@ -260,14 +289,16 @@ async function loadUserProfile(
 
     throw new Error(
 
-      "Your account is authenticated, " +
-      "but no matching profile was found " +
-      "in tblUsers."
+      "Your Supabase account is authenticated, " +
+      "but no matching profile was found in tblUsers. " +
+      "Please make sure AuthUserID in tblUsers matches your Authentication User ID."
 
     );
 
   }
 
+
+  // Check whether user is active
 
   if (
 
@@ -280,7 +311,8 @@ async function loadUserProfile(
 
     throw new Error(
 
-      "Your account is not active."
+      "Your account is not active. " +
+      "Please contact the administrator."
 
     );
 
@@ -300,16 +332,20 @@ async function showApp(
   user
 ) {
 
+  // Load profile from tblUsers
+
   const profile =
     await loadUserProfile(
       user.id
     );
 
 
+  // Display user's name and role
+
   welcomeText.textContent =
 
     `Welcome, ${
-      profile . Full name ||
+      profile["Full name"] ||
       user.email
     } (${
       profile.UserRole ||
@@ -317,15 +353,21 @@ async function showApp(
     })`;
 
 
+  // Hide login
+
   loginView.classList.add(
     "hidden"
   );
 
 
+  // Show application
+
   appView.classList.remove(
     "hidden"
   );
 
+
+  // Load dropdown information
 
   await loadFormData();
 
@@ -364,6 +406,24 @@ loginForm.addEventListener(
         .value;
 
 
+    // Check that fields are not empty
+
+    if (
+      !email ||
+      !password
+    ) {
+
+      loginMessage.textContent =
+
+        "Please enter your email and password.";
+
+      return;
+
+    }
+
+
+    // Authenticate with Supabase
+
     const {
 
       data,
@@ -379,15 +439,28 @@ loginForm.addEventListener(
     });
 
 
+    // Login error
+
     if (error) {
 
+      console.error(
+        "Login error:",
+        error
+      );
+
+
       loginMessage.textContent =
+
+        "Login failed: " +
         error.message;
+
 
       return;
 
     }
 
+
+    // Login successful
 
     try {
 
@@ -403,10 +476,18 @@ loginForm.addEventListener(
 
     catch (profileError) {
 
+      console.error(
+        "Profile error:",
+        profileError
+      );
+
+
       await client.auth.signOut();
 
 
       loginMessage.textContent =
+
+        "Login successful, but profile loading failed: " +
         profileError.message;
 
     }
@@ -441,6 +522,10 @@ logoutBtn.addEventListener(
 
     loginForm.reset();
 
+
+    loginMessage.textContent =
+      "";
+
   }
 
 );
@@ -464,6 +549,8 @@ document
 
         function() {
 
+          // Hide all sections
+
           document
             .querySelectorAll(
               ".app-section"
@@ -471,6 +558,7 @@ document
             .forEach(
 
               section =>
+
                 section.classList.add(
                   "hidden"
                 )
@@ -478,13 +566,26 @@ document
             );
 
 
-          document
-            .getElementById(
+          // Show selected section
+
+          const selectedSection =
+
+            document.getElementById(
+
               button.dataset.section
-            )
-            .classList.remove(
+
+            );
+
+
+          if (
+            selectedSection
+          ) {
+
+            selectedSection.classList.remove(
               "hidden"
             );
+
+          }
 
         }
 
@@ -512,6 +613,8 @@ maintenanceForm.addEventListener(
       "Submitting report...";
 
 
+    // Check logged-in user
+
     const {
 
       data: authData
@@ -532,6 +635,8 @@ maintenanceForm.addEventListener(
 
     }
 
+
+    // Prepare report data
 
     const payload = {
 
@@ -712,6 +817,8 @@ maintenanceForm.addEventListener(
     };
 
 
+    // Submit report to Supabase
+
     const {
 
       error
@@ -727,16 +834,19 @@ maintenanceForm.addEventListener(
       );
 
 
+    // Check submission error
+
     if (error) {
 
       console.error(
+        "Maintenance report error:",
         error
       );
 
 
       maintenanceMessage.textContent =
 
-        "Error: " +
+        "Error submitting report: " +
         error.message;
 
 
@@ -745,11 +855,14 @@ maintenanceForm.addEventListener(
     }
 
 
+    // Successful submission
+
     maintenanceMessage.textContent =
 
-      "Maintenance report " +
-      "submitted successfully.";
+      "Maintenance report submitted successfully.";
 
+
+    // Clear form
 
     maintenanceForm.reset();
 
@@ -788,10 +901,17 @@ async function initializeApp() {
 
     catch (error) {
 
+      console.error(
+        "Session error:",
+        error
+      );
+
+
       await client.auth.signOut();
 
 
       loginMessage.textContent =
+
         error.message;
 
     }
@@ -800,5 +920,9 @@ async function initializeApp() {
 
 }
 
+
+// ==========================================
+// START APPLICATION
+// ==========================================
 
 initializeApp();
