@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ATBUTH Biomedical CMMS</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="app-shell">
+
+    <!-- LOGIN PAGE -->
+    <section id="loginView" class="card">
+
+      <h1>ATBUTH Biomedical CMMS</h1>
+
+      <p class="subtitle">
+        Biomedical Daily Report
+      </p>
+
+      <form id="loginForm">
+
+        <label for="email">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          required
+          autocomplete="email"
+        >
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          required
+          autocomplete="current-password"
+        >
+
+        <button type="submit">
+          Login
+        </button>
+
+      </form>
+
+      <p id="loginMessage" class="message"></p>
+
+    </section>
+
+
+    <!-- MAIN APPLICATION -->
+    <section id="appView" class="hidden">
+
+      <header class="topbar">
+
+        <div>
+
+          <h1>
+            ATBUTH Biomedical CMMS
+          </h1>
+
+          <p id="welcomeText"></p>
+
+        </div>
+
+        <button
+          id="logoutBtn"
+          class="secondary"
+        >
+          Logout
+        </button>
+
+      </header>
+
+
+      <!-- MENU -->
+      <nav class="menu">
+
+        <button data-section="maintenanceSection">
+          Maintenance Report
+        </button>
+
+        <button data-section="pmSection">
+          Preventive Maintenance
+        </button>
+
+        <button data-section="calibrationSection">
+          Calibration
+        </button>
+
+        <button data-section="reportsSection">
+          My Reports
+        </button>
+
+      </nav>
+
+
+      <!-- MAINTENANCE REPORT -->
+      <section
+        id="maintenanceSection"
+        class="card app-section"
+      >
+
+        <h2>
+          Submit Maintenance Report
+        </h2>
+
+        <form id="maintenanceForm">
+
+          <label>
+            Job Order Number
+
+            <input
+              id="jobOrderNumber"
+              type="number"
+            >
+
+          </label>
+
+
+          <label>
+            Equipment
+
+            <select
+              id="equipmentId"
+              required
+            >
+
+              <option value="">
+                Select equipment
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Engineer
+
+            <select
+              id="engineerId"
+              required
+            >
+
+              <option value="">
+                Select engineer
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Maintenance Type
+
+            <select
+              id="maintenanceTypeId"
+              required
+            >
+
+              <option value="">
+                Select maintenance type
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Fault Reported
+
+            <textarea
+              id="faultReported"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+            Diagnosis
+
+            <textarea
+              id="diagnosis"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+            Action Taken
+
+            <textarea
+              id="actionTaken"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+            Part Used
+
+            <textarea
+              id="partUsed"
+            ></textarea>
+
+          </label>
+
+
+          <label>
+            Required Part
+
+            <input
+              id="requiredPart"
+              type="text"
+            >
+
+          </label>
+
+
+          <label>
+            Quantity Required
+
+            <input
+              id="quantityRequired"
+              type="number"
+              min="0"
+            >
+
+          </label>
+
+
+          <label>
+            Part Requested Status
+
+            <select
+              id="partStatusId"
+            >
+
+              <option value="">
+                Select part status
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Equipment Status
+
+            <select
+              id="statusId"
+              required
+            >
+
+              <option value="">
+                Select equipment status
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+            Remarks
+
+            <textarea
+              id="remarks"
+            ></textarea>
+
+          </label>
+
+
+          <button type="submit">
+            Submit Maintenance Report
+          </button>
+
+          <p
+            id="maintenanceMessage"
+            class="message"
+          ></p>
+
+        </form>
+
+      </section>
+
+
+      <!-- PREVENTIVE MAINTENANCE -->
+      <section
+        id="pmSection"
+        class="card app-section hidden"
+      >
+
+        <h2>
+          Preventive Maintenance
+        </h2>
+
+        <p>
+          PM form will be added next.
+        </p>
+
+      </section>
+
+
+      <!-- CALIBRATION -->
+      <section
+        id="calibrationSection"
+        class="card app-section hidden"
+      >
+
+        <h2>
+          Calibration
+        </h2>
+
+        <p>
+          Calibration form will be added next.
+        </p>
+
+      </section>
+
+
+      <!-- MY REPORTS -->
+      <section
+        id="reportsSection"
+        class="card app-section hidden"
+      >
+
+        <h2>
+          My Reports
+        </h2>
+
+        <p>
+          Maintenance history will be added next.
+        </p>
+
+      </section>
+
+    </section>
+
+  </main>
+
+
+  <!-- SUPABASE LIBRARY -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+
+
+  <!-- OUR APPLICATION JAVASCRIPT -->
+
+  <script src="app.js">
+  </script>
+
+</body>
+
+</html>
