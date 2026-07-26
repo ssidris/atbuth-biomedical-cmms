@@ -341,26 +341,121 @@
       </section>
 
 
-      <!-- MY REPORTS -->
-      <section
-        id="reportsSection"
-        class="card app-section hidden"
+      <!-- MY REPORTS / MAINTENANCE HISTORY -->
+<section
+  id="reportsSection"
+  class="card app-section hidden"
+>
+
+  <h2>
+    Maintenance Report History
+  </h2>
+
+  <p>
+    View submitted maintenance reports.
+  </p>
+
+
+  <!-- SEARCH -->
+  <div class="form-group">
+
+    <label for="reportSearch">
+      Search Reports
+    </label>
+
+    <input
+      type="text"
+      id="reportSearch"
+      placeholder="Search equipment, engineer, fault, or action taken"
+    />
+
+  </div>
+
+
+  <!-- REPORT HISTORY TABLE -->
+
+  <div
+    id="reportsLoading"
+  >
+    Loading reports...
+  </div>
+
+
+  <div
+    class="table-container"
+  >
+
+    <table
+      id="reportsTable"
+    >
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Date
+          </th>
+
+          <th>
+            Job Order
+          </th>
+
+          <th>
+            Equipment
+          </th>
+
+          <th>
+            Department
+          </th>
+
+          <th>
+            Engineer
+          </th>
+
+          <th>
+            Maintenance Type
+          </th>
+
+          <th>
+            Fault Reported
+          </th>
+
+          <th>
+            Action Taken
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th>
+            Remarks
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody
+        id="reportsTableBody"
       >
 
-        <h2>
-          My Reports
-        </h2>
+      </tbody>
 
-        <p>
-          Maintenance history will be added next.
-        </p>
+    </table>
 
-      </section>
+  </div>
 
-    </section>
 
-  </main>
+  <!-- REPORT MESSAGE -->
 
+  <p
+    id="reportsMessage"
+  ></p>
+
+</section>
 
   <!-- SUPABASE LIBRARY -->
 
