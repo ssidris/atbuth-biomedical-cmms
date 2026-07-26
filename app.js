@@ -142,7 +142,131 @@ async function loadLookup(
 // ==========================================
 // LOAD FORM DATA
 // ==========================================
+// ==========================================
+// LOAD EQUIPMENT FOR EQUIPMENT HISTORY
+// ==========================================
 
+async function loadEquipmentHistoryDropdown() {
+
+  const historyEquipmentSelect =
+    document.getElementById("historyEquipmentId");
+
+  if (!historyEquipmentSelect) {
+
+    console.error(
+      "Equipment History dropdown not found: historyEquipmentId"
+    );
+
+    return;
+
+  }
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  historyEquipmentSelect.innerHTML =
+    '<option value="">Loading equipment...</option>';
+
+
+  // ----------------------------------------
+  // GET EQUIPMENT FROM SUPABASE
+  // ----------------------------------------
+
+  const {
+    data,
+    error
+  } = await client
+
+    .from("tblEquipment")
+
+    .select(
+      "EquipmentID, BMENumber, EquipmentName"
+    )
+
+    .order(
+      "BMENumber",
+      {
+        ascending: true
+      }
+    );
+
+
+  // ----------------------------------------
+  // HANDLE ERROR
+  // ----------------------------------------
+
+  if (error) {
+
+    console.error(
+      "Error loading Equipment History equipment:",
+      error
+    );
+
+    historyEquipmentSelect.innerHTML =
+      '<option value="">Unable to load equipment</option>';
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // CLEAR DROPDOWN
+  // ----------------------------------------
+
+  historyEquipmentSelect.innerHTML =
+    '<option value="">Select equipment</option>';
+
+
+  // ----------------------------------------
+  // NO EQUIPMENT
+  // ----------------------------------------
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    historyEquipmentSelect.innerHTML =
+      '<option value="">No equipment found</option>';
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // ADD EQUIPMENT
+  // ----------------------------------------
+
+  data.forEach(
+    equipment => {
+
+      const option =
+        document.createElement("option");
+
+
+      option.value =
+        equipment.EquipmentID;
+
+
+      option.textContent =
+
+        `${equipment.BMENumber || ""} — ${
+          equipment.EquipmentName || ""
+        }`;
+
+
+      historyEquipmentSelect.appendChild(
+        option
+      );
+
+    }
+
+  );
+
+}
 async function loadFormData() {
 
   // ----------------------------------------
@@ -888,7 +1012,12 @@ async function showApp(
   // ----------------------------------------
 
   await loadFormData();
+  
+// ----------------------------------------
+// LOAD EQUIPMENT HISTORY DROPDOWN
+// ----------------------------------------
 
+await loadEquipmentHistoryDropdown();
 
   // ----------------------------------------
   // LOAD MAINTENANCE REPORTS
