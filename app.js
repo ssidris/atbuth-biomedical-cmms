@@ -703,7 +703,7 @@ async function showApp(
   }
 
 }
-
+await initializeEquipmentHistory();
 
 // ==========================================
 // LOGIN
@@ -2140,3 +2140,765 @@ async function initializeApp() {
 // ==========================================
 
 initializeApp();
+// ==========================================
+// EQUIPMENT HISTORY - LOAD EQUIPMENT
+// ==========================================
+
+const historyEquipmentSelect =
+  document.getElementById(
+    "historyEquipmentId"
+  );
+
+const equipmentHistoryDetails =
+  document.getElementById(
+    "equipmentHistoryDetails"
+  );
+
+const equipmentHistoryMessage =
+  document.getElementById(
+    "equipmentHistoryMessage"
+  );
+
+const equipmentHistoryTableBody =
+  document.getElementById(
+    "equipmentHistoryTableBody"
+  );
+
+
+// ==========================================
+// LOAD EQUIPMENT HISTORY DROPDOWN
+// ==========================================
+
+async function loadEquipmentHistoryEquipment() {
+
+  if (!historyEquipmentSelect) {
+    return;
+  }
+
+
+  try {
+
+    await loadLookup(
+
+      "tblEquipment",
+
+      "EquipmentID",
+
+      "EquipmentName",
+
+      "historyEquipmentId",
+
+      "Select equipment",
+
+      row => {
+
+        return `${row.EquipmentName}${
+          row.BMENumber
+            ? " — " +
+              row.BMENumber
+            : ""
+        }`;
+
+      }
+
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+
+      "Error loading equipment history equipment:",
+
+      error
+
+    );
+
+    if (equipmentHistoryMessage) {
+
+      equipmentHistoryMessage.textContent =
+
+        "Unable to load equipment: " +
+        error.message;
+
+    }
+
+  }
+
+}
+
+
+// ==========================================
+// LOAD EQUIPMENT HISTORY DROPDOWN
+// AFTER USER LOGIN
+// ==========================================
+
+async function initializeEquipmentHistory() {
+
+  await loadEquipmentHistoryEquipment();
+
+}
+
+
+// ==========================================
+// EQUIPMENT SELECTION EVENT
+// ==========================================
+
+if (historyEquipmentSelect) {
+
+  historyEquipmentSelect.addEventListener(
+
+    "change",
+
+    async function() {
+
+      const equipmentId =
+        this.value;
+
+
+      if (!equipmentId) {
+
+        if (equipmentHistoryDetails) {
+
+          equipmentHistoryDetails.innerHTML =
+
+            "<p>Select an equipment to view its details.</p>";
+
+        }
+
+
+        if (equipmentHistoryTableBody) {
+
+          equipmentHistoryTableBody.innerHTML =
+
+            `<tr>
+              <td colspan="11">
+                Select an equipment to view history.
+              </td>
+            </tr>`;
+
+        }
+
+        return;
+
+      }
+
+
+      await loadEquipmentHistory(
+
+        equipmentId
+
+      );
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// LOAD EQUIPMENT HISTORY
+// ==========================================
+
+async function loadEquipmentHistory(
+
+  equipmentId
+
+) {
+
+  if (equipmentHistoryMessage) {
+
+    equipmentHistoryMessage.textContent =
+
+      "Loading equipment history...";
+
+  }
+
+
+  try {
+
+    // --------------------------------------
+    // LOAD EQUIPMENT DETAILS
+    // --------------------------------------
+
+    const {
+
+      data: equipment,
+
+      error: equipmentError
+
+    } = await client
+
+      .from(
+
+        "tblEquipment"
+
+      )
+
+      .select(`
+
+        EquipmentID,
+
+        BMENumber,
+
+        EquipmentName,
+
+        Manufacturer,
+
+        Model,
+
+        SerialNumber,
+
+        DepartmentID,
+
+        CategoryID,
+
+        StatusID,
+
+        Location,
+
+        Remarks
+
+      `)
+
+      .eq(
+
+        "EquipmentID",
+
+        equipmentId
+
+      )
+
+      .maybeSingle();
+
+
+    if (equipmentError) {
+
+      throw equipmentError;
+
+    }
+
+
+    if (!equipment) {
+
+      throw new Error(
+
+        "Equipment not found."
+
+      );
+
+    }
+
+
+    // --------------------------------------
+    // LOAD DEPARTMENT
+    // --------------------------------------
+
+    let departmentName =
+      "Not assigned";
+
+
+    if (
+
+      equipment.DepartmentID !== null &&
+
+      equipment.DepartmentID !== undefined
+
+    ) {
+
+      const {
+
+        data: department
+
+      } = await client
+
+        .from(
+
+          "tblDepartment"
+
+        )
+
+        .select(
+
+          "DepartmentName"
+
+        )
+
+        .eq(
+
+          "DepartmentID",
+
+          equipment.DepartmentID
+
+        )
+
+        .maybeSingle();
+
+
+      if (department) {
+
+        departmentName =
+
+          department.DepartmentName;
+
+      }
+
+    }
+
+
+    // --------------------------------------
+    // DISPLAY EQUIPMENT DETAILS
+    // --------------------------------------
+
+    if (equipmentHistoryDetails) {
+
+      equipmentHistoryDetails.innerHTML = `
+
+        <div>
+
+          <h3>
+            Equipment Details
+          </h3>
+
+          <p>
+            <strong>BME Number:</strong>
+            ${equipment.BMENumber || ""}
+          </p>
+
+          <p>
+            <strong>Equipment Name:</strong>
+            ${equipment.EquipmentName || ""}
+          </p>
+
+          <p>
+            <strong>Manufacturer:</strong>
+            ${equipment.Manufacturer || ""}
+          </p>
+
+          <p>
+            <strong>Model:</strong>
+            ${equipment.Model || ""}
+          </p>
+
+          <p>
+            <strong>Serial Number:</strong>
+            ${equipment.SerialNumber || ""}
+          </p>
+
+          <p>
+            <strong>Department:</strong>
+            ${departmentName}
+          </p>
+
+          <p>
+            <strong>Location:</strong>
+            ${equipment.Location || ""}
+          </p>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // --------------------------------------
+    // LOAD MAINTENANCE HISTORY
+    // --------------------------------------
+
+    const {
+
+      data: reports,
+
+      error: reportsError
+
+    } = await client
+
+      .from(
+
+        "tblMaintenanceReport"
+
+      )
+
+      .select(`
+
+        MaintenanceID,
+
+        JobOrderNumber,
+
+        ReportDate,
+
+        EngineerID,
+
+        MaintenanceTypeID,
+
+        FaultReported,
+
+        Diagnosis,
+
+        ActionTaken,
+
+        PartUsed,
+
+        RequiredPart,
+
+        StatusID,
+
+        Remarks
+
+      `)
+
+      .eq(
+
+        "EquipmentID",
+
+        equipmentId
+
+      )
+
+      .order(
+
+        "ReportDate",
+
+        {
+
+          ascending: false
+
+        }
+
+      );
+
+
+    if (reportsError) {
+
+      throw reportsError;
+
+    }
+
+
+    // --------------------------------------
+    // NO HISTORY
+    // --------------------------------------
+
+    if (
+
+      !reports ||
+
+      reports.length === 0
+
+    ) {
+
+      equipmentHistoryTableBody.innerHTML =
+
+        `<tr>
+
+          <td colspan="11">
+
+            No maintenance history found
+            for this equipment.
+
+          </td>
+
+        </tr>`;
+
+
+      equipmentHistoryMessage.textContent =
+
+        "No maintenance reports found for this equipment.";
+
+      return;
+
+    }
+
+
+    // --------------------------------------
+    // DISPLAY HISTORY
+    // --------------------------------------
+
+    equipmentHistoryTableBody.innerHTML = "";
+
+
+    for (
+
+      const report of reports
+
+    ) {
+
+      // -------------------------------
+      // ENGINEER
+      // -------------------------------
+
+      let engineerName =
+        "Unknown";
+
+
+      if (report.EngineerID) {
+
+        const {
+
+          data: engineer
+
+        } = await client
+
+          .from(
+
+            "tblEngineers"
+
+          )
+
+          .select(
+
+            "FirstName, LastName"
+
+          )
+
+          .eq(
+
+            "EngineerID",
+
+            report.EngineerID
+
+          )
+
+          .maybeSingle();
+
+
+        if (engineer) {
+
+          engineerName =
+
+            `${
+
+              engineer.FirstName || ""
+
+            } ${
+
+              engineer.LastName || ""
+
+            }`.trim();
+
+        }
+
+      }
+
+
+      // -------------------------------
+      // MAINTENANCE TYPE
+      // -------------------------------
+
+      let maintenanceType =
+        "Unknown";
+
+
+      if (report.MaintenanceTypeID) {
+
+        const {
+
+          data: type
+
+        } = await client
+
+          .from(
+
+            "tblMaintenanceType"
+
+          )
+
+          .select(
+
+            "MaintenanceType"
+
+          )
+
+          .eq(
+
+            "MaintenanceTypeID",
+
+            report.MaintenanceTypeID
+
+          )
+
+          .maybeSingle();
+
+
+        if (type) {
+
+          maintenanceType =
+
+            type.MaintenanceType;
+
+        }
+
+      }
+
+
+      // -------------------------------
+      // STATUS
+      // -------------------------------
+
+      let statusName =
+        "Unknown";
+
+
+      if (report.StatusID) {
+
+        const {
+
+          data: status
+
+        } = await client
+
+          .from(
+
+            "tblEquipmentStatus"
+
+          )
+
+          .select(
+
+            "StatusName"
+
+          )
+
+          .eq(
+
+            "StatusID",
+
+            report.StatusID
+
+          )
+
+          .maybeSingle();
+
+
+        if (status) {
+
+          statusName =
+
+            status.StatusName;
+
+        }
+
+      }
+
+
+      // -------------------------------
+      // DATE
+      // -------------------------------
+
+      const reportDate =
+
+        report.ReportDate
+
+          ? new Date(
+
+              report.ReportDate
+
+            ).toLocaleDateString()
+
+          : "";
+
+
+      // -------------------------------
+      // CREATE TABLE ROW
+      // -------------------------------
+
+      const row =
+
+        document.createElement(
+
+          "tr"
+
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${reportDate}
+        </td>
+
+        <td>
+          ${report.JobOrderNumber || ""}
+        </td>
+
+        <td>
+          ${engineerName}
+        </td>
+
+        <td>
+          ${maintenanceType}
+        </td>
+
+        <td>
+          ${report.FaultReported || ""}
+        </td>
+
+        <td>
+          ${report.Diagnosis || ""}
+        </td>
+
+        <td>
+          ${report.ActionTaken || ""}
+        </td>
+
+        <td>
+          ${report.PartUsed || ""}
+        </td>
+
+        <td>
+          ${report.RequiredPart || ""}
+        </td>
+
+        <td>
+          ${statusName}
+        </td>
+
+        <td>
+          ${report.Remarks || ""}
+        </td>
+
+      `;
+
+
+      equipmentHistoryTableBody.appendChild(
+
+        row
+
+      );
+
+    }
+
+
+    equipmentHistoryMessage.textContent =
+
+      `${reports.length} maintenance report(s) found.`;
+
+  }
+
+  catch (error) {
+
+    console.error(
+
+      "Equipment history error:",
+
+      error
+
+    );
+
+
+    if (equipmentHistoryMessage) {
+
+      equipmentHistoryMessage.textContent =
+
+        "Unable to load equipment history: " +
+
+        error.message;
+
+    }
+
+  }
+
+}
