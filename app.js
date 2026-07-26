@@ -8,8 +8,6 @@ const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
 // Supabase Publishable Key
-// IMPORTANT: Use your sb_publishable_... key here.
-// NEVER use an sb_secret_... key.
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_O058LKa9owIjewDHfC84Yg_lMVdXD95";
 
@@ -72,7 +70,6 @@ async function loadLookup(
   select.innerHTML =
     `<option value="">${placeholder}</option>`;
 
-
   const {
     data,
     error
@@ -83,7 +80,6 @@ async function loadLookup(
       ascending: true
     });
 
-
   if (error) {
 
     console.error(
@@ -93,32 +89,23 @@ async function loadLookup(
     );
 
     throw error;
-
   }
 
-
-  for (
-    const row of data || []
-  ) {
+  for (const row of data || []) {
 
     const option =
       document.createElement("option");
 
-
     option.value =
       row[valueField];
-
 
     option.textContent =
       formatter
         ? formatter(row)
         : row[labelField];
 
-
     select.appendChild(option);
-
   }
-
 }
 
 
@@ -128,20 +115,13 @@ async function loadLookup(
 
 async function loadFormData() {
 
-  // ----------------------------------------
-  // EQUIPMENT
-  // ----------------------------------------
+  // Equipment
 
   await loadLookup(
-
     "tblEquipment",
-
     "EquipmentID",
-
     "EquipmentName",
-
     "equipmentId",
-
     "Select equipment",
 
     row => {
@@ -153,24 +133,16 @@ async function loadFormData() {
       }`;
 
     }
-
   );
 
 
-  // ----------------------------------------
-  // ENGINEERS
-  // ----------------------------------------
+  // Engineers
 
   await loadLookup(
-
     "tblEngineers",
-
     "EngineerID",
-
     "FirstName",
-
     "engineerId",
-
     "Select engineer",
 
     row => {
@@ -180,64 +152,39 @@ async function loadFormData() {
       }`.trim();
 
     }
-
   );
 
 
-  // ----------------------------------------
-  // MAINTENANCE TYPE
-  // ----------------------------------------
+  // Maintenance Type
 
   await loadLookup(
-
     "tblMaintenanceType",
-
     "MaintenanceTypeID",
-
     "MaintenanceType",
-
     "maintenanceTypeId",
-
     "Select maintenance type"
-
   );
 
 
-  // ----------------------------------------
-  // PART REQUESTED STATUS
-  // ----------------------------------------
+  // Part Status
 
   await loadLookup(
-
     "tblPartRequestedStatus",
-
     "PartStatusID",
-
     "PartStatusName",
-
     "partStatusId",
-
     "Select part status"
-
   );
 
 
-  // ----------------------------------------
-  // EQUIPMENT STATUS
-  // ----------------------------------------
+  // Equipment Status
 
   await loadLookup(
-
     "tblEquipmentStatus",
-
     "StatusID",
-
     "StatusName",
-
     "statusId",
-
     "Select equipment status"
-
   );
 
 }
@@ -252,11 +199,8 @@ async function loadUserProfile(
 ) {
 
   const {
-
     data,
-
     error
-
   } = await client
 
     .from("tblUsers")
@@ -281,7 +225,6 @@ async function loadUserProfile(
     );
 
     throw error;
-
   }
 
 
@@ -298,15 +241,11 @@ async function loadUserProfile(
   }
 
 
-  // Check whether user is active
-
   if (
-
     String(
       data.Status
     ).toLowerCase() !==
     "active"
-
   ) {
 
     throw new Error(
@@ -320,7 +259,6 @@ async function loadUserProfile(
 
 
   return data;
-
 }
 
 
@@ -332,15 +270,11 @@ async function showApp(
   user
 ) {
 
-  // Load profile from tblUsers
-
   const profile =
     await loadUserProfile(
       user.id
     );
 
-
-  // Display user's name and role
 
   welcomeText.textContent =
 
@@ -353,21 +287,15 @@ async function showApp(
     })`;
 
 
-  // Hide login
-
   loginView.classList.add(
     "hidden"
   );
 
 
-  // Show application
-
   appView.classList.remove(
     "hidden"
   );
 
-
-  // Load dropdown information
 
   await loadFormData();
 
@@ -406,8 +334,6 @@ loginForm.addEventListener(
         .value;
 
 
-    // Check that fields are not empty
-
     if (
       !email ||
       !password
@@ -422,14 +348,9 @@ loginForm.addEventListener(
     }
 
 
-    // Authenticate with Supabase
-
     const {
-
       data,
-
       error
-
     } = await client.auth.signInWithPassword({
 
       email: email,
@@ -438,8 +359,6 @@ loginForm.addEventListener(
 
     });
 
-
-    // Login error
 
     if (error) {
 
@@ -459,8 +378,6 @@ loginForm.addEventListener(
 
     }
 
-
-    // Login successful
 
     try {
 
@@ -549,8 +466,6 @@ document
 
         function() {
 
-          // Hide all sections
-
           document
             .querySelectorAll(
               ".app-section"
@@ -565,8 +480,6 @@ document
 
             );
 
-
-          // Show selected section
 
           const selectedSection =
 
@@ -613,12 +526,8 @@ maintenanceForm.addEventListener(
       "Submitting report...";
 
 
-    // Check logged-in user
-
     const {
-
       data: authData
-
     } = await client.auth.getUser();
 
 
@@ -636,11 +545,15 @@ maintenanceForm.addEventListener(
     }
 
 
-    // Prepare report data
+    // ======================================
+    // PREPARE MAINTENANCE REPORT
+    // ======================================
 
     const payload = {
 
-      JobsOrderNumber:
+      // Correct column name:
+      // JobOrderNumber
+      JobOrderNumber:
 
         document
           .getElementById(
@@ -817,12 +730,12 @@ maintenanceForm.addEventListener(
     };
 
 
-    // Submit report to Supabase
+    // ======================================
+    // INSERT REPORT
+    // ======================================
 
     const {
-
       error
-
     } = await client
 
       .from(
@@ -833,8 +746,6 @@ maintenanceForm.addEventListener(
         payload
       );
 
-
-    // Check submission error
 
     if (error) {
 
@@ -855,14 +766,10 @@ maintenanceForm.addEventListener(
     }
 
 
-    // Successful submission
-
     maintenanceMessage.textContent =
 
       "Maintenance report submitted successfully.";
 
-
-    // Clear form
 
     maintenanceForm.reset();
 
@@ -878,17 +785,13 @@ maintenanceForm.addEventListener(
 async function initializeApp() {
 
   const {
-
     data
-
   } = await client.auth.getSession();
 
 
   if (
-
     data.session &&
     data.session.user
-
   ) {
 
     try {
