@@ -3,18 +3,15 @@
 // Supabase Mobile Web Application
 // ==========================================
 
-// Supabase Project URL
+// ==========================================
+// SUPABASE CONFIGURATION
+// ==========================================
+
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
-// Supabase Publishable Key
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_O058LKa9owIjewDHfC84Yg_lMVdXD95";
-
-
-// ==========================================
-// CREATE SUPABASE CONNECTION
-// ==========================================
 
 const client = supabase.createClient(
   SUPABASE_URL,
@@ -50,6 +47,12 @@ const maintenanceForm =
 const maintenanceMessage =
   document.getElementById("maintenanceMessage");
 
+const equipmentSelect =
+  document.getElementById("equipmentId");
+
+const departmentInput =
+  document.getElementById("departmentName");
+
 
 // ==========================================
 // LOAD DROPDOWN DATA
@@ -67,6 +70,14 @@ async function loadLookup(
   const select =
     document.getElementById(selectId);
 
+  if (!select) {
+    console.error(
+      "Dropdown not found:",
+      selectId
+    );
+    return;
+  }
+
   select.innerHTML =
     `<option value="">${placeholder}</option>`;
 
@@ -83,8 +94,7 @@ async function loadLookup(
   if (error) {
 
     console.error(
-      "Error loading table:",
-      table,
+      `Error loading ${table}:`,
       error
     );
 
@@ -115,13 +125,20 @@ async function loadLookup(
 
 async function loadFormData() {
 
-  // Equipment
+  // ----------------------------------------
+  // EQUIPMENT
+  // ----------------------------------------
 
   await loadLookup(
+
     "tblEquipment",
+
     "EquipmentID",
+
     "EquipmentName",
+
     "equipmentId",
+
     "Select equipment",
 
     row => {
@@ -133,16 +150,24 @@ async function loadFormData() {
       }`;
 
     }
+
   );
 
 
-  // Engineers
+  // ----------------------------------------
+  // ENGINEERS
+  // ----------------------------------------
 
   await loadLookup(
+
     "tblEngineers",
+
     "EngineerID",
+
     "FirstName",
+
     "engineerId",
+
     "Select engineer",
 
     row => {
@@ -152,88 +177,125 @@ async function loadFormData() {
       }`.trim();
 
     }
+
   );
 
 
-  // Maintenance Type
+  // ----------------------------------------
+  // MAINTENANCE TYPE
+  // ----------------------------------------
 
   await loadLookup(
+
     "tblMaintenanceType",
+
     "MaintenanceTypeID",
+
     "MaintenanceType",
+
     "maintenanceTypeId",
+
     "Select maintenance type"
+
   );
 
 
-  // Part Status
+  // ----------------------------------------
+  // PART REQUESTED STATUS
+  // ----------------------------------------
 
   await loadLookup(
+
     "tblPartRequestedStatus",
+
     "PartStatusID",
+
     "PartStatusName",
+
     "partStatusId",
+
     "Select part status"
+
   );
 
 
-  // Equipment Status
+  // ----------------------------------------
+  // EQUIPMENT STATUS
+  // ----------------------------------------
 
   await loadLookup(
+
     "tblEquipmentStatus",
+
     "StatusID",
+
     "StatusName",
+
     "statusId",
+
     "Select equipment status"
+
   );
 
 }
+
+
 // ==========================================
 // LOAD DEPARTMENT FOR SELECTED EQUIPMENT
 // ==========================================
 
-const equipmentSelect =
-  document.getElementById("equipmentId");
+async function loadDepartmentForEquipment(
+  equipmentId
+) {
 
-const departmentInput =
-  document.getElementById("departmentName");
+  if (!departmentInput) {
 
+    console.error(
+      "Department input not found."
+    );
 
-equipmentSelect.addEventListener(
-  "change",
-  async function() {
+    return;
 
-    // Clear department first
-
-    departmentInput.value =
-      "Loading department...";
+  }
 
 
-    // Get selected equipment ID
+  // Clear department
 
-    const equipmentId =
-      this.value;
-
-
-    if (!equipmentId) {
-
-      departmentInput.value = "";
-
-      return;
-
-    }
+  departmentInput.value = "";
 
 
-    // Find selected equipment
+  if (!equipmentId) {
+
+    departmentInput.value = "";
+
+    return;
+
+  }
+
+
+  departmentInput.value =
+    "Loading department...";
+
+
+  try {
+
+    // --------------------------------------
+    // GET DEPARTMENT ID FROM EQUIPMENT
+    // --------------------------------------
 
     const {
+
       data: equipment,
+
       error: equipmentError
+
     } = await client
 
       .from("tblEquipment")
 
-      .select("DepartmentID")
+      .select(
+        "DepartmentID"
+      )
 
       .eq(
         "EquipmentID",
@@ -258,9 +320,19 @@ equipmentSelect.addEventListener(
     }
 
 
+    if (!equipment) {
+
+      departmentInput.value =
+        "Equipment not found";
+
+      return;
+
+    }
+
+
     if (
-      !equipment ||
-      !equipment.DepartmentID
+      equipment.DepartmentID === null ||
+      equipment.DepartmentID === undefined
     ) {
 
       departmentInput.value =
@@ -271,11 +343,16 @@ equipmentSelect.addEventListener(
     }
 
 
-    // Find department name
+    // --------------------------------------
+    // GET DEPARTMENT NAME
+    // --------------------------------------
 
     const {
+
       data: department,
+
       error: departmentError
+
     } = await client
 
       .from("tblDepartments")
@@ -307,22 +384,62 @@ equipmentSelect.addEventListener(
     }
 
 
-    if (department) {
-
-      departmentInput.value =
-        department.DepartmentName;
-
-    }
-
-    else {
+    if (!department) {
 
       departmentInput.value =
         "Department not found";
 
+      return;
+
     }
 
+
+    // --------------------------------------
+    // DISPLAY DEPARTMENT
+    // --------------------------------------
+
+    departmentInput.value =
+      department.DepartmentName || "";
+
   }
-);
+
+  catch (error) {
+
+    console.error(
+      "Unexpected department error:",
+      error
+    );
+
+    departmentInput.value =
+      "Unable to load department";
+
+  }
+
+}
+
+
+// ==========================================
+// EQUIPMENT CHANGE EVENT
+// ==========================================
+
+if (equipmentSelect) {
+
+  equipmentSelect.addEventListener(
+
+    "change",
+
+    function() {
+
+      loadDepartmentForEquipment(
+        this.value
+      );
+
+    }
+
+  );
+
+}
+
 
 // ==========================================
 // LOAD USER PROFILE
@@ -333,8 +450,11 @@ async function loadUserProfile(
 ) {
 
   const {
+
     data,
+
     error
+
   } = await client
 
     .from("tblUsers")
@@ -359,6 +479,7 @@ async function loadUserProfile(
     );
 
     throw error;
+
   }
 
 
@@ -376,10 +497,12 @@ async function loadUserProfile(
 
 
   if (
+
     String(
       data.Status
     ).toLowerCase() !==
     "active"
+
   ) {
 
     throw new Error(
@@ -393,6 +516,7 @@ async function loadUserProfile(
 
 
   return data;
+
 }
 
 
@@ -483,8 +607,11 @@ loginForm.addEventListener(
 
 
     const {
+
       data,
+
       error
+
     } = await client.auth.signInWithPassword({
 
       email: email,
@@ -661,7 +788,9 @@ maintenanceForm.addEventListener(
 
 
     const {
+
       data: authData
+
     } = await client.auth.getUser();
 
 
@@ -680,13 +809,40 @@ maintenanceForm.addEventListener(
 
 
     // ======================================
-    // PREPARE MAINTENANCE REPORT
+    // GET PART REQUESTED STATUS TEXT
+    // ======================================
+
+    const partStatusSelect =
+      document.getElementById(
+        "partStatusId"
+      );
+
+
+    let partRequestedStatus =
+      null;
+
+
+    if (
+      partStatusSelect &&
+      partStatusSelect.value
+    ) {
+
+      partRequestedStatus =
+
+        partStatusSelect
+          .selectedOptions[0]
+          .textContent
+          .trim();
+
+    }
+
+
+    // ======================================
+    // PREPARE REPORT DATA
     // ======================================
 
     const payload = {
 
-      // Correct column name:
-      // JobOrderNumber
       JobOrderNumber:
 
         document
@@ -819,36 +975,26 @@ maintenanceForm.addEventListener(
           : null,
 
 
+      // Required text field
+
       PartRequestedStatus:
 
-  document
-    .getElementById(
-      "partStatusId"
-    )
-    .selectedOptions[0]
-    .textContent
-    .trim(),
+        partRequestedStatus,
 
 
-PartStatusID:
+      // Keep PartStatusID
 
-  document
-    .getElementById(
-      "partStatusId"
-    )
-    .value
+      PartStatusID:
 
-    ? Number(
+        partStatusSelect &&
+        partStatusSelect.value
 
-        document
-          .getElementById(
-            "partStatusId"
-          )
-          .value
+          ? Number(
+              partStatusSelect.value
+            )
 
-      )
+          : null,
 
-    : null,
 
       StatusID:
 
@@ -879,7 +1025,9 @@ PartStatusID:
     // ======================================
 
     const {
+
       error
+
     } = await client
 
       .from(
@@ -917,6 +1065,15 @@ PartStatusID:
 
     maintenanceForm.reset();
 
+
+    // Clear department after reset
+
+    if (departmentInput) {
+
+      departmentInput.value = "";
+
+    }
+
   }
 
 );
@@ -929,13 +1086,17 @@ PartStatusID:
 async function initializeApp() {
 
   const {
+
     data
+
   } = await client.auth.getSession();
 
 
   if (
+
     data.session &&
     data.session.user
+
   ) {
 
     try {
