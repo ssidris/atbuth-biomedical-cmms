@@ -1134,3 +1134,592 @@ async function initializeApp() {
 // ==========================================
 
 initializeApp();
+// ==========================================
+// MAINTENANCE REPORT HISTORY
+// ==========================================
+
+const reportsSection =
+  document.getElementById("reportsSection");
+
+const reportsTableBody =
+  document.getElementById("reportsTableBody");
+
+const reportsLoading =
+  document.getElementById("reportsLoading");
+
+const reportsMessage =
+  document.getElementById("reportsMessage");
+
+const reportSearch =
+  document.getElementById("reportSearch");
+
+
+// Store all reports for searching
+
+let allMaintenanceReports = [];
+
+
+// ==========================================
+// LOAD MAINTENANCE REPORT HISTORY
+// ==========================================
+
+async function loadMaintenanceReports() {
+
+  if (!reportsTableBody) {
+    return;
+  }
+
+
+  reportsLoading.textContent =
+    "Loading reports...";
+
+
+  reportsMessage.textContent =
+    "";
+
+
+  const {
+    data: reports,
+    error
+  } = await client
+
+    .from("tblMaintenanceReport")
+
+    .select(`
+      MaintenanceID,
+      JobOrderNumber,
+      ReportDate,
+      EquipmentID,
+      EngineerID,
+      MaintenanceTypeID,
+      FaultReported,
+      ActionTaken,
+      StatusID,
+      Remarks,
+      tblEquipment (
+        EquipmentName,
+        DepartmentID
+      ),
+      tblEngineers (
+        FirstName,
+        LastName
+      ),
+      tblMaintenanceType (
+        MaintenanceType
+      ),
+      tblEquipmentStatus (
+        StatusName
+      )
+    `)
+
+    .order(
+      "ReportDate",
+      {
+        ascending: false
+      }
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Error loading maintenance reports:",
+      error
+    );
+
+
+    reportsLoading.textContent =
+      "";
+
+
+    reportsMessage.textContent =
+
+      "Unable to load maintenance reports: " +
+      error.message;
+
+
+    return;
+
+  }
+
+
+  allMaintenanceReports =
+    reports || [];
+
+
+  reportsLoading.textContent =
+    "";
+
+
+  await displayMaintenanceReports(
+    allMaintenanceReports
+  );
+
+}
+
+
+// ==========================================
+// DISPLAY MAINTENANCE REPORTS
+// ==========================================
+
+async function displayMaintenanceReports(
+  reports
+) {
+
+  reportsTableBody.innerHTML = "";
+
+
+  if (
+    !reports ||
+    reports.length === 0
+  ) {
+
+    reportsTableBody.innerHTML =
+
+      `<tr>
+        <td colspan="10">
+          No maintenance reports found.
+        </td>
+      </tr>`;
+
+    return;
+
+  }
+
+
+  // Get department IDs
+
+  const departmentIds =
+
+    reports
+
+      .map(
+        report =>
+
+          report.tblEquipment
+            ?.DepartmentID
+
+      )
+
+      .filter(
+        id =>
+          id !== null &&
+          id !== undefined
+      );
+
+
+  // Load departments
+
+  let departments = [];
+
+
+  if (
+    departmentIds.length > 0
+  ) {
+
+    const {
+      data,
+      error
+    } = await client
+
+      .from(
+        "tblDepartment"
+      )
+
+      .select(
+        "DepartmentID, DepartmentName"
+      )
+
+      .in(
+        "DepartmentID",
+        departmentIds
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Department loading error:",
+        error
+      );
+
+    }
+
+    else {
+
+      departments =
+        data || [];
+
+    }
+
+  }
+
+
+  // Create department lookup
+
+  const departmentMap =
+    new Map();
+
+
+  departments.forEach(
+    department => {
+
+      departmentMap.set(
+
+        String(
+          department.DepartmentID
+        ),
+
+        department.DepartmentName
+
+      );
+
+    }
+  );
+
+
+  // Create table rows
+
+  reports.forEach(
+    report => {
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      // ------------------------------------
+      // DATE
+      // ------------------------------------
+
+      const reportDate =
+
+        report.ReportDate
+
+          ? new Date(
+              report.ReportDate
+            ).toLocaleDateString()
+
+          : "";
+
+
+      // ------------------------------------
+      // EQUIPMENT
+      // ------------------------------------
+
+      const equipmentName =
+
+        report.tblEquipment
+          ?.EquipmentName
+
+          || "Unknown";
+
+
+      // ------------------------------------
+      // DEPARTMENT
+      // ------------------------------------
+
+      const departmentId =
+
+        report.tblEquipment
+          ?.DepartmentID;
+
+
+      const departmentName =
+
+        departmentId !== null &&
+        departmentId !== undefined
+
+          ? departmentMap.get(
+              String(
+                departmentId
+              )
+            ) || "Unknown"
+
+          : "Not assigned";
+
+
+      // ------------------------------------
+      // ENGINEER
+      // ------------------------------------
+
+      const engineerName =
+
+        report.tblEngineers
+
+          ? `${
+
+              report.tblEngineers.FirstName
+              || ""
+
+            } ${
+
+              report.tblEngineers.LastName
+              || ""
+
+            }`.trim()
+
+          : "Unknown";
+
+
+      // ------------------------------------
+      // MAINTENANCE TYPE
+      // ------------------------------------
+
+      const maintenanceType =
+
+        report.tblMaintenanceType
+          ?.MaintenanceType
+
+          || "Unknown";
+
+
+      // ------------------------------------
+      // STATUS
+      // ------------------------------------
+
+      const statusName =
+
+        report.tblEquipmentStatus
+          ?.StatusName
+
+          || "Unknown";
+
+
+      // ------------------------------------
+      // CREATE ROW
+      // ------------------------------------
+
+      row.innerHTML = `
+
+        <td>
+          ${reportDate}
+        </td>
+
+        <td>
+          ${report.JobOrderNumber || ""}
+        </td>
+
+        <td>
+          ${equipmentName}
+        </td>
+
+        <td>
+          ${departmentName}
+        </td>
+
+        <td>
+          ${engineerName}
+        </td>
+
+        <td>
+          ${maintenanceType}
+        </td>
+
+        <td>
+          ${report.FaultReported || ""}
+        </td>
+
+        <td>
+          ${report.ActionTaken || ""}
+        </td>
+
+        <td>
+          ${statusName}
+        </td>
+
+        <td>
+          ${report.Remarks || ""}
+        </td>
+
+      `;
+
+
+      reportsTableBody.appendChild(
+        row
+      );
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// SEARCH MAINTENANCE REPORTS
+// ==========================================
+
+if (reportSearch) {
+
+  reportSearch.addEventListener(
+
+    "input",
+
+    async function() {
+
+      const searchText =
+
+        this.value
+
+          .toLowerCase()
+
+          .trim();
+
+
+      if (!searchText) {
+
+        await displayMaintenanceReports(
+
+          allMaintenanceReports
+
+        );
+
+        return;
+
+      }
+
+
+      const filteredReports =
+
+        allMaintenanceReports.filter(
+
+          report => {
+
+            const equipmentName =
+
+              report.tblEquipment
+                ?.EquipmentName
+
+                || "";
+
+
+            const engineerName =
+
+              report.tblEngineers
+
+                ? `${
+
+                    report.tblEngineers
+                      .FirstName
+                    || ""
+
+                  } ${
+
+                    report.tblEngineers
+                      .LastName
+                    || ""
+
+                  }`
+
+                : "";
+
+
+            const maintenanceType =
+
+              report.tblMaintenanceType
+                ?.MaintenanceType
+
+                || "";
+
+
+            const faultReported =
+
+              report.FaultReported
+                || "";
+
+
+            const actionTaken =
+
+              report.ActionTaken
+                || "";
+
+
+            const remarks =
+
+              report.Remarks
+                || "";
+
+
+            const searchableText =
+
+              (
+
+                equipmentName +
+
+                " " +
+
+                engineerName +
+
+                " " +
+
+                maintenanceType +
+
+                " " +
+
+                faultReported +
+
+                " " +
+
+                actionTaken +
+
+                " " +
+
+                remarks
+
+              )
+
+              .toLowerCase();
+
+
+            return searchableText
+              .includes(
+                searchText
+              );
+
+          }
+
+        );
+
+
+      await displayMaintenanceReports(
+
+        filteredReports
+
+      );
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// LOAD REPORTS WHEN "MY REPORTS" IS OPENED
+// ==========================================
+
+document
+  .querySelectorAll(
+    '.menu button[data-section="reportsSection"]'
+  )
+  .forEach(
+
+    button => {
+
+      button.addEventListener(
+
+        "click",
+
+        function() {
+
+          loadMaintenanceReports();
+
+        }
+
+      );
+
+    }
+
+  );
