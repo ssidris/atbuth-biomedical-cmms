@@ -188,7 +188,141 @@ async function loadFormData() {
   );
 
 }
+// ==========================================
+// LOAD DEPARTMENT FOR SELECTED EQUIPMENT
+// ==========================================
 
+const equipmentSelect =
+  document.getElementById("equipmentId");
+
+const departmentInput =
+  document.getElementById("departmentName");
+
+
+equipmentSelect.addEventListener(
+  "change",
+  async function() {
+
+    // Clear department first
+
+    departmentInput.value =
+      "Loading department...";
+
+
+    // Get selected equipment ID
+
+    const equipmentId =
+      this.value;
+
+
+    if (!equipmentId) {
+
+      departmentInput.value = "";
+
+      return;
+
+    }
+
+
+    // Find selected equipment
+
+    const {
+      data: equipment,
+      error: equipmentError
+    } = await client
+
+      .from("tblEquipment")
+
+      .select("DepartmentID")
+
+      .eq(
+        "EquipmentID",
+        equipmentId
+      )
+
+      .maybeSingle();
+
+
+    if (equipmentError) {
+
+      console.error(
+        "Equipment lookup error:",
+        equipmentError
+      );
+
+      departmentInput.value =
+        "Unable to load department";
+
+      return;
+
+    }
+
+
+    if (
+      !equipment ||
+      !equipment.DepartmentID
+    ) {
+
+      departmentInput.value =
+        "No department assigned";
+
+      return;
+
+    }
+
+
+    // Find department name
+
+    const {
+      data: department,
+      error: departmentError
+    } = await client
+
+      .from("tblDepartments")
+
+      .select(
+        "DepartmentName"
+      )
+
+      .eq(
+        "DepartmentID",
+        equipment.DepartmentID
+      )
+
+      .maybeSingle();
+
+
+    if (departmentError) {
+
+      console.error(
+        "Department lookup error:",
+        departmentError
+      );
+
+      departmentInput.value =
+        "Unable to load department";
+
+      return;
+
+    }
+
+
+    if (department) {
+
+      departmentInput.value =
+        department.DepartmentName;
+
+    }
+
+    else {
+
+      departmentInput.value =
+        "Department not found";
+
+    }
+
+  }
+);
 
 // ==========================================
 // LOAD USER PROFILE
