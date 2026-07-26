@@ -145,7 +145,449 @@ async function loadLookup(
 // ==========================================
 // LOAD EQUIPMENT FOR EQUIPMENT HISTORY
 // ==========================================
+// ==========================================
+// LOAD SELECTED EQUIPMENT HISTORY
+// ==========================================
 
+async function loadEquipmentHistory(equipmentId) {
+
+  const details =
+    document.getElementById("equipmentHistoryDetails");
+
+  const tableBody =
+    document.getElementById("equipmentHistoryTableBody");
+
+  const message =
+    document.getElementById("equipmentHistoryMessage");
+
+
+  if (!details || !tableBody) {
+
+    console.error(
+      "Equipment History elements not found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // CLEAR OLD MESSAGE
+  // ----------------------------------------
+
+  if (message) {
+
+    message.textContent = "";
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  details.innerHTML =
+    "<p>Loading equipment details...</p>";
+
+  tableBody.innerHTML =
+
+    `<tr>
+      <td colspan="11">
+        Loading maintenance history...
+      </td>
+    </tr>`;
+
+
+  try {
+
+    // ======================================
+    // 1. GET SELECTED EQUIPMENT
+    // ======================================
+
+    const {
+
+      data: equipment,
+
+      error: equipmentError
+
+    } = await client
+
+      .from("tblEquipment")
+
+      .select("*")
+
+      .eq(
+        "EquipmentID",
+        equipmentId
+      )
+
+      .maybeSingle();
+
+
+    // --------------------------------------
+    // CHECK EQUIPMENT ERROR
+    // --------------------------------------
+
+    if (equipmentError) {
+
+      console.error(
+        "Equipment details error:",
+        equipmentError
+      );
+
+      throw new Error(
+        "Unable to load equipment details: " +
+        equipmentError.message
+      );
+
+    }
+
+
+    // --------------------------------------
+    // CHECK EQUIPMENT EXISTS
+    // --------------------------------------
+
+    if (!equipment) {
+
+      details.innerHTML =
+        "<p>Equipment not found.</p>";
+
+      tableBody.innerHTML =
+
+        `<tr>
+          <td colspan="11">
+            Equipment not found.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+
+    // ======================================
+    // 2. GET DEPARTMENT NAME
+    // ======================================
+
+    let departmentName =
+      "Not assigned";
+
+
+    if (
+      equipment.DepartmentID !== null &&
+      equipment.DepartmentID !== undefined
+    ) {
+
+      const {
+
+        data: department,
+
+        error: departmentError
+
+      } = await client
+
+        .from("tblDepartment")
+
+        .select(
+          "DepartmentName"
+        )
+
+        .eq(
+          "DepartmentID",
+          equipment.DepartmentID
+        )
+
+        .maybeSingle();
+
+
+      if (departmentError) {
+
+        console.warn(
+          "Department could not be loaded:",
+          departmentError
+        );
+
+      }
+
+
+      if (department) {
+
+        departmentName =
+          department.DepartmentName ||
+          "Not assigned";
+
+      }
+
+    }
+
+
+    // ======================================
+    // 3. DISPLAY EQUIPMENT DETAILS
+    // ======================================
+
+    details.innerHTML = `
+
+      <div class="equipment-history-info">
+
+        <p>
+          <strong>BME Number:</strong>
+          ${equipment.BMENumber || ""}
+        </p>
+
+        <p>
+          <strong>Equipment Name:</strong>
+          ${equipment.EquipmentName || ""}
+        </p>
+
+        <p>
+          <strong>Manufacturer:</strong>
+          ${equipment.Manufacturer || ""}
+        </p>
+
+        <p>
+          <strong>Model:</strong>
+          ${equipment.Model || ""}
+        </p>
+
+        <p>
+          <strong>Serial Number:</strong>
+          ${equipment.SerialNumber || ""}
+        </p>
+
+        <p>
+          <strong>Department:</strong>
+          ${departmentName}
+        </p>
+
+        <p>
+          <strong>Location:</strong>
+          ${equipment.Location || ""}
+        </p>
+
+      </div>
+
+    `;
+
+
+    // ======================================
+    // 4. LOAD MAINTENANCE HISTORY
+    // ======================================
+
+    const {
+
+      data: history,
+
+      error: historyError
+
+    } = await client
+
+      .from("vwMaintenanceReport")
+
+      .select("*")
+
+      .eq(
+        "EquipmentID",
+        equipmentId
+      )
+
+      .order(
+        "ReportDate",
+        {
+          ascending: false
+        }
+      );
+
+
+    // --------------------------------------
+    // CHECK HISTORY ERROR
+    // --------------------------------------
+
+    if (historyError) {
+
+      console.error(
+        "Maintenance history error:",
+        historyError
+      );
+
+      throw new Error(
+        "Unable to load equipment history: " +
+        historyError.message
+      );
+
+    }
+
+
+    // ======================================
+    // 5. NO MAINTENANCE HISTORY
+    // ======================================
+
+    if (
+      !history ||
+      history.length === 0
+    ) {
+
+      tableBody.innerHTML =
+
+        `<tr>
+          <td colspan="11">
+            No maintenance history found for this equipment.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+
+    // ======================================
+    // 6. DISPLAY MAINTENANCE HISTORY
+    // ======================================
+
+    tableBody.innerHTML = "";
+
+
+    history.forEach(
+      report => {
+
+        const row =
+          document.createElement("tr");
+
+
+        row.innerHTML = `
+
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.JobOrderNumber ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.EngineerName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.MaintenanceType ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.FaultReported ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.Diagnosis ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.ActionTaken ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.PartUsed ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.RequiredPart ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.StatusName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.Remarks ||
+              ""
+            }
+          </td>
+
+        `;
+
+
+        tableBody.appendChild(row);
+
+      }
+
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Equipment History error:",
+      error
+    );
+
+
+    if (details) {
+
+      details.innerHTML =
+
+        "<p>Unable to load equipment details.</p>";
+
+    }
+
+
+    if (tableBody) {
+
+      tableBody.innerHTML =
+
+        `<tr>
+          <td colspan="11">
+            Unable to load equipment history.
+          </td>
+        </tr>`;
+
+    }
+
+
+    if (message) {
+
+      message.textContent =
+
+        error.message;
+
+    }
+
+  }
+
+}
 async function loadEquipmentHistoryDropdown() {
 
   const historyEquipmentSelect =
@@ -646,100 +1088,6 @@ async function loadEquipmentHistory(
             }
           </td>
 
-          <td>
-            ${
-              report.FaultReported ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.Diagnosis ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.ActionTaken ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.PartUsed ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.RequiredPart ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.StatusName ||
-              ""
-            }
-          </td>
-
-          <td>
-            ${
-              report.Remarks ||
-              ""
-            }
-          </td>
-
-        `;
-
-
-        tableBody.appendChild(
-          row
-        );
-
-      }
-
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "Equipment History error:",
-      error
-    );
-
-
-    details.innerHTML =
-      "<p>Unable to load equipment details.</p>";
-
-
-    tableBody.innerHTML =
-
-      `<tr>
-        <td colspan="11">
-          Error loading maintenance history:
-          ${error.message}
-        </td>
-      </tr>`;
-
-
-    if (message) {
-
-      message.textContent =
-        "Unable to load equipment history.";
-
-    }
-
-  }
-
-}
 // ==========================================
 // LOAD EQUIPMENT FOR EQUIPMENT HISTORY
 // ==========================================
@@ -845,26 +1193,6 @@ async function loadEquipmentHistoryDropdown() {
         document.createElement("option");
 
 
-      option.value =
-        equipment.EquipmentID;
-
-
-      option.textContent =
-
-        `${equipment.BMENumber || ""} — ${
-          equipment.EquipmentName || ""
-        }`;
-
-
-      historyEquipmentSelect.appendChild(
-        option
-      );
-
-    }
-
-  );
-
-}
 async function loadFormData() {
 
   // ----------------------------------------
