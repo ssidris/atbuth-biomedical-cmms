@@ -84,6 +84,9 @@
 
       <!-- MENU -->
       <nav class="menu">
+        <button data-section="equipmentRegistrationSection">
+  Register Equipment
+</button>
 
         <button data-section="maintenanceSection">
           Maintenance Report
@@ -340,7 +343,189 @@
 
       </section>
 
+<!-- EQUIPMENT REGISTRATION -->
+<section
+  id="equipmentRegistrationSection"
+  class="card app-section hidden"
+>
 
+  <h2>
+    Register New Equipment
+  </h2>
+
+  <p>
+    Enter the details of the new medical equipment.
+  </p>
+
+
+  <form id="equipmentRegistrationForm">
+
+
+    <!-- BME NUMBER -->
+
+    <label for="newBmeNumber">
+      BME Number
+    </label>
+
+    <input
+      type="text"
+      id="newBmeNumber"
+      placeholder="Enter BME number"
+      required
+    />
+
+
+    <!-- EQUIPMENT NAME -->
+
+    <label for="newEquipmentName">
+      Equipment Name
+    </label>
+
+    <input
+      type="text"
+      id="newEquipmentName"
+      placeholder="Enter equipment name"
+      required
+    />
+
+
+    <!-- MANUFACTURER -->
+
+    <label for="newManufacturer">
+      Manufacturer
+    </label>
+
+    <input
+      type="text"
+      id="newManufacturer"
+      placeholder="Enter manufacturer"
+    />
+
+
+    <!-- MODEL -->
+
+    <label for="newModel">
+      Model
+    </label>
+
+    <input
+      type="text"
+      id="newModel"
+      placeholder="Enter model"
+    />
+
+
+    <!-- SERIAL NUMBER -->
+
+    <label for="newSerialNumber">
+      Serial Number
+    </label>
+
+    <input
+      type="text"
+      id="newSerialNumber"
+      placeholder="Enter serial number"
+    />
+
+
+    <!-- DEPARTMENT -->
+
+    <label for="newDepartmentId">
+      Department
+    </label>
+
+    <select
+      id="newDepartmentId"
+      required
+    >
+
+      <option value="">
+        Select department
+      </option>
+
+    </select>
+
+
+    <!-- CATEGORY -->
+
+    <label for="newCategoryId">
+      Category
+    </label>
+
+    <select
+      id="newCategoryId"
+      required
+    >
+
+      <option value="">
+        Select category
+      </option>
+
+    </select>
+
+
+    <!-- STATUS -->
+
+    <label for="newStatusId">
+      Equipment Status
+    </label>
+
+    <select
+      id="newStatusId"
+      required
+    >
+
+      <option value="">
+        Select status
+      </option>
+
+    </select>
+
+
+    <!-- LOCATION -->
+
+    <label for="newLocation">
+      Location
+    </label>
+
+    <input
+      type="text"
+      id="newLocation"
+      placeholder="Enter equipment location"
+    />
+
+
+    <!-- REMARKS -->
+
+    <label for="newEquipmentRemarks">
+      Remarks
+    </label>
+
+    <textarea
+      id="newEquipmentRemarks"
+      placeholder="Enter remarks"
+    ></textarea>
+
+
+    <!-- SUBMIT -->
+
+    <button
+      type="submit"
+    >
+      Register Equipment
+    </button>
+
+
+    <!-- MESSAGE -->
+
+    <p
+      id="equipmentRegistrationMessage"
+    ></p>
+
+
+  </form>
+
+</section>
       <!-- MY REPORTS / MAINTENANCE HISTORY -->
 <section
   id="reportsSection"
