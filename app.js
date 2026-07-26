@@ -1759,76 +1759,96 @@ const equipmentRegistrationMessage =
 
 async function loadEquipmentRegistrationDropdowns() {
 
-  // ----------------------------------------
-  // DEPARTMENTS
-  // ----------------------------------------
+  // ========================================
+  // LOAD DEPARTMENTS
+  // ========================================
 
-  if (newDepartmentSelect) {
+  try {
 
     await loadLookup(
-
       "tblDepartment",
-
       "DepartmentID",
-
       "DepartmentName",
-
       "newDepartmentId",
-
       "Select department"
+    );
 
+    console.log(
+      "Departments loaded successfully"
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Department loading error:",
+      error
     );
 
   }
 
 
-  // ----------------------------------------
-  // EQUIPMENT CATEGORIES
-  // ----------------------------------------
+  // ========================================
+  // LOAD EQUIPMENT CATEGORIES
+  // ========================================
 
-  if (newCategorySelect) {
+  try {
 
     await loadLookup(
-
       "tblEquipmentcategory",
-
       "CategoryID",
-
       "CategoryName",
-
       "newCategoryId",
-
       "Select category"
+    );
 
+    console.log(
+      "Equipment categories loaded successfully"
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Equipment category loading error:",
+      error
     );
 
   }
 
 
-  // ----------------------------------------
-  // EQUIPMENT STATUS
-  // ----------------------------------------
+  // ========================================
+  // LOAD EQUIPMENT STATUS
+  // ========================================
 
-  if (newStatusSelect) {
+  try {
 
     await loadLookup(
-
       "tblEquipmentStatus",
-
       "StatusID",
-
       "StatusName",
-
       "newStatusId",
-
       "Select status"
+    );
 
+    console.log(
+      "Equipment statuses loaded successfully"
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Equipment status loading error:",
+      error
     );
 
   }
 
 }
-
 
 // ==========================================
 // LOAD REGISTRATION DROPDOWNS WHEN
