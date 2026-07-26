@@ -1,6 +1,6 @@
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
-// COMPLETE APP.JS
+// Supabase Mobile Web Application
 // ==========================================
 
 
@@ -56,7 +56,7 @@ const departmentInput =
 
 
 // ==========================================
-// GENERAL LOOKUP FUNCTION
+// LOAD DROPDOWN DATA
 // ==========================================
 
 async function loadLookup(
@@ -79,7 +79,6 @@ async function loadLookup(
     );
 
     return;
-
   }
 
 
@@ -112,18 +111,13 @@ async function loadLookup(
     );
 
     throw error;
-
   }
 
 
-  for (
-    const row of data || []
-  ) {
+  for (const row of data || []) {
 
     const option =
-      document.createElement(
-        "option"
-      );
+      document.createElement("option");
 
 
     option.value =
@@ -131,11 +125,8 @@ async function loadLookup(
 
 
     option.textContent =
-
       formatter
-
         ? formatter(row)
-
         : row[labelField];
 
 
@@ -149,11 +140,10 @@ async function loadLookup(
 
 
 // ==========================================
-// LOAD MAINTENANCE REPORT FORM DATA
+// LOAD FORM DATA
 // ==========================================
 
 async function loadFormData() {
-
 
   // ----------------------------------------
   // EQUIPMENT
@@ -175,8 +165,7 @@ async function loadFormData() {
 
       return `${row.EquipmentName}${
         row.BMENumber
-          ? " — " +
-            row.BMENumber
+          ? " — " + row.BMENumber
           : ""
       }`;
 
@@ -203,9 +192,7 @@ async function loadFormData() {
 
     row => {
 
-      return `${
-        row.FirstName || ""
-      } ${
+      return `${row.FirstName || ""} ${
         row.LastName || ""
       }`.trim();
 
@@ -283,15 +270,25 @@ async function loadDepartmentForEquipment(
 
   if (!departmentInput) {
 
+    console.error(
+      "Department input not found."
+    );
+
     return;
 
   }
 
 
+  // ----------------------------------------
+  // CLEAR DEPARTMENT
+  // ----------------------------------------
+
   departmentInput.value = "";
 
 
   if (!equipmentId) {
+
+    departmentInput.value = "";
 
     return;
 
@@ -304,14 +301,19 @@ async function loadDepartmentForEquipment(
 
   try {
 
+    // --------------------------------------
+    // GET DEPARTMENT ID FROM EQUIPMENT
+    // --------------------------------------
+
     const {
+
       data: equipment,
+
       error: equipmentError
+
     } = await client
 
-      .from(
-        "tblEquipment"
-      )
+      .from("tblEquipment")
 
       .select(
         "DepartmentID"
@@ -366,14 +368,19 @@ async function loadDepartmentForEquipment(
     }
 
 
+    // --------------------------------------
+    // GET DEPARTMENT NAME
+    // --------------------------------------
+
     const {
+
       data: department,
+
       error: departmentError
+
     } = await client
 
-      .from(
-        "tblDepartment"
-      )
+      .from("tblDepartments")
 
       .select(
         "DepartmentName"
@@ -411,6 +418,10 @@ async function loadDepartmentForEquipment(
 
     }
 
+
+    // --------------------------------------
+    // DISPLAY DEPARTMENT
+    // --------------------------------------
 
     departmentInput.value =
       department.DepartmentName || "";
@@ -464,13 +475,14 @@ async function loadUserProfile(
 ) {
 
   const {
+
     data,
+
     error
+
   } = await client
 
-    .from(
-      "tblUsers"
-    )
+    .from("tblUsers")
 
     .select(
       'UserID, Username, "Full name", UserRole, Status, AuthUserID'
@@ -502,7 +514,9 @@ async function loadUserProfile(
 
       "Your Supabase account is authenticated, " +
 
-      "but no matching profile was found in tblUsers."
+      "but no matching profile was found in tblUsers. " +
+
+      "Please make sure AuthUserID in tblUsers matches your Authentication User ID."
 
     );
 
@@ -514,7 +528,6 @@ async function loadUserProfile(
     String(
       data.Status
     ).toLowerCase() !==
-
     "active"
 
   ) {
@@ -536,752 +549,151 @@ async function loadUserProfile(
 
 
 // ==========================================
-// EQUIPMENT REGISTRATION ELEMENTS
+// LOAD MAINTENANCE REPORTS
 // ==========================================
 
-const equipmentRegistrationForm =
-  document.getElementById(
-    "equipmentRegistrationForm"
-  );
+async function loadMaintenanceReports() {
 
-const newDepartmentSelect =
-  document.getElementById(
-    "newDepartmentId"
-  );
-
-const newCategorySelect =
-  document.getElementById(
-    "newCategoryId"
-  );
-
-const newStatusSelect =
-  document.getElementById(
-    "newStatusId"
-  );
-
-const equipmentRegistrationMessage =
-  document.getElementById(
-    "equipmentRegistrationMessage"
-  );
-
-
-// ==========================================
-// LOAD EQUIPMENT REGISTRATION DROPDOWNS
-// ==========================================
-
-async function loadEquipmentRegistrationDropdowns() {
-
-
-  // ----------------------------------------
-  // DEPARTMENT
-  // ----------------------------------------
-
-  try {
-
-    if (newDepartmentSelect) {
-
-      await loadLookup(
-
-        "tblDepartment",
-
-        "DepartmentID",
-
-        "DepartmentName",
-
-        "newDepartmentId",
-
-        "Select department"
-
-      );
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Department registration dropdown error:",
-
-      error
-
+  const reportTableBody =
+    document.getElementById(
+      "maintenanceReportBody"
     );
 
-  }
 
-
-  // ----------------------------------------
-  // EQUIPMENT CATEGORY
-  // ----------------------------------------
-
-  try {
-
-    if (newCategorySelect) {
-
-      await loadLookup(
-
-        "tblEquipmentcategory",
-
-        "CategoryID",
-
-        "CategoryName",
-
-        "newCategoryId",
-
-        "Select category"
-
-      );
-
-    }
-
-  }
-
-  catch (error) {
+  if (!reportTableBody) {
 
     console.error(
-
-      "Category registration dropdown error:",
-
-      error
-
+      "Maintenance report table body not found."
     );
-
-  }
-
-
-  // ----------------------------------------
-  // EQUIPMENT STATUS
-  // ----------------------------------------
-
-  try {
-
-    if (newStatusSelect) {
-
-      await loadLookup(
-
-        "tblEquipmentStatus",
-
-        "StatusID",
-
-        "StatusName",
-
-        "newStatusId",
-
-        "Select status"
-
-      );
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Status registration dropdown error:",
-
-      error
-
-    );
-
-  }
-
-}
-
-
-// ==========================================
-// EQUIPMENT HISTORY ELEMENTS
-// ==========================================
-
-const historyEquipmentSelect =
-  document.getElementById(
-    "historyEquipmentId"
-  );
-
-const equipmentHistoryDetails =
-  document.getElementById(
-    "equipmentHistoryDetails"
-  );
-
-const equipmentHistoryMessage =
-  document.getElementById(
-    "equipmentHistoryMessage"
-  );
-
-const equipmentHistoryTableBody =
-  document.getElementById(
-    "equipmentHistoryTableBody"
-  );
-
-
-// ==========================================
-// LOAD EQUIPMENT HISTORY DROPDOWN
-// ==========================================
-
-async function loadEquipmentHistoryEquipment() {
-
-  if (!historyEquipmentSelect) {
 
     return;
 
   }
 
 
-  try {
+  // ----------------------------------------
+  // SHOW LOADING MESSAGE
+  // ----------------------------------------
 
-    await loadLookup(
+  reportTableBody.innerHTML = `
 
-      "tblEquipment",
+    <tr>
 
-      "EquipmentID",
+      <td colspan="11">
 
-      "EquipmentName",
+        Loading maintenance reports...
 
-      "historyEquipmentId",
+      </td>
 
-      "Select equipment",
+    </tr>
 
-      row => {
+  `;
 
-        return `${row.EquipmentName}${
-          row.BMENumber
-            ? " — " +
-              row.BMENumber
-            : ""
-        }`;
 
+  // ----------------------------------------
+  // GET REPORTS FROM SUPABASE VIEW
+  // ----------------------------------------
+
+  const {
+
+    data,
+
+    error
+
+  } = await client
+
+    .from(
+      "vwMaintenanceReport"
+    )
+
+    .select("*")
+
+    .order(
+      "ReportDate",
+      {
+        ascending: false
       }
-
     );
 
-  }
 
-  catch (error) {
+  // ----------------------------------------
+  // HANDLE ERROR
+  // ----------------------------------------
+
+  if (error) {
 
     console.error(
-
-      "Error loading equipment history equipment:",
-
+      "Error loading maintenance reports:",
       error
-
     );
 
 
-    if (
-      equipmentHistoryMessage
-    ) {
+    reportTableBody.innerHTML = `
 
-      equipmentHistoryMessage.textContent =
+      <tr>
 
-        "Unable to load equipment: " +
+        <td colspan="11">
 
-        error.message;
+          Error loading reports:
 
-    }
+          ${error.message}
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    return;
 
   }
 
-}
 
-
-// ==========================================
-// LOAD EQUIPMENT HISTORY
-// ==========================================
-
-async function loadEquipmentHistory(
-  equipmentId
-) {
+  // ----------------------------------------
+  // NO REPORTS
+  // ----------------------------------------
 
   if (
-    equipmentHistoryMessage
+    !data ||
+    data.length === 0
   ) {
 
-    equipmentHistoryMessage.textContent =
+    reportTableBody.innerHTML = `
 
-      "Loading equipment history...";
+      <tr>
+
+        <td colspan="11">
+
+          No maintenance reports found.
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    return;
 
   }
 
 
-  try {
+  // ----------------------------------------
+  // CLEAR TABLE
+  // ----------------------------------------
 
+  reportTableBody.innerHTML = "";
 
-    // --------------------------------------
-    // LOAD EQUIPMENT DETAILS
-    // --------------------------------------
 
-    const {
+  // ----------------------------------------
+  // DISPLAY EACH REPORT
+  // ----------------------------------------
 
-      data: equipment,
-
-      error: equipmentError
-
-    } = await client
-
-      .from(
-        "tblEquipment"
-      )
-
-      .select(`
-
-        EquipmentID,
-
-        BMENumber,
-
-        EquipmentName,
-
-        Manufacturer,
-
-        Model,
-
-        SerialNumber,
-
-        DepartmentID,
-
-        CategoryID,
-
-        StatusID,
-
-        Location,
-
-        Remarks
-
-      `)
-
-      .eq(
-        "EquipmentID",
-        equipmentId
-      )
-
-      .maybeSingle();
-
-
-    if (equipmentError) {
-
-      throw equipmentError;
-
-    }
-
-
-    if (!equipment) {
-
-      throw new Error(
-
-        "Equipment not found."
-
-      );
-
-    }
-
-
-    // --------------------------------------
-    // LOAD DEPARTMENT
-    // --------------------------------------
-
-    let departmentName =
-      "Not assigned";
-
-
-    if (
-
-      equipment.DepartmentID !== null &&
-
-      equipment.DepartmentID !== undefined
-
-    ) {
-
-      const {
-
-        data: department
-
-      } = await client
-
-        .from(
-          "tblDepartment"
-        )
-
-        .select(
-          "DepartmentName"
-        )
-
-        .eq(
-          "DepartmentID",
-          equipment.DepartmentID
-        )
-
-        .maybeSingle();
-
-
-      if (department) {
-
-        departmentName =
-
-          department.DepartmentName;
-
-      }
-
-    }
-
-
-    // --------------------------------------
-    // DISPLAY EQUIPMENT DETAILS
-    // --------------------------------------
-
-    if (
-      equipmentHistoryDetails
-    ) {
-
-      equipmentHistoryDetails.innerHTML = `
-
-        <div>
-
-          <h3>
-            Equipment Details
-          </h3>
-
-          <p>
-            <strong>BME Number:</strong>
-            ${equipment.BMENumber || ""}
-          </p>
-
-          <p>
-            <strong>Equipment Name:</strong>
-            ${equipment.EquipmentName || ""}
-          </p>
-
-          <p>
-            <strong>Manufacturer:</strong>
-            ${equipment.Manufacturer || ""}
-          </p>
-
-          <p>
-            <strong>Model:</strong>
-            ${equipment.Model || ""}
-          </p>
-
-          <p>
-            <strong>Serial Number:</strong>
-            ${equipment.SerialNumber || ""}
-          </p>
-
-          <p>
-            <strong>Department:</strong>
-            ${departmentName}
-          </p>
-
-          <p>
-            <strong>Location:</strong>
-            ${equipment.Location || ""}
-          </p>
-
-        </div>
-
-      `;
-
-    }
-
-
-    // --------------------------------------
-    // LOAD MAINTENANCE HISTORY
-    // --------------------------------------
-
-    const {
-
-      data: reports,
-
-      error: reportsError
-
-    } = await client
-
-      .from(
-        "tblMaintenanceReport"
-      )
-
-      .select(`
-
-        MaintenanceID,
-
-        JobOrderNumber,
-
-        ReportDate,
-
-        EngineerID,
-
-        MaintenanceTypeID,
-
-        FaultReported,
-
-        Diagnosis,
-
-        ActionTaken,
-
-        PartUsed,
-
-        RequiredPart,
-
-        StatusID,
-
-        Remarks
-
-      `)
-
-      .eq(
-        "EquipmentID",
-        equipmentId
-      )
-
-      .order(
-
-        "ReportDate",
-
-        {
-          ascending: false
-        }
-
-      );
-
-
-    if (reportsError) {
-
-      throw reportsError;
-
-    }
-
-
-    // --------------------------------------
-    // NO HISTORY
-    // --------------------------------------
-
-    if (
-
-      !reports ||
-
-      reports.length === 0
-
-    ) {
-
-      if (
-        equipmentHistoryTableBody
-      ) {
-
-        equipmentHistoryTableBody.innerHTML =
-
-          `<tr>
-
-            <td colspan="11">
-
-              No maintenance history found
-              for this equipment.
-
-            </td>
-
-          </tr>`;
-
-      }
-
-
-      if (
-        equipmentHistoryMessage
-      ) {
-
-        equipmentHistoryMessage.textContent =
-
-          "No maintenance reports found for this equipment.";
-
-      }
-
-
-      return;
-
-    }
-
-
-    // --------------------------------------
-    // DISPLAY HISTORY
-    // --------------------------------------
-
-    if (
-      equipmentHistoryTableBody
-    ) {
-
-      equipmentHistoryTableBody.innerHTML = "";
-
-    }
-
-
-    for (
-      const report of reports
-    ) {
-
-
-      // ------------------------------------
-      // ENGINEER
-      // ------------------------------------
-
-      let engineerName =
-        "Unknown";
-
-
-      if (
-        report.EngineerID
-      ) {
-
-        const {
-
-          data: engineer
-
-        } = await client
-
-          .from(
-            "tblEngineers"
-          )
-
-          .select(
-            "FirstName, LastName"
-          )
-
-          .eq(
-            "EngineerID",
-            report.EngineerID
-          )
-
-          .maybeSingle();
-
-
-        if (engineer) {
-
-          engineerName =
-
-            `${
-
-              engineer.FirstName || ""
-
-            } ${
-
-              engineer.LastName || ""
-
-            }`.trim();
-
-        }
-
-      }
-
-
-      // ------------------------------------
-      // MAINTENANCE TYPE
-      // ------------------------------------
-
-      let maintenanceType =
-        "Unknown";
-
-
-      if (
-        report.MaintenanceTypeID
-      ) {
-
-        const {
-
-          data: type
-
-        } = await client
-
-          .from(
-            "tblMaintenanceType"
-          )
-
-          .select(
-            "MaintenanceType"
-          )
-
-          .eq(
-            "MaintenanceTypeID",
-            report.MaintenanceTypeID
-          )
-
-          .maybeSingle();
-
-
-        if (type) {
-
-          maintenanceType =
-
-            type.MaintenanceType;
-
-        }
-
-      }
-
-
-      // ------------------------------------
-      // STATUS
-      // ------------------------------------
-
-      let statusName =
-        "Unknown";
-
-
-      if (
-        report.StatusID
-      ) {
-
-        const {
-
-          data: status
-
-        } = await client
-
-          .from(
-            "tblEquipmentStatus"
-          )
-
-          .select(
-            "StatusName"
-          )
-
-          .eq(
-            "StatusID",
-            report.StatusID
-          )
-
-          .maybeSingle();
-
-
-        if (status) {
-
-          statusName =
-
-            status.StatusName;
-
-        }
-
-      }
-
-
-      // ------------------------------------
-      // DATE
-      // ------------------------------------
-
-      const reportDate =
-
-        report.ReportDate
-
-          ? new Date(
-
-              report.ReportDate
-
-            ).toLocaleDateString()
-
-          : "";
-
-
-      // ------------------------------------
-      // CREATE TABLE ROW
-      // ------------------------------------
+  data.forEach(
+    report => {
 
       const row =
-
         document.createElement(
           "tr"
         );
@@ -1290,164 +702,135 @@ async function loadEquipmentHistory(
       row.innerHTML = `
 
         <td>
-          ${reportDate}
+
+          ${
+            report.ReportDate
+
+              ? new Date(
+                  report.ReportDate
+                ).toLocaleDateString()
+
+              : ""
+
+          }
+
         </td>
 
-        <td>
-          ${report.JobOrderNumber || ""}
-        </td>
 
         <td>
-          ${engineerName}
+
+          ${
+            report.JobOrderNumber ||
+            ""
+
+          }
+
         </td>
 
-        <td>
-          ${maintenanceType}
-        </td>
 
         <td>
-          ${report.FaultReported || ""}
+
+          ${
+            report.BMENumber ||
+            ""
+
+          }
+
         </td>
 
-        <td>
-          ${report.Diagnosis || ""}
-        </td>
 
         <td>
-          ${report.ActionTaken || ""}
+
+          ${
+            report.EquipmentName ||
+            ""
+
+          }
+
         </td>
 
-        <td>
-          ${report.PartUsed || ""}
-        </td>
 
         <td>
-          ${report.RequiredPart || ""}
+
+          ${
+            report.DepartmentName ||
+            ""
+
+          }
+
         </td>
 
-        <td>
-          ${statusName}
-        </td>
 
         <td>
-          ${report.Remarks || ""}
+
+          ${
+            report.EngineerName ||
+            ""
+
+          }
+
+        </td>
+
+
+        <td>
+
+          ${
+            report.MaintenanceType ||
+            ""
+
+          }
+
+        </td>
+
+
+        <td>
+
+          ${
+            report.FaultReported ||
+            ""
+
+          }
+
+        </td>
+
+
+        <td>
+
+          ${
+            report.ActionTaken ||
+            ""
+
+          }
+
+        </td>
+
+
+        <td>
+
+          ${
+            report.StatusName ||
+            ""
+
+          }
+
+        </td>
+
+
+        <td>
+
+          ${
+            report.Remarks ||
+            ""
+
+          }
+
         </td>
 
       `;
 
 
-      if (
-        equipmentHistoryTableBody
-      ) {
-
-        equipmentHistoryTableBody.appendChild(
-          row
-        );
-
-      }
-
-    }
-
-
-    if (
-      equipmentHistoryMessage
-    ) {
-
-      equipmentHistoryMessage.textContent =
-
-        `${reports.length} maintenance report(s) found.`;
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Equipment history error:",
-
-      error
-
-    );
-
-
-    if (
-      equipmentHistoryMessage
-    ) {
-
-      equipmentHistoryMessage.textContent =
-
-        "Unable to load equipment history: " +
-
-        error.message;
-
-    }
-
-  }
-
-}
-
-
-// ==========================================
-// EQUIPMENT HISTORY SELECTION EVENT
-// ==========================================
-
-if (
-  historyEquipmentSelect
-) {
-
-  historyEquipmentSelect.addEventListener(
-
-    "change",
-
-    async function() {
-
-      const equipmentId =
-        this.value;
-
-
-      if (!equipmentId) {
-
-        if (
-          equipmentHistoryDetails
-        ) {
-
-          equipmentHistoryDetails.innerHTML =
-
-            "<p>Select an equipment to view its details.</p>";
-
-        }
-
-
-        if (
-          equipmentHistoryTableBody
-        ) {
-
-          equipmentHistoryTableBody.innerHTML =
-
-            `<tr>
-
-              <td colspan="11">
-
-                Select an equipment to view history.
-
-              </td>
-
-            </tr>`;
-
-        }
-
-
-        return;
-
-      }
-
-
-      await loadEquipmentHistory(
-
-        equipmentId
-
+      reportTableBody.appendChild(
+        row
       );
 
     }
@@ -1471,6 +854,10 @@ async function showApp(
     );
 
 
+  // ----------------------------------------
+  // DISPLAY USER NAME AND ROLE
+  // ----------------------------------------
+
   welcomeText.textContent =
 
     `Welcome, ${
@@ -1481,6 +868,10 @@ async function showApp(
       "User"
     })`;
 
+
+  // ----------------------------------------
+  // SHOW APPLICATION
+  // ----------------------------------------
 
   loginView.classList.add(
     "hidden"
@@ -1493,72 +884,17 @@ async function showApp(
 
 
   // ----------------------------------------
-  // LOAD MAINTENANCE REPORT DROPDOWNS
+  // LOAD FORM DROPDOWNS
   // ----------------------------------------
 
-  try {
-
-    await loadFormData();
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Maintenance form loading error:",
-
-      error
-
-    );
-
-  }
+  await loadFormData();
 
 
   // ----------------------------------------
-  // LOAD EQUIPMENT REGISTRATION DROPDOWNS
+  // LOAD MAINTENANCE REPORTS
   // ----------------------------------------
 
-  try {
-
-    await loadEquipmentRegistrationDropdowns();
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Equipment registration loading error:",
-
-      error
-
-    );
-
-  }
-
-
-  // ----------------------------------------
-  // LOAD EQUIPMENT HISTORY DROPDOWN
-  // ----------------------------------------
-
-  try {
-
-    await loadEquipmentHistoryEquipment();
-
-  }
-
-  catch (error) {
-
-    console.error(
-
-      "Equipment history loading error:",
-
-      error
-
-    );
-
-  }
+  await loadMaintenanceReports();
 
 }
 
@@ -1567,141 +903,144 @@ async function showApp(
 // LOGIN
 // ==========================================
 
-if (loginForm) {
+loginForm.addEventListener(
 
-  loginForm.addEventListener(
+  "submit",
 
-    "submit",
+  async function(event) {
 
-    async function(event) {
+    event.preventDefault();
 
-      event.preventDefault();
 
+    loginMessage.textContent =
+      "Signing in...";
+
+
+    const email =
+
+      document
+
+        .getElementById(
+          "email"
+        )
+
+        .value
+
+        .trim();
+
+
+    const password =
+
+      document
+
+        .getElementById(
+          "password"
+        )
+
+        .value;
+
+
+    // --------------------------------------
+    // VALIDATE LOGIN INPUT
+    // --------------------------------------
+
+    if (
+
+      !email ||
+
+      !password
+
+    ) {
 
       loginMessage.textContent =
-        "Signing in...";
 
+        "Please enter your email and password.";
 
-      const email =
-
-        document
-
-          .getElementById(
-            "email"
-          )
-
-          .value
-
-          .trim();
-
-
-      const password =
-
-        document
-
-          .getElementById(
-            "password"
-          )
-
-          .value;
-
-
-      if (
-
-        !email ||
-
-        !password
-
-      ) {
-
-        loginMessage.textContent =
-
-          "Please enter your email and password.";
-
-        return;
-
-      }
-
-
-      const {
-
-        data,
-
-        error
-
-      } = await client.auth.signInWithPassword({
-
-        email: email,
-
-        password: password
-
-      });
-
-
-      if (error) {
-
-        console.error(
-
-          "Login error:",
-
-          error
-
-        );
-
-
-        loginMessage.textContent =
-
-          "Login failed: " +
-
-          error.message;
-
-
-        return;
-
-      }
-
-
-      try {
-
-        await showApp(
-
-          data.user
-
-        );
-
-
-        loginMessage.textContent =
-          "";
-
-      }
-
-      catch (profileError) {
-
-        console.error(
-
-          "Profile error:",
-
-          profileError
-
-        );
-
-
-        await client.auth.signOut();
-
-
-        loginMessage.textContent =
-
-          "Login successful, but profile loading failed: " +
-
-          profileError.message;
-
-      }
+      return;
 
     }
 
-  );
 
-}
+    // --------------------------------------
+    // SUPABASE LOGIN
+    // --------------------------------------
+
+    const {
+
+      data,
+
+      error
+
+    } = await client.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+    // --------------------------------------
+    // LOGIN ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      console.error(
+        "Login error:",
+        error
+      );
+
+
+      loginMessage.textContent =
+
+        "Login failed: " +
+        error.message;
+
+
+      return;
+
+    }
+
+
+    // --------------------------------------
+    // LOAD APPLICATION
+    // --------------------------------------
+
+    try {
+
+      await showApp(
+        data.user
+      );
+
+
+      loginMessage.textContent =
+        "";
+
+    }
+
+    catch (profileError) {
+
+      console.error(
+        "Profile error:",
+        profileError
+      );
+
+
+      await client.auth.signOut();
+
+
+      loginMessage.textContent =
+
+        "Login successful, but profile loading failed: " +
+
+        profileError.message;
+
+    }
+
+  }
+
+);
 
 
 // ==========================================
@@ -1762,6 +1101,10 @@ document
 
         function() {
 
+          // --------------------------------
+          // HIDE ALL SECTIONS
+          // --------------------------------
+
           document
 
             .querySelectorAll(
@@ -1779,6 +1122,10 @@ document
             );
 
 
+          // --------------------------------
+          // GET SELECTED SECTION
+          // --------------------------------
+
           const selectedSection =
 
             document.getElementById(
@@ -1788,6 +1135,10 @@ document
             );
 
 
+          // --------------------------------
+          // SHOW SELECTED SECTION
+          // --------------------------------
+
           if (
             selectedSection
           ) {
@@ -1795,6 +1146,22 @@ document
             selectedSection.classList.remove(
               "hidden"
             );
+
+          }
+
+
+          // --------------------------------
+          // REFRESH MAINTENANCE REPORTS
+          // --------------------------------
+
+          if (
+
+            button.dataset.section ===
+            "maintenanceReports"
+
+          ) {
+
+            loadMaintenanceReports();
 
           }
 
@@ -1811,1458 +1178,401 @@ document
 // SUBMIT MAINTENANCE REPORT
 // ==========================================
 
-if (maintenanceForm) {
+maintenanceForm.addEventListener(
 
-  maintenanceForm.addEventListener(
+  "submit",
 
-    "submit",
+  async function(event) {
 
-    async function(event) {
+    event.preventDefault();
 
-      event.preventDefault();
 
+    maintenanceMessage.textContent =
+      "Submitting report...";
+
+
+    // --------------------------------------
+    // CHECK AUTHENTICATED USER
+    // --------------------------------------
+
+    const {
+
+      data: authData
+
+    } = await client.auth.getUser();
+
+
+    if (
+      !authData.user
+    ) {
 
       maintenanceMessage.textContent =
 
-        "Submitting report...";
+        "Your session has expired. " +
+
+        "Please log in again.";
+
+      return;
+
+    }
 
 
-      const {
+    // ======================================
+    // GET PART REQUESTED STATUS TEXT
+    // ======================================
 
-        data: authData
+    const partStatusSelect =
 
-      } = await client.auth.getUser();
-
-
-      if (
-        !authData.user
-      ) {
-
-        maintenanceMessage.textContent =
-
-          "Your session has expired. " +
-
-          "Please log in again.";
-
-        return;
-
-      }
+      document.getElementById(
+        "partStatusId"
+      );
 
 
-      const partStatusSelect =
-
-        document.getElementById(
-
-          "partStatusId"
-
-        );
+    let partRequestedStatus =
+      null;
 
 
-      let partRequestedStatus =
-        null;
+    if (
+
+      partStatusSelect &&
+
+      partStatusSelect.value
+
+    ) {
+
+      partRequestedStatus =
+
+        partStatusSelect
+
+          .selectedOptions[0]
+
+          .textContent
+
+          .trim();
+
+    }
 
 
-      if (
+    // ======================================
+    // PREPARE REPORT DATA
+    // ======================================
+
+    const payload = {
+
+      JobOrderNumber:
+
+        document
+
+          .getElementById(
+            "jobOrderNumber"
+          )
+
+          .value
+
+          ? Number(
+
+              document
+
+                .getElementById(
+                  "jobOrderNumber"
+                )
+
+                .value
+
+            )
+
+          : null,
+
+
+      ReportDate:
+
+        new Date()
+
+          .toISOString(),
+
+
+      EquipmentID:
+
+        Number(
+
+          document
+
+            .getElementById(
+              "equipmentId"
+            )
+
+            .value
+
+        ),
+
+
+      EngineerID:
+
+        Number(
+
+          document
+
+            .getElementById(
+              "engineerId"
+            )
+
+            .value
+
+        ),
+
+
+      MaintenanceTypeID:
+
+        Number(
+
+          document
+
+            .getElementById(
+              "maintenanceTypeId"
+            )
+
+            .value
+
+        ),
+
+
+      FaultReported:
+
+        document
+
+          .getElementById(
+            "faultReported"
+          )
+
+          .value ||
+
+        null,
+
+
+      Diagnosis:
+
+        document
+
+          .getElementById(
+            "diagnosis"
+          )
+
+          .value ||
+
+        null,
+
+
+      ActionTaken:
+
+        document
+
+          .getElementById(
+            "actionTaken"
+          )
+
+          .value ||
+
+        null,
+
+
+      PartUsed:
+
+        document
+
+          .getElementById(
+            "partUsed"
+          )
+
+          .value ||
+
+        null,
+
+
+      RequiredPart:
+
+        document
+
+          .getElementById(
+            "requiredPart"
+          )
+
+          .value ||
+
+        null,
+
+
+      QuantityRequired:
+
+        document
+
+          .getElementById(
+            "quantityRequired"
+          )
+
+          .value
+
+          ? Number(
+
+              document
+
+                .getElementById(
+                  "quantityRequired"
+                )
+
+                .value
+
+            )
+
+          : null,
+
+
+      // ------------------------------------
+      // PART REQUESTED STATUS TEXT
+      // ------------------------------------
+
+      PartRequestedStatus:
+
+        partRequestedStatus,
+
+
+      // ------------------------------------
+      // PART STATUS ID
+      // ------------------------------------
+
+      PartStatusID:
 
         partStatusSelect &&
 
         partStatusSelect.value
 
-      ) {
+          ? Number(
+              partStatusSelect.value
+            )
 
-        partRequestedStatus =
-
-          partStatusSelect
-
-            .selectedOptions[0]
-
-            .textContent
-
-            .trim();
-
-      }
+          : null,
 
 
-      const payload = {
+      // ------------------------------------
+      // EQUIPMENT STATUS
+      // ------------------------------------
 
-        JobOrderNumber:
+      StatusID:
+
+        Number(
 
           document
 
             .getElementById(
-
-              "jobOrderNumber"
-
+              "statusId"
             )
 
             .value
 
-            ? Number(
-
-                document
-
-                  .getElementById(
-
-                    "jobOrderNumber"
-
-                  )
-
-                  .value
-
-              )
-
-            : null,
-
-
-        ReportDate:
-
-          new Date()
-
-            .toISOString(),
-
-
-        EquipmentID:
-
-          Number(
-
-            document
-
-              .getElementById(
-
-                "equipmentId"
-
-              )
-
-              .value
-
-          ),
-
-
-        EngineerID:
-
-          Number(
-
-            document
-
-              .getElementById(
-
-                "engineerId"
-
-              )
-
-              .value
-
-          ),
-
-
-        MaintenanceTypeID:
-
-          Number(
-
-            document
-
-              .getElementById(
-
-                "maintenanceTypeId"
-
-              )
-
-              .value
-
-          ),
-
-
-        FaultReported:
-
-          document
-
-            .getElementById(
-
-              "faultReported"
-
-            )
-
-            .value ||
-
-          null,
-
-
-        Diagnosis:
-
-          document
-
-            .getElementById(
-
-              "diagnosis"
-
-            )
-
-            .value ||
-
-          null,
-
-
-        ActionTaken:
-
-          document
-
-            .getElementById(
-
-              "actionTaken"
-
-            )
-
-            .value ||
-
-          null,
-
-
-        PartUsed:
-
-          document
-
-            .getElementById(
-
-              "partUsed"
-
-            )
-
-            .value ||
-
-          null,
-
-
-        RequiredPart:
-
-          document
-
-            .getElementById(
-
-              "requiredPart"
-
-            )
-
-            .value ||
-
-          null,
-
-
-        QuantityRequired:
-
-          document
-
-            .getElementById(
-
-              "quantityRequired"
-
-            )
-
-            .value
-
-            ? Number(
-
-                document
-
-                  .getElementById(
-
-                    "quantityRequired"
-
-                  )
-
-                  .value
-
-              )
-
-            : null,
-
-
-        PartRequestedStatus:
-
-          partRequestedStatus,
-
-
-        PartStatusID:
-
-          partStatusSelect &&
-
-          partStatusSelect.value
-
-            ? Number(
-
-                partStatusSelect.value
-
-              )
-
-            : null,
-
-
-        StatusID:
-
-          Number(
-
-            document
-
-              .getElementById(
-
-                "statusId"
-
-              )
-
-              .value
-
-          ),
-
-
-        Remarks:
-
-          document
-
-            .getElementById(
-
-              "remarks"
-
-            )
-
-            .value ||
-
-          null
-
-      };
-
-
-      const {
-
-        error
-
-      } = await client
-
-        .from(
-
-          "tblMaintenanceReport"
-
-        )
-
-        .insert(
-
-          payload
-
-        );
-
-
-      if (error) {
-
-        console.error(
-
-          "Maintenance report error:",
-
-          error
-
-        );
-
-
-        maintenanceMessage.textContent =
-
-          "Error submitting report: " +
-
-          error.message;
-
-
-        return;
-
-      }
-
-
-      maintenanceMessage.textContent =
-
-        "Maintenance report submitted successfully.";
-
-
-      maintenanceForm.reset();
-
-
-      if (
-        departmentInput
-      ) {
-
-        departmentInput.value =
-          "";
-
-      }
-
-    }
-
-  );
-
-}
-
-
-// ==========================================
-// EQUIPMENT REGISTRATION
-// ==========================================
-
-if (
-  equipmentRegistrationForm
-) {
-
-  equipmentRegistrationForm.addEventListener(
-
-    "submit",
-
-    async function(event) {
-
-      event.preventDefault();
-
-
-      equipmentRegistrationMessage.textContent =
-
-        "Registering equipment...";
-
-
-      const {
-
-        data: authData
-
-      } = await client.auth.getUser();
-
-
-      if (
-
-        !authData ||
-
-        !authData.user
-
-      ) {
-
-        equipmentRegistrationMessage.textContent =
-
-          "Your session has expired. Please log in again.";
-
-        return;
-
-      }
-
-
-      const bmeNumber =
-
-        document
-
-          .getElementById(
-
-            "newBmeNumber"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const equipmentName =
-
-        document
-
-          .getElementById(
-
-            "newEquipmentName"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const manufacturer =
-
-        document
-
-          .getElementById(
-
-            "newManufacturer"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const model =
-
-        document
-
-          .getElementById(
-
-            "newModel"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const serialNumber =
-
-        document
-
-          .getElementById(
-
-            "newSerialNumber"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const departmentId =
-
-        document
-
-          .getElementById(
-
-            "newDepartmentId"
-
-          )
-
-          .value;
-
-
-      const categoryId =
-
-        document
-
-          .getElementById(
-
-            "newCategoryId"
-
-          )
-
-          .value;
-
-
-      const statusId =
-
-        document
-
-          .getElementById(
-
-            "newStatusId"
-
-          )
-
-          .value;
-
-
-      const location =
-
-        document
-
-          .getElementById(
-
-            "newLocation"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      const remarks =
-
-        document
-
-          .getElementById(
-
-            "newEquipmentRemarks"
-
-          )
-
-          .value
-
-          .trim();
-
-
-      if (
-
-        !bmeNumber ||
-
-        !equipmentName ||
-
-        !departmentId ||
-
-        !categoryId ||
-
-        !statusId
-
-      ) {
-
-        equipmentRegistrationMessage.textContent =
-
-          "Please complete all required fields.";
-
-        return;
-
-      }
-
-
-      const equipmentData = {
-
-        BMENumber:
-
-          bmeNumber,
-
-
-        EquipmentName:
-
-          equipmentName,
-
-
-        Manufacturer:
-
-          manufacturer ||
-
-          null,
-
-
-        Model:
-
-          model ||
-
-          null,
-
-
-        SerialNumber:
-
-          serialNumber ||
-
-          null,
-
-
-        DepartmentID:
-
-          Number(
-
-            departmentId
-
-          ),
-
-
-        CategoryID:
-
-          Number(
-
-            categoryId
-
-          ),
-
-
-        StatusID:
-
-          Number(
-
-            statusId
-
-          ),
-
-
-        Location:
-
-          location ||
-
-          null,
-
-
-        Remarks:
-
-          remarks ||
-
-          null
-
-      };
-
-
-      const {
-
-        error
-
-      } = await client
-
-        .from(
-
-          "tblEquipment"
-
-        )
-
-        .insert(
-
-          equipmentData
-
-        );
-
-
-      if (error) {
-
-        console.error(
-
-          "Equipment registration error:",
-
-          error
-
-        );
-
-
-        equipmentRegistrationMessage.textContent =
-
-          "Error registering equipment: " +
-
-          error.message;
-
-
-        return;
-
-      }
-
-
-      equipmentRegistrationMessage.textContent =
-
-        "Equipment registered successfully.";
-
-
-      equipmentRegistrationForm.reset();
+        ),
 
 
       // ------------------------------------
-      // REFRESH MAINTENANCE EQUIPMENT
-      // DROPDOWN
+      // REMARKS
       // ------------------------------------
 
-      try {
+      Remarks:
 
-        await loadLookup(
+        document
 
-          "tblEquipment",
+          .getElementById(
+            "remarks"
+          )
 
-          "EquipmentID",
+          .value ||
 
-          "EquipmentName",
+        null
 
-          "equipmentId",
+    };
 
-          "Select equipment",
 
-          row => {
-
-            return `${row.EquipmentName}${
-              row.BMENumber
-                ? " — " +
-                  row.BMENumber
-                : ""
-            }`;
-
-          }
-
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          "Equipment dropdown refresh error:",
-
-          error
-
-        );
-
-      }
-
-
-      // ------------------------------------
-      // REFRESH EQUIPMENT HISTORY DROPDOWN
-      // ------------------------------------
-
-      try {
-
-        await loadEquipmentHistoryEquipment();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          "Equipment history dropdown refresh error:",
-
-          error
-
-        );
-
-      }
-
-    }
-
-  );
-
-}
-
-
-// ==========================================
-// MAINTENANCE REPORT HISTORY
-// ==========================================
-
-const reportsTableBody =
-  document.getElementById(
-    "reportsTableBody"
-  );
-
-const reportsLoading =
-  document.getElementById(
-    "reportsLoading"
-  );
-
-const reportsMessage =
-  document.getElementById(
-    "reportsMessage"
-  );
-
-const reportSearch =
-  document.getElementById(
-    "reportSearch"
-  );
-
-
-let allMaintenanceReports = [];
-
-
-// ==========================================
-// LOAD MAINTENANCE REPORT HISTORY
-// ==========================================
-
-async function loadMaintenanceReports() {
-
-  if (!reportsTableBody) {
-
-    return;
-
-  }
-
-
-  reportsLoading.textContent =
-    "Loading reports...";
-
-
-  const {
-
-    data: reports,
-
-    error
-
-  } = await client
-
-    .from(
-
-      "tblMaintenanceReport"
-
-    )
-
-    .select(`
-
-      MaintenanceID,
-
-      JobOrderNumber,
-
-      ReportDate,
-
-      EquipmentID,
-
-      EngineerID,
-
-      MaintenanceTypeID,
-
-      FaultReported,
-
-      ActionTaken,
-
-      StatusID,
-
-      Remarks,
-
-      tblEquipment (
-
-        EquipmentName,
-
-        DepartmentID
-
-      ),
-
-      tblEngineers (
-
-        FirstName,
-
-        LastName
-
-      ),
-
-      tblMaintenanceType (
-
-        MaintenanceType
-
-      ),
-
-      tblEquipmentStatus (
-
-        StatusName
-
-      )
-
-    `)
-
-    .order(
-
-      "ReportDate",
-
-      {
-
-        ascending: false
-
-      }
-
-    );
-
-
-  if (error) {
-
-    console.error(
-
-      "Error loading maintenance reports:",
-
-      error
-
-    );
-
-
-    reportsLoading.textContent =
-      "";
-
-
-    reportsMessage.textContent =
-
-      "Unable to load maintenance reports: " +
-
-      error.message;
-
-
-    return;
-
-  }
-
-
-  allMaintenanceReports =
-    reports || [];
-
-
-  reportsLoading.textContent =
-    "";
-
-
-  await displayMaintenanceReports(
-
-    allMaintenanceReports
-
-  );
-
-}
-
-
-// ==========================================
-// DISPLAY MAINTENANCE REPORTS
-// ==========================================
-
-async function displayMaintenanceReports(
-  reports
-) {
-
-  reportsTableBody.innerHTML =
-    "";
-
-
-  if (
-
-    !reports ||
-
-    reports.length === 0
-
-  ) {
-
-    reportsTableBody.innerHTML =
-
-      `<tr>
-
-        <td colspan="10">
-
-          No maintenance reports found.
-
-        </td>
-
-      </tr>`;
-
-    return;
-
-  }
-
-
-  const departmentIds =
-
-    reports
-
-      .map(
-
-        report =>
-
-          report.tblEquipment
-
-            ?.DepartmentID
-
-      )
-
-      .filter(
-
-        id =>
-
-          id !== null &&
-
-          id !== undefined
-
-      );
-
-
-  let departments = [];
-
-
-  if (
-
-    departmentIds.length > 0
-
-  ) {
+    // ======================================
+    // INSERT REPORT INTO SUPABASE
+    // ======================================
 
     const {
-
-      data,
 
       error
 
     } = await client
 
       .from(
-
-        "tblDepartment"
-
+        "tblMaintenanceReport"
       )
 
-      .select(
-
-        "DepartmentID, DepartmentName"
-
-      )
-
-      .in(
-
-        "DepartmentID",
-
-        departmentIds
-
+      .insert(
+        payload
       );
 
 
-    if (!error) {
+    // ======================================
+    // HANDLE INSERT ERROR
+    // ======================================
 
-      departments =
-        data || [];
+    if (error) {
+
+      console.error(
+        "Maintenance report error:",
+        error
+      );
+
+
+      maintenanceMessage.textContent =
+
+        "Error submitting report: " +
+
+        error.message;
+
+
+      return;
 
     }
+
+
+    // ======================================
+    // SUCCESS MESSAGE
+    // ======================================
+
+    maintenanceMessage.textContent =
+
+      "Maintenance report submitted successfully.";
+
+
+    // --------------------------------------
+    // RESET FORM
+    // --------------------------------------
+
+    maintenanceForm.reset();
+
+
+    // --------------------------------------
+    // CLEAR DEPARTMENT
+    // --------------------------------------
+
+    if (departmentInput) {
+
+      departmentInput.value = "";
+
+    }
+
+
+    // --------------------------------------
+    // REFRESH REPORT TABLE
+    // --------------------------------------
+
+    await loadMaintenanceReports();
 
   }
 
-
-  const departmentMap =
-    new Map();
-
-
-  departments.forEach(
-
-    department => {
-
-      departmentMap.set(
-
-        String(
-
-          department.DepartmentID
-
-        ),
-
-        department.DepartmentName
-
-      );
-
-    }
-
-  );
-
-
-  reports.forEach(
-
-    report => {
-
-      const row =
-
-        document.createElement(
-
-          "tr"
-
-        );
-
-
-      const reportDate =
-
-        report.ReportDate
-
-          ? new Date(
-
-              report.ReportDate
-
-            ).toLocaleDateString()
-
-          : "";
-
-
-      const equipmentName =
-
-        report.tblEquipment
-
-          ?.EquipmentName
-
-          || "Unknown";
-
-
-      const departmentId =
-
-        report.tblEquipment
-
-          ?.DepartmentID;
-
-
-      const departmentName =
-
-        departmentId !== null &&
-
-        departmentId !== undefined
-
-          ? departmentMap.get(
-
-              String(
-
-                departmentId
-
-              )
-
-            ) ||
-
-            "Unknown"
-
-          : "Not assigned";
-
-
-      const engineerName =
-
-        report.tblEngineers
-
-          ? `${
-
-              report.tblEngineers
-
-                .FirstName || ""
-
-            } ${
-
-              report.tblEngineers
-
-                .LastName || ""
-
-            }`.trim()
-
-          : "Unknown";
-
-
-      const maintenanceType =
-
-        report.tblMaintenanceType
-
-          ?.MaintenanceType
-
-          || "Unknown";
-
-
-      const statusName =
-
-        report.tblEquipmentStatus
-
-          ?.StatusName
-
-          || "Unknown";
-
-
-      row.innerHTML = `
-
-        <td>
-          ${reportDate}
-        </td>
-
-        <td>
-          ${report.JobOrderNumber || ""}
-        </td>
-
-        <td>
-          ${equipmentName}
-        </td>
-
-        <td>
-          ${departmentName}
-        </td>
-
-        <td>
-          ${engineerName}
-        </td>
-
-        <td>
-          ${maintenanceType}
-        </td>
-
-        <td>
-          ${report.FaultReported || ""}
-        </td>
-
-        <td>
-          ${report.ActionTaken || ""}
-        </td>
-
-        <td>
-          ${statusName}
-        </td>
-
-        <td>
-          ${report.Remarks || ""}
-        </td>
-
-      `;
-
-
-      reportsTableBody.appendChild(
-
-        row
-
-      );
-
-    }
-
-  );
-
-}
+);
 
 
 // ==========================================
-// SEARCH MAINTENANCE REPORTS
-// ==========================================
-
-if (reportSearch) {
-
-  reportSearch.addEventListener(
-
-    "input",
-
-    async function() {
-
-      const searchText =
-
-        this.value
-
-          .toLowerCase()
-
-          .trim();
-
-
-      if (!searchText) {
-
-        await displayMaintenanceReports(
-
-          allMaintenanceReports
-
-        );
-
-        return;
-
-      }
-
-
-      const filteredReports =
-
-        allMaintenanceReports.filter(
-
-          report => {
-
-            const equipmentName =
-
-              report.tblEquipment
-
-                ?.EquipmentName
-
-                || "";
-
-
-            const engineerName =
-
-              report.tblEngineers
-
-                ? `${
-
-                    report.tblEngineers
-
-                      .FirstName || ""
-
-                  } ${
-
-                    report.tblEngineers
-
-                      .LastName || ""
-
-                  }`
-
-                : "";
-
-
-            const maintenanceType =
-
-              report.tblMaintenanceType
-
-                ?.MaintenanceType
-
-                || "";
-
-
-            const searchableText =
-
-              (
-
-                equipmentName +
-
-                " " +
-
-                engineerName +
-
-                " " +
-
-                maintenanceType +
-
-                " " +
-
-                (
-
-                  report.FaultReported ||
-
-                  ""
-
-                ) +
-
-                " " +
-
-                (
-
-                  report.ActionTaken ||
-
-                  ""
-
-                ) +
-
-                " " +
-
-                (
-
-                  report.Remarks ||
-
-                  ""
-
-                )
-
-              )
-
-              .toLowerCase();
-
-
-            return searchableText
-
-              .includes(
-
-                searchText
-
-              );
-
-          }
-
-        );
-
-
-      await displayMaintenanceReports(
-
-        filteredReports
-
-      );
-
-    }
-
-  );
-
-}
-
-
-// ==========================================
-// MY REPORTS BUTTON
-// ==========================================
-
-document
-
-  .querySelectorAll(
-
-    '.menu button[data-section="reportsSection"]'
-
-  )
-
-  .forEach(
-
-    button => {
-
-      button.addEventListener(
-
-        "click",
-
-        function() {
-
-          loadMaintenanceReports();
-
-        }
-
-      );
-
-    }
-
-  );
-
-
-// ==========================================
-// INITIALIZE APPLICATION
+// CHECK EXISTING LOGIN SESSION
 // ==========================================
 
 async function initializeApp() {
@@ -3295,11 +1605,8 @@ async function initializeApp() {
     catch (error) {
 
       console.error(
-
         "Session error:",
-
         error
-
       );
 
 
