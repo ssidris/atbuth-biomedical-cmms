@@ -84,6 +84,9 @@
 
       <!-- MENU -->
       <nav class="menu">
+        <button data-section="equipmentHistorySection">
+  Equipment History
+</button>
         <button data-section="equipmentRegistrationSection">
   Register Equipment
 </button>
@@ -524,6 +527,140 @@
 
 
   </form>
+
+</section>
+      <!-- EQUIPMENT HISTORY -->
+<section
+  id="equipmentHistorySection"
+  class="card app-section hidden"
+>
+
+  <h2>
+    Equipment History
+  </h2>
+
+  <p>
+    Select an equipment to view its complete maintenance history.
+  </p>
+
+  <!-- EQUIPMENT SELECTION -->
+
+  <label for="historyEquipmentId">
+    Select Equipment
+  </label>
+
+  <select
+    id="historyEquipmentId"
+  >
+
+    <option value="">
+      Select equipment
+    </option>
+
+  </select>
+
+
+  <!-- EQUIPMENT DETAILS -->
+
+  <div
+    id="equipmentHistoryDetails"
+  >
+
+    <p>
+      Select an equipment to view its details.
+    </p>
+
+  </div>
+
+
+  <!-- HISTORY MESSAGE -->
+
+  <p
+    id="equipmentHistoryMessage"
+  ></p>
+
+
+  <!-- MAINTENANCE HISTORY TABLE -->
+
+  <div
+    style="overflow-x:auto;"
+  >
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Date
+          </th>
+
+          <th>
+            Job Order
+          </th>
+
+          <th>
+            Engineer
+          </th>
+
+          <th>
+            Maintenance Type
+          </th>
+
+          <th>
+            Fault Reported
+          </th>
+
+          <th>
+            Diagnosis
+          </th>
+
+          <th>
+            Action Taken
+          </th>
+
+          <th>
+            Part Used
+          </th>
+
+          <th>
+            Required Part
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th>
+            Remarks
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody
+        id="equipmentHistoryTableBody"
+      >
+
+        <tr>
+
+          <td
+            colspan="11"
+          >
+
+            Select an equipment to view history.
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
 
 </section>
       <!-- MY REPORTS / MAINTENANCE HISTORY -->
