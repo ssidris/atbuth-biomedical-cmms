@@ -380,7 +380,7 @@ async function loadDepartmentForEquipment(
 
     } = await client
 
-      .from("tblDepartments")
+      .from("tblDepartment")
 
       .select(
         "DepartmentName"
