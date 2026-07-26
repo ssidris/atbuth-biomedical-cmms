@@ -1723,3 +1723,484 @@ document
     }
 
   );
+// ==========================================
+// EQUIPMENT REGISTRATION
+// ==========================================
+
+const equipmentRegistrationForm =
+  document.getElementById(
+    "equipmentRegistrationForm"
+  );
+
+const newDepartmentSelect =
+  document.getElementById(
+    "newDepartmentId"
+  );
+
+const newCategorySelect =
+  document.getElementById(
+    "newCategoryId"
+  );
+
+const newStatusSelect =
+  document.getElementById(
+    "newStatusId"
+  );
+
+const equipmentRegistrationMessage =
+  document.getElementById(
+    "equipmentRegistrationMessage"
+  );
+
+
+// ==========================================
+// LOAD EQUIPMENT REGISTRATION DROPDOWNS
+// ==========================================
+
+async function loadEquipmentRegistrationDropdowns() {
+
+  // ----------------------------------------
+  // DEPARTMENTS
+  // ----------------------------------------
+
+  if (newDepartmentSelect) {
+
+    await loadLookup(
+
+      "tblDepartment",
+
+      "DepartmentID",
+
+      "DepartmentName",
+
+      "newDepartmentId",
+
+      "Select department"
+
+    );
+
+  }
+
+
+  // ----------------------------------------
+  // EQUIPMENT CATEGORIES
+  // ----------------------------------------
+
+  if (newCategorySelect) {
+
+    await loadLookup(
+
+      "tblEquipmentCategories",
+
+      "CategoryID",
+
+      "CategoryName",
+
+      "newCategoryId",
+
+      "Select category"
+
+    );
+
+  }
+
+
+  // ----------------------------------------
+  // EQUIPMENT STATUS
+  // ----------------------------------------
+
+  if (newStatusSelect) {
+
+    await loadLookup(
+
+      "tblEquipmentStatus",
+
+      "StatusID",
+
+      "StatusName",
+
+      "newStatusId",
+
+      "Select status"
+
+    );
+
+  }
+
+}
+
+
+// ==========================================
+// LOAD REGISTRATION DROPDOWNS WHEN
+// APPLICATION IS OPENED
+// ==========================================
+
+const originalShowApp =
+  showApp;
+
+
+// We don't replace the existing showApp.
+// Instead, load registration dropdowns
+// when the page is ready and the user
+// is authenticated.
+
+async function initializeEquipmentRegistration() {
+
+  try {
+
+    await loadEquipmentRegistrationDropdowns();
+
+  }
+
+  catch (error) {
+
+    console.error(
+
+      "Error loading equipment registration dropdowns:",
+
+      error
+
+    );
+
+  }
+
+}
+
+
+// ==========================================
+// SUBMIT NEW EQUIPMENT
+// ==========================================
+
+if (equipmentRegistrationForm) {
+
+  equipmentRegistrationForm.addEventListener(
+
+    "submit",
+
+    async function(event) {
+
+      event.preventDefault();
+
+
+      equipmentRegistrationMessage.textContent =
+
+        "Registering equipment...";
+
+
+      // ------------------------------------
+      // GET CURRENT USER
+      // ------------------------------------
+
+      const {
+
+        data: authData
+
+      } = await client.auth.getUser();
+
+
+      if (
+        !authData ||
+        !authData.user
+      ) {
+
+        equipmentRegistrationMessage.textContent =
+
+          "Your session has expired. Please log in again.";
+
+        return;
+
+      }
+
+
+      // ------------------------------------
+      // GET FORM VALUES
+      // ------------------------------------
+
+      const bmeNumber =
+
+        document
+          .getElementById(
+            "newBmeNumber"
+          )
+          .value
+          .trim();
+
+
+      const equipmentName =
+
+        document
+          .getElementById(
+            "newEquipmentName"
+          )
+          .value
+          .trim();
+
+
+      const manufacturer =
+
+        document
+          .getElementById(
+            "newManufacturer"
+          )
+          .value
+          .trim();
+
+
+      const model =
+
+        document
+          .getElementById(
+            "newModel"
+          )
+          .value
+          .trim();
+
+
+      const serialNumber =
+
+        document
+          .getElementById(
+            "newSerialNumber"
+          )
+          .value
+          .trim();
+
+
+      const departmentId =
+
+        document
+          .getElementById(
+            "newDepartmentId"
+          )
+          .value;
+
+
+      const categoryId =
+
+        document
+          .getElementById(
+            "newCategoryId"
+          )
+          .value;
+
+
+      const statusId =
+
+        document
+          .getElementById(
+            "newStatusId"
+          )
+          .value;
+
+
+      const location =
+
+        document
+          .getElementById(
+            "newLocation"
+          )
+          .value
+          .trim();
+
+
+      const remarks =
+
+        document
+          .getElementById(
+            "newEquipmentRemarks"
+          )
+          .value
+          .trim();
+
+
+      // ------------------------------------
+      // VALIDATE REQUIRED FIELDS
+      // ------------------------------------
+
+      if (
+
+        !bmeNumber ||
+
+        !equipmentName ||
+
+        !departmentId ||
+
+        !categoryId ||
+
+        !statusId
+
+      ) {
+
+        equipmentRegistrationMessage.textContent =
+
+          "Please complete all required fields.";
+
+        return;
+
+      }
+
+
+      // ------------------------------------
+      // PREPARE EQUIPMENT DATA
+      // ------------------------------------
+
+      const equipmentData = {
+
+        BMENumber:
+          bmeNumber,
+
+        EquipmentName:
+          equipmentName,
+
+        Manufacturer:
+          manufacturer || null,
+
+        Model:
+          model || null,
+
+        SerialNumber:
+          serialNumber || null,
+
+        DepartmentID:
+          Number(
+            departmentId
+          ),
+
+        CategoryID:
+          Number(
+            categoryId
+          ),
+
+        StatusID:
+          Number(
+            statusId
+          ),
+
+        Location:
+          location || null,
+
+        Remarks:
+          remarks || null
+
+      };
+
+
+      // ------------------------------------
+      // INSERT INTO tblEquipment
+      // ------------------------------------
+
+      const {
+
+        data,
+
+        error
+
+      } = await client
+
+        .from(
+          "tblEquipment"
+        )
+
+        .insert(
+          equipmentData
+        )
+
+        .select();
+
+
+      if (error) {
+
+        console.error(
+
+          "Equipment registration error:",
+
+          error
+
+        );
+
+
+        equipmentRegistrationMessage.textContent =
+
+          "Error registering equipment: " +
+
+          error.message;
+
+        return;
+
+      }
+
+
+      // ------------------------------------
+      // SUCCESS
+      // ------------------------------------
+
+      equipmentRegistrationMessage.textContent =
+
+        "Equipment registered successfully.";
+
+
+      // ------------------------------------
+      // RESET FORM
+      // ------------------------------------
+
+      equipmentRegistrationForm.reset();
+
+
+      // ------------------------------------
+      // REFRESH MAINTENANCE REPORT
+      // EQUIPMENT DROPDOWN
+      // ------------------------------------
+
+      try {
+
+        await loadLookup(
+
+          "tblEquipment",
+
+          "EquipmentID",
+
+          "EquipmentName",
+
+          "equipmentId",
+
+          "Select equipment",
+
+          row => {
+
+            return `${row.EquipmentName}${
+              row.BMENumber
+                ? " — " +
+                  row.BMENumber
+                : ""
+            }`;
+
+          }
+
+        );
+
+      }
+
+      catch (refreshError) {
+
+        console.error(
+
+          "Equipment dropdown refresh error:",
+
+          refreshError
+
+        );
+
+      }
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// START EQUIPMENT REGISTRATION
+// ==========================================
+
+initializeEquipmentRegistration();
