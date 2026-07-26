@@ -1,6 +1,6 @@
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
-// Supabase Mobile Web Application
+// SUPABASE MOBILE WEB APPLICATION
 // ==========================================
 
 
@@ -56,7 +56,7 @@ const departmentInput =
 
 
 // ==========================================
-// LOAD DROPDOWN DATA
+// GENERIC DROPDOWN LOADER
 // ==========================================
 
 async function loadLookup(
@@ -73,14 +73,14 @@ async function loadLookup(
 
   if (!select) {
 
-    console.warn(
+    console.error(
       "Dropdown not found:",
       selectId
     );
 
     return;
-
   }
+
 
   select.innerHTML =
     `<option value="">${placeholder}</option>`;
@@ -111,18 +111,13 @@ async function loadLookup(
     );
 
     throw error;
-
   }
 
 
-  for (
-    const row of data || []
-  ) {
+  for (const row of data || []) {
 
     const option =
-      document.createElement(
-        "option"
-      );
+      document.createElement("option");
 
 
     option.value =
@@ -145,7 +140,7 @@ async function loadLookup(
 
 
 // ==========================================
-// LOAD FORM DATA
+// LOAD FORM DROPDOWN DATA
 // ==========================================
 
 async function loadFormData() {
@@ -266,119 +261,6 @@ async function loadFormData() {
 
 
 // ==========================================
-// LOAD EQUIPMENT HISTORY DROPDOWN
-// ==========================================
-
-async function loadEquipmentHistoryDropdown() {
-
-  const select =
-    document.getElementById(
-      "historyEquipmentId"
-    );
-
-
-  if (!select) {
-
-    console.warn(
-      "Equipment History dropdown not found."
-    );
-
-    return;
-
-  }
-
-
-  select.innerHTML =
-    '<option value="">Loading equipment...</option>';
-
-
-  const {
-
-    data,
-
-    error
-
-  } = await client
-
-    .from("tblEquipment")
-
-    .select(
-      "EquipmentID, BMENumber, EquipmentName"
-    )
-
-    .order(
-      "BMENumber",
-      {
-        ascending: true
-      }
-    );
-
-
-  if (error) {
-
-    console.error(
-      "Error loading Equipment History dropdown:",
-      error
-    );
-
-
-    select.innerHTML =
-      '<option value="">Unable to load equipment</option>';
-
-    return;
-
-  }
-
-
-  select.innerHTML =
-    '<option value="">Select equipment</option>';
-
-
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    select.innerHTML =
-      '<option value="">No equipment found</option>';
-
-    return;
-
-  }
-
-
-  data.forEach(
-    equipment => {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-
-      option.value =
-        equipment.EquipmentID;
-
-
-      option.textContent =
-
-        `${equipment.BMENumber || ""} — ${
-          equipment.EquipmentName || ""
-        }`;
-
-
-      select.appendChild(
-        option
-      );
-
-    }
-
-  );
-
-}
-
-
-// ==========================================
 // LOAD DEPARTMENT FOR SELECTED EQUIPMENT
 // ==========================================
 
@@ -387,6 +269,10 @@ async function loadDepartmentForEquipment(
 ) {
 
   if (!departmentInput) {
+
+    console.error(
+      "Department input not found."
+    );
 
     return;
 
@@ -409,6 +295,10 @@ async function loadDepartmentForEquipment(
 
   try {
 
+    // --------------------------------------
+    // GET EQUIPMENT DEPARTMENT ID
+    // --------------------------------------
+
     const {
 
       data: equipment,
@@ -419,9 +309,7 @@ async function loadDepartmentForEquipment(
 
       .from("tblEquipment")
 
-      .select(
-        "DepartmentID"
-      )
+      .select("DepartmentID")
 
       .eq(
         "EquipmentID",
@@ -472,6 +360,10 @@ async function loadDepartmentForEquipment(
     }
 
 
+    // --------------------------------------
+    // GET DEPARTMENT NAME
+    // --------------------------------------
+
     const {
 
       data: department,
@@ -482,9 +374,7 @@ async function loadDepartmentForEquipment(
 
       .from("tblDepartment")
 
-      .select(
-        "DepartmentName"
-      )
+      .select("DepartmentName")
 
       .eq(
         "DepartmentID",
@@ -527,7 +417,7 @@ async function loadDepartmentForEquipment(
   catch (error) {
 
     console.error(
-      "Department error:",
+      "Unexpected department error:",
       error
     );
 
@@ -540,7 +430,7 @@ async function loadDepartmentForEquipment(
 
 
 // ==========================================
-// MAINTENANCE EQUIPMENT CHANGE
+// EQUIPMENT CHANGE EVENT
 // ==========================================
 
 if (equipmentSelect) {
@@ -563,302 +453,136 @@ if (equipmentSelect) {
 
 
 // ==========================================
-// LOAD USER PROFILE
+// LOAD EQUIPMENT HISTORY DROPDOWN
 // ==========================================
 
-async function loadUserProfile(
-  userId
-) {
+async function loadEquipmentHistoryDropdown() {
 
-  const {
-
-    data,
-
-    error
-
-  } = await client
-
-    .from("tblUsers")
-
-    .select(
-      'UserID, Username, "Full name", UserRole, Status, AuthUserID'
-    )
-
-    .eq(
-      "AuthUserID",
-      userId
-    )
-
-    .maybeSingle();
-
-
-  if (error) {
-
-    console.error(
-      "User profile error:",
-      error
-    );
-
-    throw error;
-
-  }
-
-
-  if (!data) {
-
-    throw new Error(
-
-      "Your Supabase account is authenticated, " +
-
-      "but no matching profile was found in tblUsers. " +
-
-      "Please make sure AuthUserID in tblUsers matches your Authentication User ID."
-
-    );
-
-  }
-
-
-  if (
-
-    String(
-      data.Status
-    ).toLowerCase() !==
-    "active"
-
-  ) {
-
-    throw new Error(
-
-      "Your account is not active. " +
-
-      "Please contact the administrator."
-
-    );
-
-  }
-
-
-  return data;
-
-}
-
-
-// ==========================================
-// LOAD MAINTENANCE REPORTS
-// ==========================================
-
-async function loadMaintenanceReports() {
-
-  const reportTableBody =
+  const historyEquipmentSelect =
     document.getElementById(
-      "reportsTableBody"
+      "historyEquipmentId"
     );
 
 
-  if (!reportTableBody) {
-
-    console.warn(
-      "Reports table body not found."
-    );
-
-    return;
-
-  }
-
-
-  reportTableBody.innerHTML = `
-
-    <tr>
-
-      <td colspan="10">
-
-        Loading maintenance reports...
-
-      </td>
-
-    </tr>
-
-  `;
-
-
-  const {
-
-    data,
-
-    error
-
-  } = await client
-
-    .from(
-      "vwMaintenanceReport"
-    )
-
-    .select("*")
-
-    .order(
-      "ReportDate",
-      {
-        ascending: false
-      }
-    );
-
-
-  if (error) {
+  if (!historyEquipmentSelect) {
 
     console.error(
-      "Error loading maintenance reports:",
-      error
+      "Equipment History dropdown not found."
     );
 
-
-    reportTableBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="10">
-
-          Error loading reports:
-          ${error.message}
-
-        </td>
-
-      </tr>
-
-    `;
-
     return;
 
   }
 
 
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    reportTableBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="10">
-
-          No maintenance reports found.
-
-        </td>
-
-      </tr>
-
-    `;
-
-    return;
-
-  }
+  historyEquipmentSelect.innerHTML =
+    '<option value="">Loading equipment...</option>';
 
 
-  reportTableBody.innerHTML = "";
+  try {
 
+    const {
 
-  data.forEach(
-    report => {
+      data,
 
-      const row =
-        document.createElement(
-          "tr"
-        );
+      error
 
+    } = await client
 
-      row.innerHTML = `
+      .from("tblEquipment")
 
-        <td>
-          ${
-            report.ReportDate
-              ? new Date(
-                  report.ReportDate
-                ).toLocaleDateString()
-              : ""
-          }
-        </td>
+      .select(
+        "EquipmentID, BMENumber, EquipmentName"
+      )
 
-        <td>
-          ${
-            report.JobOrderNumber ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.EquipmentName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.DepartmentName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.EngineerName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.MaintenanceType ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.FaultReported ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.ActionTaken ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.StatusName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.Remarks ||
-            ""
-          }
-        </td>
-
-      `;
-
-
-      reportTableBody.appendChild(
-        row
+      .order(
+        "BMENumber",
+        {
+          ascending: true
+        }
       );
+
+
+    if (error) {
+
+      console.error(
+        "Error loading Equipment History equipment:",
+        error
+      );
+
+      historyEquipmentSelect.innerHTML =
+        '<option value="">Unable to load equipment</option>';
+
+      return;
 
     }
 
-  );
+
+    historyEquipmentSelect.innerHTML =
+      '<option value="">Select equipment</option>';
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+      historyEquipmentSelect.innerHTML =
+        '<option value="">No equipment found</option>';
+
+      return;
+
+    }
+
+
+    data.forEach(
+
+      equipment => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          equipment.EquipmentID;
+
+
+        option.textContent =
+
+          `${equipment.BMENumber || ""} — ${
+            equipment.EquipmentName || ""
+          }`;
+
+
+        historyEquipmentSelect.appendChild(
+          option
+        );
+
+      }
+
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Equipment History dropdown error:",
+      error
+    );
+
+    historyEquipmentSelect.innerHTML =
+      '<option value="">Unable to load equipment</option>';
+
+  }
 
 }
 
 
 // ==========================================
-// LOAD EQUIPMENT HISTORY
+// LOAD SELECTED EQUIPMENT HISTORY
 // ==========================================
 
 async function loadEquipmentHistory(
@@ -883,7 +607,10 @@ async function loadEquipmentHistory(
     );
 
 
-  if (!details || !tableBody) {
+  if (
+    !details ||
+    !tableBody
+  ) {
 
     console.error(
       "Equipment History elements not found."
@@ -894,24 +621,9 @@ async function loadEquipmentHistory(
   }
 
 
-  details.innerHTML =
-    "<p>Loading equipment details...</p>";
-
-
-  tableBody.innerHTML = `
-
-    <tr>
-
-      <td colspan="11">
-
-        Loading maintenance history...
-
-      </td>
-
-    </tr>
-
-  `;
-
+  // ----------------------------------------
+  // CLEAR MESSAGE
+  // ----------------------------------------
 
   if (message) {
 
@@ -920,10 +632,27 @@ async function loadEquipmentHistory(
   }
 
 
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  details.innerHTML =
+    "<p>Loading equipment details...</p>";
+
+
+  tableBody.innerHTML =
+
+    `<tr>
+      <td colspan="11">
+        Loading maintenance history...
+      </td>
+    </tr>`;
+
+
   try {
 
     // ======================================
-    // GET EQUIPMENT DETAILS
+    // 1. GET EQUIPMENT DETAILS
     // ======================================
 
     const {
@@ -936,7 +665,18 @@ async function loadEquipmentHistory(
 
       .from("tblEquipment")
 
-      .select("*")
+      .select(
+        `
+        EquipmentID,
+        BMENumber,
+        EquipmentName,
+        Manufacturer,
+        Model,
+        SerialNumber,
+        Location,
+        DepartmentID
+        `
+      )
 
       .eq(
         "EquipmentID",
@@ -953,32 +693,10 @@ async function loadEquipmentHistory(
         equipmentError
       );
 
-      if (message) {
-
-        message.textContent =
-          "Unable to load equipment details: " +
-          equipmentError.message;
-
-      }
-
-      details.innerHTML =
-        "<p>Unable to load equipment details.</p>";
-
-      tableBody.innerHTML = `
-
-        <tr>
-
-          <td colspan="11">
-
-            Unable to load equipment details.
-
-          </td>
-
-        </tr>
-
-      `;
-
-      return;
+      throw new Error(
+        "Unable to load equipment details: " +
+        equipmentError.message
+      );
 
     }
 
@@ -988,19 +706,13 @@ async function loadEquipmentHistory(
       details.innerHTML =
         "<p>Equipment not found.</p>";
 
-      tableBody.innerHTML = `
+      tableBody.innerHTML =
 
-        <tr>
-
+        `<tr>
           <td colspan="11">
-
             Equipment not found.
-
           </td>
-
-        </tr>
-
-      `;
+        </tr>`;
 
       return;
 
@@ -1008,7 +720,7 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // GET DEPARTMENT
+    // 2. GET DEPARTMENT
     // ======================================
 
     let departmentName =
@@ -1045,10 +757,17 @@ async function loadEquipmentHistory(
         .maybeSingle();
 
 
-      if (
-        !departmentError &&
-        department
-      ) {
+      if (departmentError) {
+
+        console.warn(
+          "Department could not be loaded:",
+          departmentError
+        );
+
+      }
+
+
+      if (department) {
 
         departmentName =
           department.DepartmentName ||
@@ -1060,7 +779,7 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // DISPLAY EQUIPMENT DETAILS
+    // 3. DISPLAY EQUIPMENT DETAILS
     // ======================================
 
     details.innerHTML = `
@@ -1108,7 +827,7 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // GET MAINTENANCE HISTORY
+    // 4. GET MAINTENANCE HISTORY
     // ======================================
 
     const {
@@ -1119,9 +838,7 @@ async function loadEquipmentHistory(
 
     } = await client
 
-      .from(
-        "vwMaintenanceReport"
-      )
+      .from("vwMaintenanceReport")
 
       .select("*")
 
@@ -1145,59 +862,33 @@ async function loadEquipmentHistory(
         historyError
       );
 
-
-      if (message) {
-
-        message.textContent =
-
-          "Unable to load equipment history: " +
-
-          historyError.message;
-
-      }
-
-
-      tableBody.innerHTML = `
-
-        <tr>
-
-          <td colspan="11">
-
-            Unable to load equipment history.
-
-          </td>
-
-        </tr>
-
-      `;
-
-      return;
+      throw new Error(
+        "Unable to load equipment history: " +
+        historyError.message
+      );
 
     }
 
 
     // ======================================
-    // NO HISTORY
+    // 5. NO HISTORY
     // ======================================
 
     if (
+
       !history ||
+
       history.length === 0
+
     ) {
 
-      tableBody.innerHTML = `
+      tableBody.innerHTML =
 
-        <tr>
-
+        `<tr>
           <td colspan="11">
-
             No maintenance history found for this equipment.
-
           </td>
-
-        </tr>
-
-      `;
+        </tr>`;
 
       return;
 
@@ -1205,13 +896,14 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // DISPLAY HISTORY
+    // 6. DISPLAY HISTORY
     // ======================================
 
     tableBody.innerHTML = "";
 
 
     history.forEach(
+
       report => {
 
         const row =
@@ -1324,22 +1016,17 @@ async function loadEquipmentHistory(
 
 
     details.innerHTML =
+
       "<p>Unable to load equipment details.</p>";
 
 
-    tableBody.innerHTML = `
+    tableBody.innerHTML =
 
-      <tr>
-
+      `<tr>
         <td colspan="11">
-
           Unable to load equipment history.
-
         </td>
-
-      </tr>
-
-    `;
+      </tr>`;
 
 
     if (message) {
@@ -1355,7 +1042,7 @@ async function loadEquipmentHistory(
 
 
 // ==========================================
-// EQUIPMENT HISTORY CHANGE EVENT
+// EQUIPMENT HISTORY SELECTION EVENT
 // ==========================================
 
 const historyEquipmentSelect =
@@ -1387,19 +1074,14 @@ if (historyEquipmentSelect) {
 
         document.getElementById(
           "equipmentHistoryTableBody"
-        ).innerHTML = `
+        ).innerHTML =
 
-          <tr>
-
+          `<tr>
             <td colspan="11">
-
               Select an equipment to view history.
-
             </td>
+          </tr>`;
 
-          </tr>
-
-        `;
 
         return;
 
@@ -1418,6 +1100,314 @@ if (historyEquipmentSelect) {
 
 
 // ==========================================
+// LOAD USER PROFILE
+// ==========================================
+
+async function loadUserProfile(
+  userId
+) {
+
+  const {
+
+    data,
+
+    error
+
+  } = await client
+
+    .from("tblUsers")
+
+    .select(
+      'UserID, Username, "Full name", UserRole, Status, AuthUserID'
+    )
+
+    .eq(
+      "AuthUserID",
+      userId
+    )
+
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(
+      "User profile error:",
+      error
+    );
+
+    throw error;
+
+  }
+
+
+  if (!data) {
+
+    throw new Error(
+
+      "Your Supabase account is authenticated, " +
+
+      "but no matching profile was found in tblUsers. " +
+
+      "Please make sure AuthUserID in tblUsers matches your Authentication User ID."
+
+    );
+
+  }
+
+
+  if (
+
+    String(
+      data.Status
+    ).toLowerCase() !==
+    "active"
+
+  ) {
+
+    throw new Error(
+
+      "Your account is not active. " +
+
+      "Please contact the administrator."
+
+    );
+
+  }
+
+
+  return data;
+
+}
+
+
+// ==========================================
+// LOAD MAINTENANCE REPORTS
+// ==========================================
+
+async function loadMaintenanceReports() {
+
+  const reportTableBody =
+    document.getElementById(
+      "maintenanceReportBody"
+    );
+
+
+  // Your current HTML does not contain
+  // maintenanceReportBody.
+  // Therefore, safely exit if it is missing.
+
+  if (!reportTableBody) {
+
+    return;
+
+  }
+
+
+  reportTableBody.innerHTML = `
+
+    <tr>
+
+      <td colspan="11">
+
+        Loading maintenance reports...
+
+      </td>
+
+    </tr>
+
+  `;
+
+
+  const {
+
+    data,
+
+    error
+
+  } = await client
+
+    .from(
+      "vwMaintenanceReport"
+    )
+
+    .select("*")
+
+    .order(
+      "ReportDate",
+      {
+        ascending: false
+      }
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Error loading maintenance reports:",
+      error
+    );
+
+
+    reportTableBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="11">
+
+          Error loading reports:
+          ${error.message}
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    return;
+
+  }
+
+
+  if (
+
+    !data ||
+
+    data.length === 0
+
+  ) {
+
+    reportTableBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="11">
+
+          No maintenance reports found.
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    return;
+
+  }
+
+
+  reportTableBody.innerHTML = "";
+
+
+  data.forEach(
+
+    report => {
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${
+            report.ReportDate
+              ? new Date(
+                  report.ReportDate
+                ).toLocaleDateString()
+              : ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.JobOrderNumber ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.BMENumber ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.EquipmentName ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.DepartmentName ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.EngineerName ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.MaintenanceType ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.FaultReported ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.ActionTaken ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.StatusName ||
+            ""
+          }
+        </td>
+
+        <td>
+          ${
+            report.Remarks ||
+            ""
+          }
+        </td>
+
+      `;
+
+
+      reportTableBody.appendChild(
+        row
+      );
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
 // SHOW APPLICATION
 // ==========================================
 
@@ -1425,35 +1415,59 @@ async function showApp(
   user
 ) {
 
+  // ----------------------------------------
+  // LOAD USER PROFILE
+  // ----------------------------------------
+
   const profile =
     await loadUserProfile(
       user.id
     );
 
 
-  welcomeText.textContent =
+  // ----------------------------------------
+  // DISPLAY USER NAME AND ROLE
+  // ----------------------------------------
 
-    `Welcome, ${
-      profile["Full name"] ||
-      user.email
-    } (${
-      profile.UserRole ||
-      "User"
-    })`;
+  if (welcomeText) {
 
+    welcomeText.textContent =
 
-  loginView.classList.add(
-    "hidden"
-  );
+      `Welcome, ${
+        profile["Full name"] ||
+        user.email
+      } (${
+        profile.UserRole ||
+        "User"
+      })`;
 
-
-  appView.classList.remove(
-    "hidden"
-  );
+  }
 
 
   // ----------------------------------------
-  // LOAD ALL DROPDOWNS
+  // SHOW APPLICATION
+  // ----------------------------------------
+
+  if (loginView) {
+
+    loginView.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (appView) {
+
+    appView.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  // ----------------------------------------
+  // LOAD FORM DROPDOWNS
   // ----------------------------------------
 
   await loadFormData();
@@ -1519,8 +1533,11 @@ if (loginForm) {
 
 
       if (
+
         !email ||
+
         !password
+
       ) {
 
         loginMessage.textContent =
@@ -1532,6 +1549,10 @@ if (loginForm) {
       }
 
 
+      // ------------------------------------
+      // SUPABASE LOGIN
+      // ------------------------------------
+
       const {
 
         data,
@@ -1540,11 +1561,9 @@ if (loginForm) {
 
       } = await client.auth.signInWithPassword({
 
-        email:
-          email,
+        email: email,
 
-        password:
-          password
+        password: password
 
       });
 
@@ -1562,10 +1581,15 @@ if (loginForm) {
           "Login failed: " +
           error.message;
 
+
         return;
 
       }
 
+
+      // ------------------------------------
+      // LOAD APPLICATION
+      // ------------------------------------
 
       try {
 
@@ -1579,11 +1603,11 @@ if (loginForm) {
 
       }
 
-      catch (error) {
+      catch (profileError) {
 
         console.error(
           "Application loading error:",
-          error
+          profileError
         );
 
 
@@ -1594,7 +1618,7 @@ if (loginForm) {
 
           "Login successful, but application loading failed: " +
 
-          error.message;
+          profileError.message;
 
       }
 
@@ -1620,14 +1644,22 @@ if (logoutBtn) {
       await client.auth.signOut();
 
 
-      appView.classList.add(
-        "hidden"
-      );
+      if (appView) {
+
+        appView.classList.add(
+          "hidden"
+        );
+
+      }
 
 
-      loginView.classList.remove(
-        "hidden"
-      );
+      if (loginView) {
+
+        loginView.classList.remove(
+          "hidden"
+        );
+
+      }
 
 
       if (loginForm) {
@@ -1637,8 +1669,12 @@ if (logoutBtn) {
       }
 
 
-      loginMessage.textContent =
-        "";
+      if (loginMessage) {
+
+        loginMessage.textContent =
+          "";
+
+      }
 
     }
 
@@ -1667,6 +1703,10 @@ document
 
         function() {
 
+          // --------------------------------
+          // HIDE ALL SECTIONS
+          // --------------------------------
+
           document
 
             .querySelectorAll(
@@ -1684,6 +1724,10 @@ document
             );
 
 
+          // --------------------------------
+          // GET SELECTED SECTION
+          // --------------------------------
+
           const selectedSection =
 
             document.getElementById(
@@ -1692,6 +1736,10 @@ document
 
             );
 
+
+          // --------------------------------
+          // SHOW SELECTED SECTION
+          // --------------------------------
 
           if (
             selectedSection
@@ -1704,16 +1752,18 @@ document
           }
 
 
-          // Refresh My Reports
+          // --------------------------------
+          // REFRESH EQUIPMENT HISTORY
+          // --------------------------------
 
           if (
 
             button.dataset.section ===
-            "reportsSection"
+            "equipmentHistorySection"
 
           ) {
 
-            loadMaintenanceReports();
+            loadEquipmentHistoryDropdown();
 
           }
 
@@ -1745,27 +1795,39 @@ if (maintenanceForm) {
         "Submitting report...";
 
 
+      // ------------------------------------
+      // CHECK AUTHENTICATED USER
+      // ------------------------------------
+
       const {
 
-        data: authData
+        data: authData,
+
+        error: authError
 
       } = await client.auth.getUser();
 
 
       if (
+
+        authError ||
+
         !authData.user
+
       ) {
 
         maintenanceMessage.textContent =
 
-          "Your session has expired. " +
-
-          "Please log in again.";
+          "Your session has expired. Please log in again.";
 
         return;
 
       }
 
+
+      // ------------------------------------
+      // PART STATUS
+      // ------------------------------------
 
       const partStatusSelect =
 
@@ -1799,7 +1861,11 @@ if (maintenanceForm) {
       }
 
 
-      const equipmentIdValue =
+      // ------------------------------------
+      // GET FORM VALUES
+      // ------------------------------------
+
+      const equipmentValue =
 
         document
 
@@ -1810,7 +1876,7 @@ if (maintenanceForm) {
           .value;
 
 
-      const engineerIdValue =
+      const engineerValue =
 
         document
 
@@ -1821,7 +1887,7 @@ if (maintenanceForm) {
           .value;
 
 
-      const maintenanceTypeIdValue =
+      const maintenanceTypeValue =
 
         document
 
@@ -1832,7 +1898,7 @@ if (maintenanceForm) {
           .value;
 
 
-      const statusIdValue =
+      const statusValue =
 
         document
 
@@ -1843,15 +1909,19 @@ if (maintenanceForm) {
           .value;
 
 
+      // ------------------------------------
+      // VALIDATE REQUIRED IDs
+      // ------------------------------------
+
       if (
 
-        !equipmentIdValue ||
+        !equipmentValue ||
 
-        !engineerIdValue ||
+        !engineerValue ||
 
-        !maintenanceTypeIdValue ||
+        !maintenanceTypeValue ||
 
-        !statusIdValue
+        !statusValue
 
       ) {
 
@@ -1863,6 +1933,10 @@ if (maintenanceForm) {
 
       }
 
+
+      // ====================================
+      // PREPARE PAYLOAD
+      // ====================================
 
       const payload = {
 
@@ -1893,29 +1967,27 @@ if (maintenanceForm) {
 
         ReportDate:
 
-          new Date()
-
-            .toISOString(),
+          new Date().toISOString(),
 
 
         EquipmentID:
 
           Number(
-            equipmentIdValue
+            equipmentValue
           ),
 
 
         EngineerID:
 
           Number(
-            engineerIdValue
+            engineerValue
           ),
 
 
         MaintenanceTypeID:
 
           Number(
-            maintenanceTypeIdValue
+            maintenanceTypeValue
           ),
 
 
@@ -2030,7 +2102,7 @@ if (maintenanceForm) {
         StatusID:
 
           Number(
-            statusIdValue
+            statusValue
           ),
 
 
@@ -2049,6 +2121,10 @@ if (maintenanceForm) {
       };
 
 
+      // ====================================
+      // INSERT REPORT
+      // ====================================
+
       const {
 
         error
@@ -2064,6 +2140,10 @@ if (maintenanceForm) {
         );
 
 
+      // ====================================
+      // HANDLE ERROR
+      // ====================================
+
       if (error) {
 
         console.error(
@@ -2078,26 +2158,42 @@ if (maintenanceForm) {
 
           error.message;
 
+
         return;
 
       }
 
+
+      // ====================================
+      // SUCCESS
+      // ====================================
 
       maintenanceMessage.textContent =
 
         "Maintenance report submitted successfully.";
 
 
+      // ------------------------------------
+      // RESET FORM
+      // ------------------------------------
+
       maintenanceForm.reset();
 
 
+      // ------------------------------------
+      // CLEAR DEPARTMENT
+      // ------------------------------------
+
       if (departmentInput) {
 
-        departmentInput.value =
-          "";
+        departmentInput.value = "";
 
       }
 
+
+      // ------------------------------------
+      // REFRESH REPORTS
+      // ------------------------------------
 
       await loadMaintenanceReports();
 
@@ -2118,9 +2214,23 @@ async function initializeApp() {
 
     const {
 
-      data
+      data,
+
+      error
 
     } = await client.auth.getSession();
+
+
+    if (error) {
+
+      console.error(
+        "Session error:",
+        error
+      );
+
+      return;
+
+    }
 
 
     if (
@@ -2132,7 +2242,9 @@ async function initializeApp() {
     ) {
 
       await showApp(
+
         data.session.user
+
       );
 
     }
@@ -2142,9 +2254,12 @@ async function initializeApp() {
   catch (error) {
 
     console.error(
-      "Session initialization error:",
+      "Application initialization error:",
       error
     );
+
+
+    await client.auth.signOut();
 
 
     if (loginMessage) {
