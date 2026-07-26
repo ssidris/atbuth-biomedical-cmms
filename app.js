@@ -685,7 +685,26 @@ maintenanceForm.addEventListener(
           : null,
 
 
-      PartStatusID:
+      PartRequestedStatus:
+
+  document
+    .getElementById(
+      "partStatusId"
+    )
+    .selectedOptions[0]
+    .textContent
+    .trim(),
+
+
+PartStatusID:
+
+  document
+    .getElementById(
+      "partStatusId"
+    )
+    .value
+
+    ? Number(
 
         document
           .getElementById(
@@ -693,18 +712,9 @@ maintenanceForm.addEventListener(
           )
           .value
 
-          ? Number(
+      )
 
-              document
-                .getElementById(
-                  "partStatusId"
-                )
-                .value
-
-            )
-
-          : null,
-
+    : null,
 
       StatusID:
 
