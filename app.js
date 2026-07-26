@@ -1790,7 +1790,7 @@ async function loadEquipmentRegistrationDropdowns() {
 
     await loadLookup(
 
-      "tblEquipmentCategories",
+      "tblEquipmentcategory",
 
       "CategoryID",
 
