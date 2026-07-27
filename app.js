@@ -2906,416 +2906,168 @@ async function loadPMHistory() {
 
         }
 // ==========================================
-// LOAD PM HISTORY
+// LOAD PREVENTIVE MAINTENANCE HISTORY
 // ==========================================
 
 async function loadPMHistory() {
 
-  // IMPORTANT:
-  // HTML uses id="pmTableBody"
+  const pmTableBody = document.getElementById("pmTableBody");
+  const pmLoading = document.getElementById("pmLoading");
+  const pmHistoryMessage = document.getElementById("pmHistoryMessage");
 
-  const tableBody =
-    document.getElementById(
-      "pmTableBody"
-    );
-
-  const loading =
-    document.getElementById(
-      "pmLoading"
-    );
-
-  const message =
-    document.getElementById(
-      "pmHistoryMessage"
-    );
-
-
-  // ----------------------------------------
-  // CHECK TABLE
-  // ----------------------------------------
-
-  if (!tableBody) {
-
-    console.error(
-      "PM history table body not found. Expected id: pmTableBody"
-    );
-
+  // Check that the table exists
+  if (!pmTableBody) {
+    console.error("pmTableBody was not found.");
     return;
-
   }
 
-
-  // ----------------------------------------
-  // SHOW LOADING
-  // ----------------------------------------
-
-  if (loading) {
-
-    loading.textContent =
+  // Show loading message
+  if (pmLoading) {
+    pmLoading.textContent =
       "Loading preventive maintenance history...";
-
   }
 
-
-  tableBody.innerHTML =
-    `<tr>
-      <td colspan="12">
-        Loading preventive maintenance history...
-      </td>
-    </tr>`;
-
-
-  if (message) {
-
-    message.textContent =
-      "";
-
+  // Clear previous message
+  if (pmHistoryMessage) {
+    pmHistoryMessage.textContent = "";
   }
-
 
   try {
 
-    // --------------------------------------
-    // LOAD PM RECORDS
-    // --------------------------------------
+    // ======================================
+    // FETCH PM HISTORY
+    // ======================================
 
-    const {
-      data,
-      error
-    } = await client
-      .from(
-        "tblPreventiveMaintenance"
-      )
+    const { data, error } = await client
+      .from("vwPMHistory")
       .select("*")
-      .order(
-        "PMDate",
-        {
-          ascending: false
-        }
-      );
+      .order("PMDate", { ascending: false });
 
+
+    // ======================================
+    // CHECK FOR DATABASE ERROR
+    // ======================================
 
     if (error) {
 
-      throw error;
+      console.error(
+        "Error loading PM history:",
+        error
+      );
 
-    }
-
-
-    console.log(
-      "PM History Records:",
-      data
-    );
-
-
-    // --------------------------------------
-    // NO RECORDS
-    // --------------------------------------
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-      tableBody.innerHTML =
-        `<tr>
+      pmTableBody.innerHTML = `
+        <tr>
           <td colspan="12">
-            No preventive maintenance records found.
+            Error loading PM history:
+            ${error.message}
           </td>
-        </tr>`;
+        </tr>
+      `;
 
-      if (loading) {
-
-        loading.textContent =
-          "";
-
+      if (pmHistoryMessage) {
+        pmHistoryMessage.textContent =
+          "Unable to load Preventive Maintenance history.";
       }
 
       return;
-
     }
 
 
-    // --------------------------------------
-    // CLEAR TABLE
-    // --------------------------------------
+    // ======================================
+    // NO RECORDS
+    // ======================================
 
-    tableBody.innerHTML =
-      "";
+    if (!data || data.length === 0) {
 
+      pmTableBody.innerHTML = `
+        <tr>
+          <td colspan="12">
+            No PM records found.
+          </td>
+        </tr>
+      `;
 
-    // --------------------------------------
-    // PROCESS EACH PM RECORD
-    // --------------------------------------
-
-    for (
-      const pm of data
-    ) {
-
-      let equipmentName =
-        "";
-
-      let bmeNumber =
-        "";
-
-      let departmentName =
-        "";
-
-      let engineerName =
-        "";
-
-
-      // ------------------------------------
-      // LOAD EQUIPMENT
-      // ------------------------------------
-
-      if (
-        pm.EquipmentID !== null &&
-        pm.EquipmentID !== undefined
-      ) {
-
-        const {
-          data: equipment,
-          error: equipmentError
-        } = await client
-          .from(
-            "tblEquipment"
-          )
-          .select(
-            "EquipmentName, BMENumber, DepartmentID"
-          )
-          .eq(
-            "EquipmentID",
-            pm.EquipmentID
-          )
-          .maybeSingle();
-
-
-        if (equipmentError) {
-
-          console.error(
-            "Error loading PM equipment:",
-            equipmentError
-          );
-
-        }
-
-
-        if (equipment) {
-
-          equipmentName =
-            equipment.EquipmentName ||
-            "";
-
-          bmeNumber =
-            equipment.BMENumber ||
-            "";
-
-
-          // --------------------------------
-          // LOAD DEPARTMENT
-          // --------------------------------
-
-          if (
-            equipment.DepartmentID !== null &&
-            equipment.DepartmentID !== undefined
-          ) {
-
-            const {
-              data: department,
-              error: departmentError
-            } = await client
-              .from(
-                "tblDepartment"
-              )
-              .select(
-                "DepartmentName"
-              )
-              .eq(
-                "DepartmentID",
-                equipment.DepartmentID
-              )
-              .maybeSingle();
-
-
-            if (departmentError) {
-
-              console.error(
-                "Error loading PM department:",
-                departmentError
-              );
-
-            }
-
-
-            if (department) {
-
-              departmentName =
-                department.DepartmentName ||
-                "";
-
-            }
-
-          }
-
-        }
-
+      if (pmLoading) {
+        pmLoading.textContent =
+          "No preventive maintenance records found.";
       }
 
-
-      // ------------------------------------
-      // LOAD ENGINEER
-      // ------------------------------------
-
-      if (
-        pm.EngineerID !== null &&
-        pm.EngineerID !== undefined
-      ) {
-
-        const {
-          data: engineer,
-          error: engineerError
-        } = await client
-          .from(
-            "tblEngineers"
-          )
-          .select(
-            "FirstName, LastName"
-          )
-          .eq(
-            "EngineerID",
-            pm.EngineerID
-          )
-          .maybeSingle();
+      return;
+    }
 
 
-        if (engineerError) {
+    // ======================================
+    // DISPLAY PM RECORDS
+    // ======================================
 
-          console.error(
-            "Error loading PM engineer:",
-            engineerError
-          );
-
-        }
+    pmTableBody.innerHTML = "";
 
 
-        if (engineer) {
+    data.forEach(pm => {
 
-          engineerName =
-            `${engineer.FirstName || ""} ${
-              engineer.LastName || ""
-            }`.trim();
-
-        }
-
-      }
-
-
-      // ------------------------------------
-      // CALCULATE DUE STATUS
-      // ------------------------------------
-
-      let dueStatus =
-        "";
-
+      // Calculate Due Status
+      let dueStatus = "";
 
       if (pm.NextPMDate) {
 
-        const today =
-          new Date();
+        const today = new Date();
+        const nextPMDate = new Date(pm.NextPMDate);
 
-        today.setHours(
-          0,
-          0,
-          0,
-          0
-        );
+        // Remove time portion
+        today.setHours(0, 0, 0, 0);
+        nextPMDate.setHours(0, 0, 0, 0);
 
 
-        const nextPMDate =
-          new Date(
-            pm.NextPMDate
-          );
+        if (nextPMDate < today) {
 
-        nextPMDate.setHours(
-          0,
-          0,
-          0,
-          0
-        );
+          dueStatus = "Overdue";
 
-
-        if (
-          nextPMDate < today
+        } else if (
+          nextPMDate.getTime() === today.getTime()
         ) {
 
-          dueStatus =
-            "OVERDUE";
+          dueStatus = "Due Today";
+
+        } else {
+
+          dueStatus = "Not Due";
 
         }
 
-        else if (
-          nextPMDate.getTime() ===
-          today.getTime()
-        ) {
+      } else {
 
-          dueStatus =
-            "DUE TODAY";
-
-        }
-
-        else {
-
-          dueStatus =
-            "UPCOMING";
-
-        }
+        dueStatus = "No Date";
 
       }
 
 
-      // ------------------------------------
+      // ====================================
       // CREATE TABLE ROW
-      // ------------------------------------
+      // ====================================
 
-      const row =
-        document.createElement(
-          "tr"
-        );
+      const row = document.createElement("tr");
 
 
       row.innerHTML = `
 
         <td>
-          ${bmeNumber}
+          ${pm.BMENumber || ""}
         </td>
 
         <td>
-          ${equipmentName}
+          ${pm.EquipmentName || ""}
         </td>
 
         <td>
-          ${departmentName}
+          ${pm.DepartmentName || ""}
         </td>
 
         <td>
-          ${
-            pm.PMDate
-              ? new Date(
-                  pm.PMDate
-                ).toLocaleDateString()
-              : ""
-          }
+          ${pm.PMDate || ""}
         </td>
 
         <td>
-          ${
-            pm.NextPMDate
-              ? new Date(
-                  pm.NextPMDate
-                ).toLocaleDateString()
-              : ""
-          }
+          ${pm.NextPMDate || ""}
         </td>
 
         <td>
@@ -3323,11 +3075,11 @@ async function loadPMHistory() {
         </td>
 
         <td>
-          ${engineerName}
+          ${pm.EngineerName || ""}
         </td>
 
         <td>
-          ${pm["Work Performed"] || ""}
+          ${pm.WorkPerformed || ""}
         </td>
 
         <td>
@@ -3349,67 +3101,55 @@ async function loadPMHistory() {
       `;
 
 
-      tableBody.appendChild(
-        row
-      );
+      pmTableBody.appendChild(row);
+
+    });
+
+
+    // ======================================
+    // HIDE LOADING MESSAGE
+    // ======================================
+
+    if (pmLoading) {
+
+      pmLoading.textContent =
+        `${data.length} PM record(s) loaded successfully.`;
 
     }
 
 
-    // --------------------------------------
-    // CLEAR LOADING MESSAGE
-    // --------------------------------------
+  } catch (err) {
 
-    if (loading) {
-
-      loading.textContent =
-        "";
-
-    }
-
-
-    console.log(
-      "PM history loaded successfully."
-    );
-
-  }
-
-
-  catch (error) {
+    // ======================================
+    // UNEXPECTED ERROR
+    // ======================================
 
     console.error(
-      "PM history error:",
-      error
+      "Unexpected error loading PM history:",
+      err
     );
 
 
-    tableBody.innerHTML =
-      `<tr>
+    pmTableBody.innerHTML = `
+      <tr>
         <td colspan="12">
-          Unable to load preventive maintenance history.
+          An unexpected error occurred while
+          loading PM history.
         </td>
-      </tr>`;
+      </tr>
+    `;
 
 
-    if (loading) {
+    if (pmHistoryMessage) {
 
-      loading.textContent =
-        "";
-
-    }
-
-
-    if (message) {
-
-      message.textContent =
-        error.message;
+      pmHistoryMessage.textContent =
+        "An unexpected error occurred.";
 
     }
 
   }
 
 }
-
 // ==========================================
 // LOAD DASHBOARD
 // ==========================================
