@@ -672,118 +672,328 @@
         Preventive Maintenance History
       </h2>
 
+<!-- ==================================== -->
+<!-- PREVENTIVE MAINTENANCE -->
+<!-- ==================================== -->
 
-      <p id="pmLoading"></p>
+<section
+  id="pmSection"
+  class="card app-section hidden"
+>
+
+  <h2>
+    Preventive Maintenance
+  </h2>
 
 
-      <div
-        class="table-container"
-        style="overflow-x:auto;"
+  <!-- ================================== -->
+  <!-- PM FORM -->
+  <!-- ================================== -->
+
+  <form
+    id="preventiveMaintenanceForm"
+  >
+
+
+    <!-- EQUIPMENT -->
+
+    <label for="pmEquipmentId">
+      Equipment
+    </label>
+
+    <select
+      id="pmEquipmentId"
+      required
+    >
+
+      <option value="">
+        Select equipment
+      </option>
+
+    </select>
+
+
+    <!-- DEPARTMENT -->
+
+    <label for="pmDepartmentName">
+      Department
+    </label>
+
+    <input
+      type="text"
+      id="pmDepartmentName"
+      readonly
+      placeholder="Department will appear automatically"
+    >
+
+
+    <!-- ENGINEER -->
+
+    <label for="pmEngineerId">
+      Engineer
+    </label>
+
+    <select
+      id="pmEngineerId"
+      required
+    >
+
+      <option value="">
+        Select engineer
+      </option>
+
+    </select>
+
+
+    <!-- PM DATE -->
+
+    <label for="pmDate">
+      PM Date
+    </label>
+
+    <input
+      type="date"
+      id="pmDate"
+      required
+    >
+
+
+    <!-- NEXT PM DATE -->
+
+    <label for="nextPMDate">
+      Next PM Date
+    </label>
+
+    <input
+      type="date"
+      id="nextPMDate"
+      required
+    >
+
+
+    <!-- WORK PERFORMED -->
+
+    <label for="workPerformed">
+      Work Performed
+    </label>
+
+    <textarea
+      id="workPerformed"
+      placeholder="Describe the preventive maintenance work performed"
+    ></textarea>
+
+
+    <!-- FINDINGS -->
+
+    <label for="pmFindings">
+      Findings
+    </label>
+
+    <textarea
+      id="pmFindings"
+      placeholder="Enter findings"
+    ></textarea>
+
+
+    <!-- RECOMMENDATIONS -->
+
+    <label for="pmRecommendations">
+      Recommendations
+    </label>
+
+    <textarea
+      id="pmRecommendations"
+      placeholder="Enter recommendations"
+    ></textarea>
+
+
+    <!-- PM STATUS -->
+
+    <label for="pmStatus">
+      PM Status
+    </label>
+
+    <select
+      id="pmStatus"
+      required
+    >
+
+      <option value="">
+        Select PM status
+      </option>
+
+      <option value="Completed">
+        Completed
+      </option>
+
+      <option value="Partially Completed">
+        Partially Completed
+      </option>
+
+      <option value="Not Completed">
+        Not Completed
+      </option>
+
+      <option value="Deferred">
+        Deferred
+      </option>
+
+    </select>
+
+
+    <!-- REMARKS -->
+
+    <label for="pmRemarks">
+      Remarks
+    </label>
+
+    <textarea
+      id="pmRemarks"
+      placeholder="Enter remarks"
+    ></textarea>
+
+
+    <!-- SUBMIT -->
+
+    <button
+      type="submit"
+    >
+      Submit Preventive Maintenance
+    </button>
+
+
+    <!-- MESSAGE -->
+
+    <p
+      id="pmMessage"
+      class="message"
+    ></p>
+
+
+  </form>
+
+
+  <!-- ================================== -->
+  <!-- PM HISTORY -->
+  <!-- ================================== -->
+
+  <hr>
+
+
+  <h2>
+    Preventive Maintenance History
+  </h2>
+
+
+  <p id="pmLoading">
+    Loading preventive maintenance history...
+  </p>
+
+
+  <p
+    id="pmHistoryMessage"
+    class="message"
+  ></p>
+
+
+  <div
+    class="table-container"
+    style="overflow-x:auto;"
+  >
+
+
+    <table
+      id="pmHistoryTable"
+    >
+
+
+      <!-- ================================= -->
+      <!-- 12 PM HISTORY COLUMNS -->
+      <!-- ================================= -->
+
+      <thead>
+
+        <tr>
+
+          <th>
+            BME Number
+          </th>
+
+          <th>
+            Equipment
+          </th>
+
+          <th>
+            Department
+          </th>
+
+          <th>
+            PM Date
+          </th>
+
+          <th>
+            Next PM Date
+          </th>
+
+          <th>
+            Due Status
+          </th>
+
+          <th>
+            Engineer
+          </th>
+
+          <th>
+            Work Performed
+          </th>
+
+          <th>
+            Findings
+          </th>
+
+          <th>
+            Recommendations
+          </th>
+
+          <th>
+            PM Status
+          </th>
+
+          <th>
+            Remarks
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <!-- ================================= -->
+      <!-- PM HISTORY DATA -->
+      <!-- ================================= -->
+
+      <tbody
+        id="pmTableBody"
       >
 
+        <tr>
 
-        <table>
+          <td colspan="12">
+            No PM records loaded.
+          </td>
 
+        </tr>
 
-          <thead>
-
-
-            <tr>
-
-
-              <th>
-                BME Number
-              </th>
+      </tbody>
 
 
-              <th>
-                Equipment
-              </th>
+    </table>
 
 
-              <th>
-                Department
-              </th>
+  </div>
 
 
-              <th>
-                PM Date
-              </th>
-
-
-              <th>
-                Next PM Date
-              </th>
-
-
-              <th>
-                Due Status
-              </th>
-
-
-              <th>
-                Engineer
-              </th>
-
-
-              <th>
-                Work Performed
-              </th>
-
-
-              <th>
-                Findings
-              </th>
-
-
-              <th>
-                Recommendations
-              </th>
-
-
-              <th>
-                PM Status
-              </th>
-
-
-              <th>
-                Remarks
-              </th>
-
-
-            </tr>
-
-
-          </thead>
-
-
-          <tbody
-            id="pmTableBody"
-          >
-
-
-            <tr>
-
-
-              <td colspan="12">
-                No PM records loaded.
-              </td>
-
-
-            </tr>
-
-
-          </tbody>
-
-
-        </table>
-
-
-      </div>
-
-
-    </section>
-
+</section>
 
 
     <!-- ==================================== -->
