@@ -1039,8 +1039,6 @@ async function loadEquipmentHistory(
   }
 
 }
-
-
 // ==========================================
 // EQUIPMENT HISTORY SELECTION EVENT
 // ==========================================
@@ -1065,22 +1063,37 @@ if (historyEquipmentSelect) {
 
       if (!equipmentId) {
 
-        document.getElementById(
-          "equipmentHistoryDetails"
-        ).innerHTML =
+        const details =
+          document.getElementById(
+            "equipmentHistoryDetails"
+          );
 
-          "<p>Select an equipment to view its details.</p>";
+        const tableBody =
+          document.getElementById(
+            "equipmentHistoryTableBody"
+          );
 
 
-        document.getElementById(
-          "equipmentHistoryTableBody"
-        ).innerHTML =
+        if (details) {
 
-          `<tr>
-            <td colspan="11">
-              Select an equipment to view history.
-            </td>
-          </tr>`;
+          details.innerHTML =
+
+            "<p>Select an equipment to view its details.</p>";
+
+        }
+
+
+        if (tableBody) {
+
+          tableBody.innerHTML =
+
+            `<tr>
+              <td colspan="11">
+                Select an equipment to view history.
+              </td>
+            </tr>`;
+
+        }
 
 
         return;
@@ -1188,14 +1201,15 @@ async function loadUserProfile(
 async function loadMaintenanceReports() {
 
   const reportTableBody =
-  document.getElementById(
-    "reportsTableBody"
-  );
+    document.getElementById(
+      "reportsTableBody"
+    );
 
 
-  // Your current HTML does not contain
-  // maintenanceReportBody.
-  // Therefore, safely exit if it is missing.
+  // ----------------------------------------
+  // SAFELY EXIT IF REPORT TABLE IS NOT
+  // PRESENT IN THE CURRENT HTML
+  // ----------------------------------------
 
   if (!reportTableBody) {
 
@@ -1203,6 +1217,10 @@ async function loadMaintenanceReports() {
 
   }
 
+
+  // ----------------------------------------
+  // SHOW LOADING MESSAGE
+  // ----------------------------------------
 
   reportTableBody.innerHTML = `
 
@@ -1219,32 +1237,219 @@ async function loadMaintenanceReports() {
   `;
 
 
-  const {
+  try {
 
-    data,
+    // ======================================
+    // LOAD REPORTS FROM SUPABASE VIEW
+    // ======================================
 
-    error
+    const {
 
-  } = await client
+      data,
 
-    .from(
-      "vwMaintenanceReport"
-    )
+      error
 
-    .select("*")
+    } = await client
 
-    .order(
-      "ReportDate",
-      {
-        ascending: false
+      .from(
+        "vwMaintenanceReport"
+      )
+
+      .select("*")
+
+      .order(
+        "ReportDate",
+        {
+          ascending: false
+        }
+      );
+
+
+    // ======================================
+    // HANDLE SUPABASE ERROR
+    // ======================================
+
+    if (error) {
+
+      console.error(
+        "Error loading maintenance reports:",
+        error
+      );
+
+
+      reportTableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="11">
+
+            Error loading reports:
+            ${error.message}
+
+          </td>
+
+        </tr>
+
+      `;
+
+
+      return;
+
+    }
+
+
+    // ======================================
+    // NO REPORTS FOUND
+    // ======================================
+
+    if (
+
+      !data ||
+
+      data.length === 0
+
+    ) {
+
+      reportTableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="11">
+
+            No maintenance reports found.
+
+          </td>
+
+        </tr>
+
+      `;
+
+
+      return;
+
+    }
+
+
+    // ======================================
+    // CLEAR TABLE
+    // ======================================
+
+    reportTableBody.innerHTML = "";
+
+
+    // ======================================
+    // DISPLAY ALL REPORTS
+    // ======================================
+
+    data.forEach(
+
+      report => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+
+        row.innerHTML = `
+
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.JobOrderNumber ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.BMENumber ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.EquipmentName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.DepartmentName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.EngineerName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.MaintenanceType ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.FaultReported ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.ActionTaken ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.StatusName ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              report.Remarks ||
+              ""
+            }
+          </td>
+
+        `;
+
+
+        reportTableBody.appendChild(
+          row
+        );
+
       }
+
     );
 
+  }
 
-  if (error) {
+  catch (error) {
 
     console.error(
-      "Error loading maintenance reports:",
+      "Unexpected maintenance reports error:",
       error
     );
 
@@ -1255,8 +1460,7 @@ async function loadMaintenanceReports() {
 
         <td colspan="11">
 
-          Error loading reports:
-          ${error.message}
+          Unable to load maintenance reports.
 
         </td>
 
@@ -1264,145 +1468,7 @@ async function loadMaintenanceReports() {
 
     `;
 
-
-    return;
-
   }
-
-
-  if (
-
-    !data ||
-
-    data.length === 0
-
-  ) {
-
-    reportTableBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="11">
-
-          No maintenance reports found.
-
-        </td>
-
-      </tr>
-
-    `;
-
-
-    return;
-
-  }
-
-
-  reportTableBody.innerHTML = "";
-
-
-  data.forEach(
-
-    report => {
-
-      const row =
-        document.createElement(
-          "tr"
-        );
-
-
-      row.innerHTML = `
-
-        <td>
-          ${
-            report.ReportDate
-              ? new Date(
-                  report.ReportDate
-                ).toLocaleDateString()
-              : ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.JobOrderNumber ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.BMENumber ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.EquipmentName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.DepartmentName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.EngineerName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.MaintenanceType ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.FaultReported ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.ActionTaken ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.StatusName ||
-            ""
-          }
-        </td>
-
-        <td>
-          ${
-            report.Remarks ||
-            ""
-          }
-        </td>
-
-      `;
-
-
-      reportTableBody.appendChild(
-        row
-      );
-
-    }
-
-  );
 
 }
 
@@ -1445,7 +1511,7 @@ async function showApp(
 
 
   // ----------------------------------------
-  // SHOW APPLICATION
+  // HIDE LOGIN VIEW
   // ----------------------------------------
 
   if (loginView) {
@@ -1456,6 +1522,10 @@ async function showApp(
 
   }
 
+
+  // ----------------------------------------
+  // SHOW APPLICATION VIEW
+  // ----------------------------------------
 
   if (appView) {
 
@@ -1504,33 +1574,59 @@ if (loginForm) {
       event.preventDefault();
 
 
-      loginMessage.textContent =
-        "Signing in...";
+      // ------------------------------------
+      // SHOW LOGIN MESSAGE
+      // ------------------------------------
+
+      if (loginMessage) {
+
+        loginMessage.textContent =
+          "Signing in...";
+
+      }
+
+
+      // ------------------------------------
+      // GET EMAIL
+      // ------------------------------------
+
+      const emailInput =
+        document.getElementById(
+          "email"
+        );
+
+
+      // ------------------------------------
+      // GET PASSWORD
+      // ------------------------------------
+
+      const passwordInput =
+        document.getElementById(
+          "password"
+        );
 
 
       const email =
 
-        document
+        emailInput
 
-          .getElementById(
-            "email"
-          )
+          ? emailInput.value.trim()
 
-          .value
-
-          .trim();
+          : "";
 
 
       const password =
 
-        document
+        passwordInput
 
-          .getElementById(
-            "password"
-          )
+          ? passwordInput.value
 
-          .value;
+          : "";
 
+
+      // ------------------------------------
+      // VALIDATE LOGIN FIELDS
+      // ------------------------------------
 
       if (
 
@@ -1540,9 +1636,13 @@ if (loginForm) {
 
       ) {
 
-        loginMessage.textContent =
+        if (loginMessage) {
 
-          "Please enter your email and password.";
+          loginMessage.textContent =
+
+            "Please enter your email and password.";
+
+        }
 
         return;
 
@@ -1568,6 +1668,10 @@ if (loginForm) {
       });
 
 
+      // ------------------------------------
+      // HANDLE LOGIN ERROR
+      // ------------------------------------
+
       if (error) {
 
         console.error(
@@ -1576,10 +1680,14 @@ if (loginForm) {
         );
 
 
-        loginMessage.textContent =
+        if (loginMessage) {
 
-          "Login failed: " +
-          error.message;
+          loginMessage.textContent =
+
+            "Login failed: " +
+            error.message;
+
+        }
 
 
         return;
@@ -1598,8 +1706,12 @@ if (loginForm) {
         );
 
 
-        loginMessage.textContent =
-          "";
+        if (loginMessage) {
+
+          loginMessage.textContent =
+            "";
+
+        }
 
       }
 
@@ -1611,14 +1723,40 @@ if (loginForm) {
         );
 
 
+        // ----------------------------------
+        // SIGN OUT IF PROFILE LOADING FAILS
+        // ----------------------------------
+
         await client.auth.signOut();
 
 
-        loginMessage.textContent =
+        if (appView) {
 
-          "Login successful, but application loading failed: " +
+          appView.classList.add(
+            "hidden"
+          );
 
-          profileError.message;
+        }
+
+
+        if (loginView) {
+
+          loginView.classList.remove(
+            "hidden"
+          );
+
+        }
+
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+
+            "Login successful, but application loading failed: " +
+
+            profileError.message;
+
+        }
 
       }
 
@@ -1641,8 +1779,25 @@ if (logoutBtn) {
 
     async function() {
 
-      await client.auth.signOut();
+      try {
 
+        await client.auth.signOut();
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
+
+
+      // ------------------------------------
+      // HIDE APPLICATION
+      // ------------------------------------
 
       if (appView) {
 
@@ -1653,6 +1808,10 @@ if (logoutBtn) {
       }
 
 
+      // ------------------------------------
+      // SHOW LOGIN
+      // ------------------------------------
+
       if (loginView) {
 
         loginView.classList.remove(
@@ -1662,12 +1821,20 @@ if (logoutBtn) {
       }
 
 
+      // ------------------------------------
+      // RESET LOGIN FORM
+      // ------------------------------------
+
       if (loginForm) {
 
         loginForm.reset();
 
       }
 
+
+      // ------------------------------------
+      // CLEAR LOGIN MESSAGE
+      // ------------------------------------
 
       if (loginMessage) {
 
@@ -1682,6 +1849,7 @@ if (logoutBtn) {
 
 }
 
+
 // ==========================================
 // MENU NAVIGATION
 // ==========================================
@@ -1690,58 +1858,100 @@ document
   .querySelectorAll(".menu button")
   .forEach(button => {
 
-    button.addEventListener("click", function() {
+    button.addEventListener(
 
-      // --------------------------------------
-      // HIDE ALL APPLICATION SECTIONS
-      // --------------------------------------
+      "click",
 
-      document
-        .querySelectorAll(".app-section")
-        .forEach(section => {
-          section.classList.add("hidden");
-        });
+      function() {
+
+        // ----------------------------------
+        // HIDE ALL APPLICATION SECTIONS
+        // ----------------------------------
+
+        document
+
+          .querySelectorAll(
+            ".app-section"
+          )
+
+          .forEach(
+
+            section => {
+
+              section.classList.add(
+                "hidden"
+              );
+
+            }
+
+          );
 
 
-      // --------------------------------------
-      // GET SELECTED SECTION
-      // --------------------------------------
+        // ----------------------------------
+        // GET SELECTED SECTION
+        // ----------------------------------
 
-      const selectedSection =
-        document.getElementById(
-          button.dataset.section
-        );
+        const selectedSection =
+
+          document.getElementById(
+
+            button.dataset.section
+
+          );
 
 
-      // --------------------------------------
-      // SHOW SELECTED SECTION
-      // --------------------------------------
+        // ----------------------------------
+        // SHOW SELECTED SECTION
+        // ----------------------------------
 
-      if (selectedSection) {
+        if (selectedSection) {
 
-        selectedSection.classList.remove(
-          "hidden"
-        );
+          selectedSection.classList.remove(
+            "hidden"
+          );
+
+        }
+
+
+        // ----------------------------------
+        // LOAD MAINTENANCE REPORTS
+        // ----------------------------------
+
+        if (
+
+          button.dataset.section ===
+
+          "reportsSection"
+
+        ) {
+
+          loadMaintenanceReports();
+
+        }
+
+
+        // ----------------------------------
+        // LOAD EQUIPMENT HISTORY
+        // ----------------------------------
+
+        if (
+
+          button.dataset.section ===
+
+          "historySection"
+
+        ) {
+
+          loadEquipmentHistoryDropdown();
+
+        }
 
       }
 
-
-      // --------------------------------------
-      // LOAD MY REPORTS
-      // --------------------------------------
-
-      if (
-        button.dataset.section ===
-        "reportsSection"
-      ) {
-
-        loadMaintenanceReports();
-
-      }
-
-    });
+    );
 
   });
+
 
 // ==========================================
 // SUBMIT MAINTENANCE REPORT
@@ -1758,8 +1968,16 @@ if (maintenanceForm) {
       event.preventDefault();
 
 
-      maintenanceMessage.textContent =
-        "Submitting report...";
+      // ------------------------------------
+      // SHOW SUBMISSION MESSAGE
+      // ------------------------------------
+
+      if (maintenanceMessage) {
+
+        maintenanceMessage.textContent =
+          "Submitting report...";
+
+      }
 
 
       // ------------------------------------
@@ -1783,9 +2001,13 @@ if (maintenanceForm) {
 
       ) {
 
-        maintenanceMessage.textContent =
+        if (maintenanceMessage) {
 
-          "Your session has expired. Please log in again.";
+          maintenanceMessage.textContent =
+
+            "Your session has expired. Please log in again.";
+
+        }
 
         return;
 
@@ -1793,7 +2015,7 @@ if (maintenanceForm) {
 
 
       // ------------------------------------
-      // PART STATUS
+      // GET PART STATUS SELECT
       // ------------------------------------
 
       const partStatusSelect =
@@ -1802,6 +2024,10 @@ if (maintenanceForm) {
           "partStatusId"
         );
 
+
+      // ------------------------------------
+      // PREPARE PART STATUS
+      // ------------------------------------
 
       let partRequestedStatus =
         null;
@@ -1829,51 +2055,83 @@ if (maintenanceForm) {
 
 
       // ------------------------------------
-      // GET FORM VALUES
+      // GET EQUIPMENT
       // ------------------------------------
+
+      const equipmentElement =
+
+        document.getElementById(
+          "equipmentId"
+        );
+
+
+      // ------------------------------------
+      // GET ENGINEER
+      // ------------------------------------
+
+      const engineerElement =
+
+        document.getElementById(
+          "engineerId"
+        );
+
+
+      // ------------------------------------
+      // GET MAINTENANCE TYPE
+      // ------------------------------------
+
+      const maintenanceTypeElement =
+
+        document.getElementById(
+          "maintenanceTypeId"
+        );
+
+
+      // ------------------------------------
+      // GET EQUIPMENT STATUS
+      // ------------------------------------
+
+      const statusElement =
+
+        document.getElementById(
+          "statusId"
+        );
+
 
       const equipmentValue =
 
-        document
+        equipmentElement
 
-          .getElementById(
-            "equipmentId"
-          )
+          ? equipmentElement.value
 
-          .value;
+          : "";
 
 
       const engineerValue =
 
-        document
+        engineerElement
 
-          .getElementById(
-            "engineerId"
-          )
+          ? engineerElement.value
 
-          .value;
+          : "";
 
 
       const maintenanceTypeValue =
 
-        document
+        maintenanceTypeElement
 
-          .getElementById(
-            "maintenanceTypeId"
-          )
+          ? maintenanceTypeElement.value
 
-          .value;
+          : "";
 
 
       const statusValue =
 
-        document
+        statusElement
 
-          .getElementById(
-            "statusId"
-          )
+          ? statusElement.value
 
-          .value;
+          : "";
 
 
       // ------------------------------------
@@ -1892,9 +2150,13 @@ if (maintenanceForm) {
 
       ) {
 
-        maintenanceMessage.textContent =
+        if (maintenanceMessage) {
 
-          "Please complete all required fields.";
+          maintenanceMessage.textContent =
+
+            "Please complete all required fields.";
+
+        }
 
         return;
 
@@ -1902,30 +2164,22 @@ if (maintenanceForm) {
 
 
       // ====================================
-      // PREPARE PAYLOAD
+      // PREPARE MAINTENANCE REPORT PAYLOAD
       // ====================================
 
       const payload = {
 
         JobOrderNumber:
 
-          document
-
-            .getElementById(
-              "jobOrderNumber"
-            )
-
-            .value
+          document.getElementById(
+            "jobOrderNumber"
+          )?.value
 
             ? Number(
 
-                document
-
-                  .getElementById(
-                    "jobOrderNumber"
-                  )
-
-                  .value
+                document.getElementById(
+                  "jobOrderNumber"
+                ).value
 
               )
 
@@ -1960,88 +2214,60 @@ if (maintenanceForm) {
 
         FaultReported:
 
-          document
-
-            .getElementById(
-              "faultReported"
-            )
-
-            .value ||
+          document.getElementById(
+            "faultReported"
+          )?.value ||
 
           null,
 
 
         Diagnosis:
 
-          document
-
-            .getElementById(
-              "diagnosis"
-            )
-
-            .value ||
+          document.getElementById(
+            "diagnosis"
+          )?.value ||
 
           null,
 
 
         ActionTaken:
 
-          document
-
-            .getElementById(
-              "actionTaken"
-            )
-
-            .value ||
+          document.getElementById(
+            "actionTaken"
+          )?.value ||
 
           null,
 
 
         PartUsed:
 
-          document
-
-            .getElementById(
-              "partUsed"
-            )
-
-            .value ||
+          document.getElementById(
+            "partUsed"
+          )?.value ||
 
           null,
 
 
         RequiredPart:
 
-          document
-
-            .getElementById(
-              "requiredPart"
-            )
-
-            .value ||
+          document.getElementById(
+            "requiredPart"
+          )?.value ||
 
           null,
 
 
         QuantityRequired:
 
-          document
-
-            .getElementById(
-              "quantityRequired"
-            )
-
-            .value
+          document.getElementById(
+            "quantityRequired"
+          )?.value
 
             ? Number(
 
-                document
-
-                  .getElementById(
-                    "quantityRequired"
-                  )
-
-                  .value
+                document.getElementById(
+                  "quantityRequired"
+                ).value
 
               )
 
@@ -2075,13 +2301,9 @@ if (maintenanceForm) {
 
         Remarks:
 
-          document
-
-            .getElementById(
-              "remarks"
-            )
-
-            .value ||
+          document.getElementById(
+            "remarks"
+          )?.value ||
 
           null
 
@@ -2089,10 +2311,12 @@ if (maintenanceForm) {
 
 
       // ====================================
-      // INSERT REPORT
+      // INSERT MAINTENANCE REPORT
       // ====================================
 
       const {
+
+        data: insertedReport,
 
         error
 
@@ -2104,11 +2328,14 @@ if (maintenanceForm) {
 
         .insert(
           payload
-        );
+        )
+
+        .select()
+        .single();
 
 
       // ====================================
-      // HANDLE ERROR
+      // HANDLE INSERT ERROR
       // ====================================
 
       if (error) {
@@ -2119,11 +2346,15 @@ if (maintenanceForm) {
         );
 
 
-        maintenanceMessage.textContent =
+        if (maintenanceMessage) {
 
-          "Error submitting report: " +
+          maintenanceMessage.textContent =
 
-          error.message;
+            "Error submitting report: " +
+
+            error.message;
+
+        }
 
 
         return;
@@ -2135,9 +2366,19 @@ if (maintenanceForm) {
       // SUCCESS
       // ====================================
 
-      maintenanceMessage.textContent =
+      console.log(
+        "Maintenance report submitted:",
+        insertedReport
+      );
 
-        "Maintenance report submitted successfully.";
+
+      if (maintenanceMessage) {
+
+        maintenanceMessage.textContent =
+
+          "Maintenance report submitted successfully.";
+
+      }
 
 
       // ------------------------------------
@@ -2188,6 +2429,10 @@ async function initializeApp() {
     } = await client.auth.getSession();
 
 
+    // --------------------------------------
+    // HANDLE SESSION ERROR
+    // --------------------------------------
+
     if (error) {
 
       console.error(
@@ -2199,6 +2444,10 @@ async function initializeApp() {
 
     }
 
+
+    // --------------------------------------
+    // USER ALREADY LOGGED IN
+    // --------------------------------------
 
     if (
 
@@ -2229,6 +2478,28 @@ async function initializeApp() {
     await client.auth.signOut();
 
 
+    // --------------------------------------
+    // SHOW LOGIN VIEW
+    // --------------------------------------
+
+    if (appView) {
+
+      appView.classList.add(
+        "hidden"
+      );
+
+    }
+
+
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
     if (loginMessage) {
 
       loginMessage.textContent =
@@ -2240,6 +2511,96 @@ async function initializeApp() {
   }
 
 }
+
+
+// ==========================================
+// SUPABASE AUTH STATE CHANGE
+// ==========================================
+
+client.auth.onAuthStateChange(
+
+  async function(
+    event,
+    session
+  ) {
+
+    console.log(
+      "Authentication event:",
+      event
+    );
+
+
+    // --------------------------------------
+    // USER SIGNED OUT
+    // --------------------------------------
+
+    if (
+
+      event ===
+      "SIGNED_OUT"
+
+    ) {
+
+      if (appView) {
+
+        appView.classList.add(
+          "hidden"
+        );
+
+      }
+
+
+      if (loginView) {
+
+        loginView.classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    // --------------------------------------
+    // USER SIGNED IN
+    // --------------------------------------
+
+    if (
+
+      event ===
+      "SIGNED_IN" &&
+
+      session &&
+
+      session.user
+
+    ) {
+
+      try {
+
+        await showApp(
+          session.user
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Auth state application error:",
+          error
+        );
+
+      }
+
+    }
+
+  }
+
+);
 
 
 // ==========================================
