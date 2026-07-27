@@ -54,6 +54,11 @@ const equipmentSelect =
 const departmentInput =
   document.getElementById("departmentName");
 
+const equipmentRegistrationForm =
+  document.getElementById(
+    "equipmentRegistrationForm"
+  );
+
 
 // ==========================================
 // GENERIC DROPDOWN LOADER
@@ -71,14 +76,16 @@ async function loadLookup(
   const select =
     document.getElementById(selectId);
 
+
   if (!select) {
 
-    console.error(
+    console.warn(
       "Dropdown not found:",
       selectId
     );
 
     return;
+
   }
 
 
@@ -86,53 +93,84 @@ async function loadLookup(
     `<option value="">${placeholder}</option>`;
 
 
-  const {
-    data,
-    error
-  } = await client
+  try {
 
-    .from(table)
+    const {
 
-    .select("*")
+      data,
 
-    .order(
-      labelField,
-      {
-        ascending: true
-      }
-    );
+      error
+
+    } = await client
+
+      .from(table)
+
+      .select("*")
+
+      .order(
+        labelField,
+        {
+          ascending: true
+        }
+      );
 
 
-  if (error) {
+    if (error) {
+
+      console.error(
+        `Error loading ${table}:`,
+        error
+      );
+
+      select.innerHTML =
+        `<option value="">Unable to load data</option>`;
+
+      return;
+
+    }
+
+
+    for (
+      const row of data || []
+    ) {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        row[valueField];
+
+
+      option.textContent =
+
+        formatter
+
+          ? formatter(row)
+
+          : row[labelField];
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+
+  }
+
+  catch (error) {
 
     console.error(
-      `Error loading ${table}:`,
+      `Unexpected error loading ${table}:`,
       error
     );
 
-    throw error;
-  }
 
-
-  for (const row of data || []) {
-
-    const option =
-      document.createElement("option");
-
-
-    option.value =
-      row[valueField];
-
-
-    option.textContent =
-      formatter
-        ? formatter(row)
-        : row[labelField];
-
-
-    select.appendChild(
-      option
-    );
+    select.innerHTML =
+      `<option value="">Unable to load data</option>`;
 
   }
 
@@ -140,10 +178,10 @@ async function loadLookup(
 
 
 // ==========================================
-// LOAD FORM DROPDOWN DATA
+// LOAD MAINTENANCE FORM DROPDOWNS
 // ==========================================
 
-async function loadFormData() {
+async function loadMaintenanceFormData() {
 
   // ----------------------------------------
   // EQUIPMENT
@@ -163,11 +201,25 @@ async function loadFormData() {
 
     row => {
 
-      return `${row.EquipmentName || ""}${
-        row.BMENumber
-          ? " — " + row.BMENumber
-          : ""
-      }`;
+      const equipmentName =
+        row.EquipmentName || "";
+
+      const bmeNumber =
+        row.BMENumber || "";
+
+
+      if (bmeNumber) {
+
+        return (
+          bmeNumber +
+          " — " +
+          equipmentName
+        );
+
+      }
+
+
+      return equipmentName;
 
     }
 
@@ -192,9 +244,13 @@ async function loadFormData() {
 
     row => {
 
-      return `${row.FirstName || ""} ${
-        row.LastName || ""
-      }`.trim();
+      return (
+
+        `${row.FirstName || ""} ` +
+
+        `${row.LastName || ""}`
+
+      ).trim();
 
     }
 
@@ -261,6 +317,84 @@ async function loadFormData() {
 
 
 // ==========================================
+// LOAD EQUIPMENT REGISTRATION DROPDOWNS
+// ==========================================
+
+async function loadEquipmentRegistrationDropdowns() {
+
+  // ----------------------------------------
+  // DEPARTMENT
+  // ----------------------------------------
+
+  await loadLookup(
+
+    "tblDepartment",
+
+    "DepartmentID",
+
+    "DepartmentName",
+
+    "newDepartmentId",
+
+    "Select department"
+
+  );
+
+
+  // ----------------------------------------
+  // CATEGORY
+  // ----------------------------------------
+
+  await loadLookup(
+
+    "tblEquipmentcategory",
+
+    "CategoryID",
+
+    "CategoryName",
+
+    "newCategoryId",
+
+    "Select category"
+
+  );
+
+
+  // ----------------------------------------
+  // EQUIPMENT STATUS
+  // ----------------------------------------
+
+  await loadLookup(
+
+    "tblEquipmentStatus",
+
+    "StatusID",
+
+    "StatusName",
+
+    "newStatusId",
+
+    "Select status"
+
+  );
+
+}
+
+
+// ==========================================
+// LOAD ALL FORM DATA
+// ==========================================
+
+async function loadFormData() {
+
+  await loadMaintenanceFormData();
+
+  await loadEquipmentRegistrationDropdowns();
+
+}
+
+
+// ==========================================
 // LOAD DEPARTMENT FOR SELECTED EQUIPMENT
 // ==========================================
 
@@ -296,7 +430,7 @@ async function loadDepartmentForEquipment(
   try {
 
     // --------------------------------------
-    // GET EQUIPMENT DEPARTMENT ID
+    // GET DEPARTMENT ID
     // --------------------------------------
 
     const {
@@ -309,7 +443,9 @@ async function loadDepartmentForEquipment(
 
       .from("tblEquipment")
 
-      .select("DepartmentID")
+      .select(
+        "DepartmentID"
+      )
 
       .eq(
         "EquipmentID",
@@ -326,8 +462,10 @@ async function loadDepartmentForEquipment(
         equipmentError
       );
 
+
       departmentInput.value =
         "Unable to load department";
+
 
       return;
 
@@ -338,6 +476,7 @@ async function loadDepartmentForEquipment(
 
       departmentInput.value =
         "Equipment not found";
+
 
       return;
 
@@ -354,6 +493,7 @@ async function loadDepartmentForEquipment(
 
       departmentInput.value =
         "No department assigned";
+
 
       return;
 
@@ -374,7 +514,9 @@ async function loadDepartmentForEquipment(
 
       .from("tblDepartment")
 
-      .select("DepartmentName")
+      .select(
+        "DepartmentName"
+      )
 
       .eq(
         "DepartmentID",
@@ -391,8 +533,10 @@ async function loadDepartmentForEquipment(
         departmentError
       );
 
+
       departmentInput.value =
         "Unable to load department";
+
 
       return;
 
@@ -404,12 +548,14 @@ async function loadDepartmentForEquipment(
       departmentInput.value =
         "Department not found";
 
+
       return;
 
     }
 
 
     departmentInput.value =
+
       department.DepartmentName || "";
 
   }
@@ -421,6 +567,7 @@ async function loadDepartmentForEquipment(
       error
     );
 
+
     departmentInput.value =
       "Unable to load department";
 
@@ -430,7 +577,7 @@ async function loadDepartmentForEquipment(
 
 
 // ==========================================
-// EQUIPMENT CHANGE EVENT
+// MAINTENANCE EQUIPMENT CHANGE EVENT
 // ==========================================
 
 if (equipmentSelect) {
@@ -466,9 +613,10 @@ async function loadEquipmentHistoryDropdown() {
 
   if (!historyEquipmentSelect) {
 
-    console.error(
+    console.warn(
       "Equipment History dropdown not found."
     );
+
 
     return;
 
@@ -476,6 +624,7 @@ async function loadEquipmentHistoryDropdown() {
 
 
   historyEquipmentSelect.innerHTML =
+
     '<option value="">Loading equipment...</option>';
 
 
@@ -510,8 +659,11 @@ async function loadEquipmentHistoryDropdown() {
         error
       );
 
+
       historyEquipmentSelect.innerHTML =
+
         '<option value="">Unable to load equipment</option>';
+
 
       return;
 
@@ -519,16 +671,22 @@ async function loadEquipmentHistoryDropdown() {
 
 
     historyEquipmentSelect.innerHTML =
+
       '<option value="">Select equipment</option>';
 
 
     if (
+
       !data ||
+
       data.length === 0
+
     ) {
 
       historyEquipmentSelect.innerHTML =
+
         '<option value="">No equipment found</option>';
+
 
       return;
 
@@ -540,12 +698,14 @@ async function loadEquipmentHistoryDropdown() {
       equipment => {
 
         const option =
+
           document.createElement(
             "option"
           );
 
 
         option.value =
+
           equipment.EquipmentID;
 
 
@@ -573,7 +733,9 @@ async function loadEquipmentHistoryDropdown() {
       error
     );
 
+
     historyEquipmentSelect.innerHTML =
+
       '<option value="">Unable to load equipment</option>';
 
   }
@@ -608,22 +770,22 @@ async function loadEquipmentHistory(
 
 
   if (
+
     !details ||
+
     !tableBody
+
   ) {
 
     console.error(
       "Equipment History elements not found."
     );
 
+
     return;
 
   }
 
-
-  // ----------------------------------------
-  // CLEAR MESSAGE
-  // ----------------------------------------
 
   if (message) {
 
@@ -632,11 +794,8 @@ async function loadEquipmentHistory(
   }
 
 
-  // ----------------------------------------
-  // SHOW LOADING
-  // ----------------------------------------
-
   details.innerHTML =
+
     "<p>Loading equipment details...</p>";
 
 
@@ -652,7 +811,7 @@ async function loadEquipmentHistory(
   try {
 
     // ======================================
-    // 1. GET EQUIPMENT DETAILS
+    // GET EQUIPMENT DETAILS
     // ======================================
 
     const {
@@ -688,14 +847,12 @@ async function loadEquipmentHistory(
 
     if (equipmentError) {
 
-      console.error(
-        "Equipment details error:",
-        equipmentError
-      );
-
       throw new Error(
+
         "Unable to load equipment details: " +
+
         equipmentError.message
+
       );
 
     }
@@ -704,7 +861,9 @@ async function loadEquipmentHistory(
     if (!equipment) {
 
       details.innerHTML =
+
         "<p>Equipment not found.</p>";
+
 
       tableBody.innerHTML =
 
@@ -714,13 +873,14 @@ async function loadEquipmentHistory(
           </td>
         </tr>`;
 
+
       return;
 
     }
 
 
     // ======================================
-    // 2. GET DEPARTMENT
+    // GET DEPARTMENT
     // ======================================
 
     let departmentName =
@@ -770,7 +930,9 @@ async function loadEquipmentHistory(
       if (department) {
 
         departmentName =
+
           department.DepartmentName ||
+
           "Not assigned";
 
       }
@@ -779,7 +941,7 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // 3. DISPLAY EQUIPMENT DETAILS
+    // DISPLAY EQUIPMENT DETAILS
     // ======================================
 
     details.innerHTML = `
@@ -827,7 +989,7 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // 4. GET MAINTENANCE HISTORY
+    // GET MAINTENANCE HISTORY
     // ======================================
 
     const {
@@ -857,21 +1019,19 @@ async function loadEquipmentHistory(
 
     if (historyError) {
 
-      console.error(
-        "Maintenance history error:",
-        historyError
-      );
-
       throw new Error(
+
         "Unable to load equipment history: " +
+
         historyError.message
+
       );
 
     }
 
 
     // ======================================
-    // 5. NO HISTORY
+    // NO HISTORY
     // ======================================
 
     if (
@@ -890,13 +1050,14 @@ async function loadEquipmentHistory(
           </td>
         </tr>`;
 
+
       return;
 
     }
 
 
     // ======================================
-    // 6. DISPLAY HISTORY
+    // DISPLAY HISTORY
     // ======================================
 
     tableBody.innerHTML = "";
@@ -907,6 +1068,7 @@ async function loadEquipmentHistory(
       report => {
 
         const row =
+
           document.createElement(
             "tr"
           );
@@ -917,9 +1079,11 @@ async function loadEquipmentHistory(
           <td>
             ${
               report.ReportDate
+
                 ? new Date(
                     report.ReportDate
                   ).toLocaleDateString()
+
                 : ""
             }
           </td>
@@ -1032,6 +1196,7 @@ async function loadEquipmentHistory(
     if (message) {
 
       message.textContent =
+
         error.message;
 
     }
@@ -1039,6 +1204,8 @@ async function loadEquipmentHistory(
   }
 
 }
+
+
 // ==========================================
 // EQUIPMENT HISTORY SELECTION EVENT
 // ==========================================
@@ -1067,6 +1234,7 @@ if (historyEquipmentSelect) {
           document.getElementById(
             "equipmentHistoryDetails"
           );
+
 
         const tableBody =
           document.getElementById(
@@ -1149,6 +1317,7 @@ async function loadUserProfile(
       error
     );
 
+
     throw error;
 
   }
@@ -1206,10 +1375,11 @@ async function loadMaintenanceReports() {
     );
 
 
-  // ----------------------------------------
-  // SAFELY EXIT IF REPORT TABLE IS NOT
-  // PRESENT IN THE CURRENT HTML
-  // ----------------------------------------
+  const loading =
+    document.getElementById(
+      "reportsLoading"
+    );
+
 
   if (!reportTableBody) {
 
@@ -1218,30 +1388,24 @@ async function loadMaintenanceReports() {
   }
 
 
-  // ----------------------------------------
-  // SHOW LOADING MESSAGE
-  // ----------------------------------------
+  if (loading) {
 
-  reportTableBody.innerHTML = `
+    loading.textContent =
+      "Loading reports...";
 
-    <tr>
+  }
 
+
+  reportTableBody.innerHTML =
+
+    `<tr>
       <td colspan="11">
-
         Loading maintenance reports...
-
       </td>
-
-    </tr>
-
-  `;
+    </tr>`;
 
 
   try {
-
-    // ======================================
-    // LOAD REPORTS FROM SUPABASE VIEW
-    // ======================================
 
     const {
 
@@ -1265,10 +1429,6 @@ async function loadMaintenanceReports() {
       );
 
 
-    // ======================================
-    // HANDLE SUPABASE ERROR
-    // ======================================
-
     if (error) {
 
       console.error(
@@ -1277,30 +1437,20 @@ async function loadMaintenanceReports() {
       );
 
 
-      reportTableBody.innerHTML = `
+      reportTableBody.innerHTML =
 
-        <tr>
-
+        `<tr>
           <td colspan="11">
-
             Error loading reports:
             ${error.message}
-
           </td>
-
-        </tr>
-
-      `;
+        </tr>`;
 
 
       return;
 
     }
 
-
-    // ======================================
-    // NO REPORTS FOUND
-    // ======================================
 
     if (
 
@@ -1310,19 +1460,13 @@ async function loadMaintenanceReports() {
 
     ) {
 
-      reportTableBody.innerHTML = `
+      reportTableBody.innerHTML =
 
-        <tr>
-
+        `<tr>
           <td colspan="11">
-
             No maintenance reports found.
-
           </td>
-
-        </tr>
-
-      `;
+        </tr>`;
 
 
       return;
@@ -1330,16 +1474,8 @@ async function loadMaintenanceReports() {
     }
 
 
-    // ======================================
-    // CLEAR TABLE
-    // ======================================
-
     reportTableBody.innerHTML = "";
 
-
-    // ======================================
-    // DISPLAY ALL REPORTS
-    // ======================================
 
     data.forEach(
 
@@ -1454,118 +1590,24 @@ async function loadMaintenanceReports() {
     );
 
 
-    reportTableBody.innerHTML = `
+    reportTableBody.innerHTML =
 
-      <tr>
-
+      `<tr>
         <td colspan="11">
-
           Unable to load maintenance reports.
-
         </td>
-
-      </tr>
-
-    `;
+      </tr>`;
 
   }
 
 }
-
-
 // ==========================================
-// SHOW APPLICATION
+// EQUIPMENT REGISTRATION
 // ==========================================
 
-async function showApp(
-  user
-) {
+if (equipmentRegistrationForm) {
 
-  // ----------------------------------------
-  // LOAD USER PROFILE
-  // ----------------------------------------
-
-  const profile =
-    await loadUserProfile(
-      user.id
-    );
-
-
-  // ----------------------------------------
-  // DISPLAY USER NAME AND ROLE
-  // ----------------------------------------
-
-  if (welcomeText) {
-
-    welcomeText.textContent =
-
-      `Welcome, ${
-        profile["Full name"] ||
-        user.email
-      } (${
-        profile.UserRole ||
-        "User"
-      })`;
-
-  }
-
-
-  // ----------------------------------------
-  // HIDE LOGIN VIEW
-  // ----------------------------------------
-
-  if (loginView) {
-
-    loginView.classList.add(
-      "hidden"
-    );
-
-  }
-
-
-  // ----------------------------------------
-  // SHOW APPLICATION VIEW
-  // ----------------------------------------
-
-  if (appView) {
-
-    appView.classList.remove(
-      "hidden"
-    );
-
-  }
-
-
-  // ----------------------------------------
-  // LOAD FORM DROPDOWNS
-  // ----------------------------------------
-
-  await loadFormData();
-
-
-  // ----------------------------------------
-  // LOAD EQUIPMENT HISTORY DROPDOWN
-  // ----------------------------------------
-
-  await loadEquipmentHistoryDropdown();
-
-
-  // ----------------------------------------
-  // LOAD MAINTENANCE REPORTS
-  // ----------------------------------------
-
-  await loadMaintenanceReports();
-
-}
-
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-if (loginForm) {
-
-  loginForm.addEventListener(
+  equipmentRegistrationForm.addEventListener(
 
     "submit",
 
@@ -1574,73 +1616,118 @@ if (loginForm) {
       event.preventDefault();
 
 
-      // ------------------------------------
-      // SHOW LOGIN MESSAGE
-      // ------------------------------------
+      const message =
 
-      if (loginMessage) {
+        document.getElementById(
+          "equipmentRegistrationMessage"
+        );
 
-        loginMessage.textContent =
-          "Signing in...";
+
+      if (message) {
+
+        message.textContent =
+          "Registering equipment...";
 
       }
 
 
-      // ------------------------------------
-      // GET EMAIL
-      // ------------------------------------
+      // ======================================
+      // GET FORM VALUES
+      // ======================================
 
-      const emailInput =
+      const bmeNumber =
+
         document.getElementById(
-          "email"
-        );
+          "newBmeNumber"
+        ).value.trim();
 
 
-      // ------------------------------------
-      // GET PASSWORD
-      // ------------------------------------
+      const equipmentName =
 
-      const passwordInput =
         document.getElementById(
-          "password"
-        );
+          "newEquipmentName"
+        ).value.trim();
 
 
-      const email =
+      const manufacturer =
 
-        emailInput
-
-          ? emailInput.value.trim()
-
-          : "";
+        document.getElementById(
+          "newManufacturer"
+        ).value.trim();
 
 
-      const password =
+      const model =
 
-        passwordInput
-
-          ? passwordInput.value
-
-          : "";
+        document.getElementById(
+          "newModel"
+        ).value.trim();
 
 
-      // ------------------------------------
-      // VALIDATE LOGIN FIELDS
-      // ------------------------------------
+      const serialNumber =
+
+        document.getElementById(
+          "newSerialNumber"
+        ).value.trim();
+
+
+      const departmentId =
+
+        document.getElementById(
+          "newDepartmentId"
+        ).value;
+
+
+      const categoryId =
+
+        document.getElementById(
+          "newCategoryId"
+        ).value;
+
+
+      const statusId =
+
+        document.getElementById(
+          "newStatusId"
+        ).value;
+
+
+      const location =
+
+        document.getElementById(
+          "newLocation"
+        ).value.trim();
+
+
+      const remarks =
+
+        document.getElementById(
+          "newEquipmentRemarks"
+        ).value.trim();
+
+
+      // ======================================
+      // VALIDATE REQUIRED FIELDS
+      // ======================================
 
       if (
 
-        !email ||
+        !bmeNumber ||
 
-        !password
+        !equipmentName ||
+
+        !departmentId ||
+
+        !categoryId ||
+
+        !statusId
 
       ) {
 
-        if (loginMessage) {
+        if (message) {
 
-          loginMessage.textContent =
+          message.textContent =
 
-            "Please enter your email and password.";
+            "Please complete all required fields.";
 
         }
 
@@ -1649,9 +1736,120 @@ if (loginForm) {
       }
 
 
-      // ------------------------------------
-      // SUPABASE LOGIN
-      // ------------------------------------
+      // ======================================
+      // CHECK FOR DUPLICATE BME NUMBER
+      // ======================================
+
+      const {
+
+        data: existingEquipment,
+
+        error: checkError
+
+      } = await client
+
+        .from("tblEquipment")
+
+        .select(
+          "EquipmentID"
+        )
+
+        .eq(
+          "BMENumber",
+          bmeNumber
+        )
+
+        .maybeSingle();
+
+
+      if (checkError) {
+
+        console.error(
+          "BME Number check error:",
+          checkError
+        );
+
+
+        if (message) {
+
+          message.textContent =
+
+            "Unable to check BME Number: " +
+
+            checkError.message;
+
+        }
+
+
+        return;
+
+      }
+
+
+      if (existingEquipment) {
+
+        if (message) {
+
+          message.textContent =
+
+            "This BME Number already exists. Please enter a unique BME Number.";
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ======================================
+      // PREPARE EQUIPMENT DATA
+      // ======================================
+
+      const equipmentData = {
+
+        BMENumber:
+          bmeNumber,
+
+        EquipmentName:
+          equipmentName,
+
+        Manufacturer:
+          manufacturer || null,
+
+        Model:
+          model || null,
+
+        SerialNumber:
+          serialNumber || null,
+
+        DepartmentID:
+          Number(
+            departmentId
+          ),
+
+        CategoryID:
+          Number(
+            categoryId
+          ),
+
+        StatusID:
+          Number(
+            statusId
+          ),
+
+        Location:
+          location || null,
+
+        Remarks:
+          remarks || null
+
+      };
+
+
+      // ======================================
+      // INSERT NEW EQUIPMENT
+      // ======================================
 
       const {
 
@@ -1659,32 +1857,38 @@ if (loginForm) {
 
         error
 
-      } = await client.auth.signInWithPassword({
+      } = await client
 
-        email: email,
+        .from(
+          "tblEquipment"
+        )
 
-        password: password
+        .insert(
+          equipmentData
+        )
 
-      });
+        .select()
+        .single();
 
 
-      // ------------------------------------
-      // HANDLE LOGIN ERROR
-      // ------------------------------------
+      // ======================================
+      // HANDLE REGISTRATION ERROR
+      // ======================================
 
       if (error) {
 
         console.error(
-          "Login error:",
+          "Equipment registration error:",
           error
         );
 
 
-        if (loginMessage) {
+        if (message) {
 
-          loginMessage.textContent =
+          message.textContent =
 
-            "Login failed: " +
+            "Error registering equipment: " +
+
             error.message;
 
         }
@@ -1695,153 +1899,60 @@ if (loginForm) {
       }
 
 
-      // ------------------------------------
-      // LOAD APPLICATION
-      // ------------------------------------
+      // ======================================
+      // REGISTRATION SUCCESS
+      // ======================================
 
-      try {
-
-        await showApp(
-          data.user
-        );
-
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-            "";
-
-        }
-
-      }
-
-      catch (profileError) {
-
-        console.error(
-          "Application loading error:",
-          profileError
-        );
+      console.log(
+        "Equipment registered successfully:",
+        data
+      );
 
 
-        // ----------------------------------
-        // SIGN OUT IF PROFILE LOADING FAILS
-        // ----------------------------------
+      if (message) {
 
-        await client.auth.signOut();
+        message.textContent =
 
-
-        if (appView) {
-
-          appView.classList.add(
-            "hidden"
-          );
-
-        }
-
-
-        if (loginView) {
-
-          loginView.classList.remove(
-            "hidden"
-          );
-
-        }
-
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-
-            "Login successful, but application loading failed: " +
-
-            profileError.message;
-
-        }
-
-      }
-
-    }
-
-  );
-
-}
-
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-if (logoutBtn) {
-
-  logoutBtn.addEventListener(
-
-    "click",
-
-    async function() {
-
-      try {
-
-        await client.auth.signOut();
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
+          "Equipment registered successfully.";
 
       }
 
 
-      // ------------------------------------
-      // HIDE APPLICATION
-      // ------------------------------------
+      // ======================================
+      // RESET FORM
+      // ======================================
 
-      if (appView) {
-
-        appView.classList.add(
-          "hidden"
-        );
-
-      }
+      equipmentRegistrationForm.reset();
 
 
-      // ------------------------------------
-      // SHOW LOGIN
-      // ------------------------------------
+      // ======================================
+      // REFRESH EQUIPMENT DROPDOWNS
+      // ======================================
 
-      if (loginView) {
+      await loadMaintenanceFormData();
 
-        loginView.classList.remove(
-          "hidden"
-        );
-
-      }
+      await loadEquipmentHistoryDropdown();
 
 
-      // ------------------------------------
-      // RESET LOGIN FORM
-      // ------------------------------------
+      // ======================================
+      // CLEAR SUCCESS MESSAGE AFTER 5 SECONDS
+      // ======================================
 
-      if (loginForm) {
+      setTimeout(
 
-        loginForm.reset();
+        function() {
 
-      }
+          if (message) {
 
+            message.textContent = "";
 
-      // ------------------------------------
-      // CLEAR LOGIN MESSAGE
-      // ------------------------------------
+          }
 
-      if (loginMessage) {
+        },
 
-        loginMessage.textContent =
-          "";
+        5000
 
-      }
+      );
 
     }
 
@@ -1856,101 +1967,113 @@ if (logoutBtn) {
 
 document
   .querySelectorAll(".menu button")
-  .forEach(button => {
+  .forEach(
 
-    button.addEventListener(
+    button => {
 
-      "click",
+      button.addEventListener(
 
-      function() {
+        "click",
 
-        // ----------------------------------
-        // HIDE ALL APPLICATION SECTIONS
-        // ----------------------------------
+        function() {
 
-        document
+          // --------------------------------
+          // HIDE ALL APPLICATION SECTIONS
+          // --------------------------------
 
-          .querySelectorAll(
-            ".app-section"
-          )
+          document
+            .querySelectorAll(".app-section")
+            .forEach(
 
-          .forEach(
+              section => {
 
-            section => {
+                section.classList.add(
+                  "hidden"
+                );
 
-              section.classList.add(
-                "hidden"
-              );
+              }
 
-            }
-
-          );
+            );
 
 
-        // ----------------------------------
-        // GET SELECTED SECTION
-        // ----------------------------------
+          // --------------------------------
+          // GET SELECTED SECTION
+          // --------------------------------
 
-        const selectedSection =
+          const selectedSection =
 
-          document.getElementById(
-
-            button.dataset.section
-
-          );
+            document.getElementById(
+              button.dataset.section
+            );
 
 
-        // ----------------------------------
-        // SHOW SELECTED SECTION
-        // ----------------------------------
+          // --------------------------------
+          // SHOW SELECTED SECTION
+          // --------------------------------
 
-        if (selectedSection) {
+          if (selectedSection) {
 
-          selectedSection.classList.remove(
-            "hidden"
-          );
+            selectedSection.classList.remove(
+              "hidden"
+            );
+
+          }
+
+
+          // --------------------------------
+          // LOAD MAINTENANCE REPORTS
+          // --------------------------------
+
+          if (
+
+            button.dataset.section ===
+            "reportsSection"
+
+          ) {
+
+            loadMaintenanceReports();
+
+          }
+
+
+          // --------------------------------
+          // REFRESH REGISTRATION DROPDOWNS
+          // --------------------------------
+
+          if (
+
+            button.dataset.section ===
+            "equipmentRegistrationSection"
+
+          ) {
+
+            loadEquipmentRegistrationDropdowns();
+
+          }
+
+
+          // --------------------------------
+          // REFRESH HISTORY DROPDOWN
+          // --------------------------------
+
+          if (
+
+            button.dataset.section ===
+            "equipmentHistorySection"
+
+          ) {
+
+            loadEquipmentHistoryDropdown();
+
+          }
 
         }
 
+      );
 
-        // ----------------------------------
-        // LOAD MAINTENANCE REPORTS
-        // ----------------------------------
+    }
 
-        if (
-
-          button.dataset.section ===
-
-          "reportsSection"
-
-        ) {
-
-          loadMaintenanceReports();
-
-        }
-
-
-        // ----------------------------------
-        // LOAD EQUIPMENT HISTORY
-        // ----------------------------------
-
-        if (
-
-          button.dataset.section ===
-
-          "historySection"
-
-        ) {
-
-          loadEquipmentHistoryDropdown();
-
-        }
-
-      }
-
-    );
-
-  });
+  );
 
 
 // ==========================================
@@ -1968,10 +2091,6 @@ if (maintenanceForm) {
       event.preventDefault();
 
 
-      // ------------------------------------
-      // SHOW SUBMISSION MESSAGE
-      // ------------------------------------
-
       if (maintenanceMessage) {
 
         maintenanceMessage.textContent =
@@ -1980,9 +2099,9 @@ if (maintenanceForm) {
       }
 
 
-      // ------------------------------------
-      // CHECK AUTHENTICATED USER
-      // ------------------------------------
+      // ====================================
+      // CHECK AUTHENTICATION
+      // ====================================
 
       const {
 
@@ -2009,14 +2128,43 @@ if (maintenanceForm) {
 
         }
 
+
         return;
 
       }
 
 
-      // ------------------------------------
-      // GET PART STATUS SELECT
-      // ------------------------------------
+      // ====================================
+      // GET FORM VALUES
+      // ====================================
+
+      const equipmentValue =
+
+        document.getElementById(
+          "equipmentId"
+        ).value;
+
+
+      const engineerValue =
+
+        document.getElementById(
+          "engineerId"
+        ).value;
+
+
+      const maintenanceTypeValue =
+
+        document.getElementById(
+          "maintenanceTypeId"
+        ).value;
+
+
+      const statusValue =
+
+        document.getElementById(
+          "statusId"
+        ).value;
+
 
       const partStatusSelect =
 
@@ -2025,12 +2173,11 @@ if (maintenanceForm) {
         );
 
 
-      // ------------------------------------
-      // PREPARE PART STATUS
-      // ------------------------------------
+      // ====================================
+      // GET PART STATUS
+      // ====================================
 
-      let partRequestedStatus =
-        null;
+      let partRequestedStatus = null;
 
 
       if (
@@ -2044,99 +2191,16 @@ if (maintenanceForm) {
         partRequestedStatus =
 
           partStatusSelect
-
             .selectedOptions[0]
-
             .textContent
-
             .trim();
 
       }
 
 
-      // ------------------------------------
-      // GET EQUIPMENT
-      // ------------------------------------
-
-      const equipmentElement =
-
-        document.getElementById(
-          "equipmentId"
-        );
-
-
-      // ------------------------------------
-      // GET ENGINEER
-      // ------------------------------------
-
-      const engineerElement =
-
-        document.getElementById(
-          "engineerId"
-        );
-
-
-      // ------------------------------------
-      // GET MAINTENANCE TYPE
-      // ------------------------------------
-
-      const maintenanceTypeElement =
-
-        document.getElementById(
-          "maintenanceTypeId"
-        );
-
-
-      // ------------------------------------
-      // GET EQUIPMENT STATUS
-      // ------------------------------------
-
-      const statusElement =
-
-        document.getElementById(
-          "statusId"
-        );
-
-
-      const equipmentValue =
-
-        equipmentElement
-
-          ? equipmentElement.value
-
-          : "";
-
-
-      const engineerValue =
-
-        engineerElement
-
-          ? engineerElement.value
-
-          : "";
-
-
-      const maintenanceTypeValue =
-
-        maintenanceTypeElement
-
-          ? maintenanceTypeElement.value
-
-          : "";
-
-
-      const statusValue =
-
-        statusElement
-
-          ? statusElement.value
-
-          : "";
-
-
-      // ------------------------------------
-      // VALIDATE REQUIRED IDs
-      // ------------------------------------
+      // ====================================
+      // VALIDATE REQUIRED FIELDS
+      // ====================================
 
       if (
 
@@ -2158,13 +2222,14 @@ if (maintenanceForm) {
 
         }
 
+
         return;
 
       }
 
 
       // ====================================
-      // PREPARE MAINTENANCE REPORT PAYLOAD
+      // PREPARE MAINTENANCE REPORT
       // ====================================
 
       const payload = {
@@ -2173,7 +2238,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "jobOrderNumber"
-          )?.value
+          ).value
 
             ? Number(
 
@@ -2216,7 +2281,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "faultReported"
-          )?.value ||
+          ).value ||
 
           null,
 
@@ -2225,7 +2290,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "diagnosis"
-          )?.value ||
+          ).value ||
 
           null,
 
@@ -2234,7 +2299,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "actionTaken"
-          )?.value ||
+          ).value ||
 
           null,
 
@@ -2243,7 +2308,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "partUsed"
-          )?.value ||
+          ).value ||
 
           null,
 
@@ -2252,7 +2317,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "requiredPart"
-          )?.value ||
+          ).value ||
 
           null,
 
@@ -2261,7 +2326,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "quantityRequired"
-          )?.value
+          ).value
 
             ? Number(
 
@@ -2303,7 +2368,7 @@ if (maintenanceForm) {
 
           document.getElementById(
             "remarks"
-          )?.value ||
+          ).value ||
 
           null
 
@@ -2316,8 +2381,6 @@ if (maintenanceForm) {
 
       const {
 
-        data: insertedReport,
-
         error
 
       } = await client
@@ -2328,14 +2391,11 @@ if (maintenanceForm) {
 
         .insert(
           payload
-        )
-
-        .select()
-        .single();
+        );
 
 
       // ====================================
-      // HANDLE INSERT ERROR
+      // HANDLE ERROR
       // ====================================
 
       if (error) {
@@ -2366,12 +2426,6 @@ if (maintenanceForm) {
       // SUCCESS
       // ====================================
 
-      console.log(
-        "Maintenance report submitted:",
-        insertedReport
-      );
-
-
       if (maintenanceMessage) {
 
         maintenanceMessage.textContent =
@@ -2381,16 +2435,12 @@ if (maintenanceForm) {
       }
 
 
-      // ------------------------------------
+      // ====================================
       // RESET FORM
-      // ------------------------------------
+      // ====================================
 
       maintenanceForm.reset();
 
-
-      // ------------------------------------
-      // CLEAR DEPARTMENT
-      // ------------------------------------
 
       if (departmentInput) {
 
@@ -2399,15 +2449,339 @@ if (maintenanceForm) {
       }
 
 
-      // ------------------------------------
+      // ====================================
       // REFRESH REPORTS
-      // ------------------------------------
+      // ====================================
 
       await loadMaintenanceReports();
+
+
+      // ====================================
+      // CLEAR MESSAGE
+      // ====================================
+
+      setTimeout(
+
+        function() {
+
+          if (maintenanceMessage) {
+
+            maintenanceMessage.textContent = "";
+
+          }
+
+        },
+
+        5000
+
+      );
 
     }
 
   );
+
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+if (loginForm) {
+
+  loginForm.addEventListener(
+
+    "submit",
+
+    async function(event) {
+
+      event.preventDefault();
+
+
+      if (loginMessage) {
+
+        loginMessage.textContent =
+          "Signing in...";
+
+      }
+
+
+      const email =
+
+        document
+          .getElementById(
+            "email"
+          )
+          .value
+          .trim();
+
+
+      const password =
+
+        document
+          .getElementById(
+            "password"
+          )
+          .value;
+
+
+      if (
+
+        !email ||
+
+        !password
+
+      ) {
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+
+            "Please enter your email and password.";
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ====================================
+      // SUPABASE LOGIN
+      // ====================================
+
+      const {
+
+        data,
+
+        error
+
+      } = await client.auth.signInWithPassword({
+
+        email:
+          email,
+
+        password:
+          password
+
+      });
+
+
+      if (error) {
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+
+            "Login failed: " +
+
+            error.message;
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ====================================
+      // LOAD APPLICATION
+      // ====================================
+
+      try {
+
+        await showApp(
+          data.user
+        );
+
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+            "";
+
+        }
+
+      }
+
+      catch (profileError) {
+
+        console.error(
+          "Application loading error:",
+          profileError
+        );
+
+
+        await client.auth.signOut();
+
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+
+            "Login successful, but application loading failed: " +
+
+            profileError.message;
+
+        }
+
+      }
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+
+    "click",
+
+    async function() {
+
+      await client.auth.signOut();
+
+
+      if (appView) {
+
+        appView.classList.add(
+          "hidden"
+        );
+
+      }
+
+
+      if (loginView) {
+
+        loginView.classList.remove(
+          "hidden"
+        );
+
+      }
+
+
+      if (loginForm) {
+
+        loginForm.reset();
+
+      }
+
+
+      if (loginMessage) {
+
+        loginMessage.textContent =
+          "";
+
+      }
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// SHOW APPLICATION
+// ==========================================
+
+async function showApp(
+  user
+) {
+
+  // ----------------------------------------
+  // LOAD USER PROFILE
+  // ----------------------------------------
+
+  const profile =
+
+    await loadUserProfile(
+      user.id
+    );
+
+
+  // ----------------------------------------
+  // DISPLAY USER NAME AND ROLE
+  // ----------------------------------------
+
+  if (welcomeText) {
+
+    welcomeText.textContent =
+
+      `Welcome, ${
+        profile["Full name"] ||
+        user.email
+      } (${
+        profile.UserRole ||
+        "User"
+      })`;
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW APPLICATION
+  // ----------------------------------------
+
+  if (loginView) {
+
+    loginView.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (appView) {
+
+    appView.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  // ----------------------------------------
+  // LOAD MAINTENANCE DROPDOWNS
+  // ----------------------------------------
+
+  await loadMaintenanceFormData();
+
+
+  // ----------------------------------------
+  // LOAD REGISTRATION DROPDOWNS
+  // ----------------------------------------
+
+  await loadEquipmentRegistrationDropdowns();
+
+
+  // ----------------------------------------
+  // LOAD HISTORY DROPDOWN
+  // ----------------------------------------
+
+  await loadEquipmentHistoryDropdown();
+
+
+  // ----------------------------------------
+  // LOAD REPORTS
+  // ----------------------------------------
+
+  await loadMaintenanceReports();
 
 }
 
@@ -2429,10 +2803,6 @@ async function initializeApp() {
     } = await client.auth.getSession();
 
 
-    // --------------------------------------
-    // HANDLE SESSION ERROR
-    // --------------------------------------
-
     if (error) {
 
       console.error(
@@ -2440,14 +2810,11 @@ async function initializeApp() {
         error
       );
 
+
       return;
 
     }
 
-
-    // --------------------------------------
-    // USER ALREADY LOGGED IN
-    // --------------------------------------
 
     if (
 
@@ -2478,28 +2845,6 @@ async function initializeApp() {
     await client.auth.signOut();
 
 
-    // --------------------------------------
-    // SHOW LOGIN VIEW
-    // --------------------------------------
-
-    if (appView) {
-
-      appView.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-    if (loginView) {
-
-      loginView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
     if (loginMessage) {
 
       loginMessage.textContent =
@@ -2511,96 +2856,6 @@ async function initializeApp() {
   }
 
 }
-
-
-// ==========================================
-// SUPABASE AUTH STATE CHANGE
-// ==========================================
-
-client.auth.onAuthStateChange(
-
-  async function(
-    event,
-    session
-  ) {
-
-    console.log(
-      "Authentication event:",
-      event
-    );
-
-
-    // --------------------------------------
-    // USER SIGNED OUT
-    // --------------------------------------
-
-    if (
-
-      event ===
-      "SIGNED_OUT"
-
-    ) {
-
-      if (appView) {
-
-        appView.classList.add(
-          "hidden"
-        );
-
-      }
-
-
-      if (loginView) {
-
-        loginView.classList.remove(
-          "hidden"
-        );
-
-      }
-
-
-      return;
-
-    }
-
-
-    // --------------------------------------
-    // USER SIGNED IN
-    // --------------------------------------
-
-    if (
-
-      event ===
-      "SIGNED_IN" &&
-
-      session &&
-
-      session.user
-
-    ) {
-
-      try {
-
-        await showApp(
-          session.user
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "Auth state application error:",
-          error
-        );
-
-      }
-
-    }
-
-  }
-
-);
 
 
 // ==========================================
