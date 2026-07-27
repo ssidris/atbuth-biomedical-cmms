@@ -1,32 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ATBUTH Biomedical CMMS</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <link rel="stylesheet" href="style.css">
+  <title>
+    ATBUTH Biomedical CMMS
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 
 <body>
 
+
   <main class="app-shell">
 
-    <!-- LOGIN PAGE -->
-    <section id="loginView" class="card">
 
-      <h1>ATBUTH Biomedical CMMS</h1>
+    <!-- ====================================== -->
+    <!-- LOGIN PAGE -->
+    <!-- ====================================== -->
+
+    <section
+      id="loginView"
+      class="card"
+    >
+
+      <h1>
+        ATBUTH Biomedical CMMS
+      </h1>
+
 
       <p class="subtitle">
         Biomedical Daily Report
       </p>
 
+
       <form id="loginForm">
+
 
         <label for="email">
           Email
         </label>
+
 
         <input
           id="email"
@@ -35,9 +62,11 @@
           autocomplete="email"
         >
 
+
         <label for="password">
           Password
         </label>
+
 
         <input
           id="password"
@@ -46,31 +75,55 @@
           autocomplete="current-password"
         >
 
+
         <button type="submit">
           Login
         </button>
 
+
       </form>
 
-      <p id="loginMessage" class="message"></p>
+
+      <p
+        id="loginMessage"
+        class="message"
+      ></p>
+
 
     </section>
 
 
+
+    <!-- ====================================== -->
     <!-- MAIN APPLICATION -->
-    <section id="appView" class="hidden">
+    <!-- ====================================== -->
+
+    <section
+      id="appView"
+      class="hidden"
+    >
+
+
+      <!-- ==================================== -->
+      <!-- TOP BAR -->
+      <!-- ==================================== -->
 
       <header class="topbar">
 
+
         <div>
+
 
           <h1>
             ATBUTH Biomedical CMMS
           </h1>
 
+
           <p id="welcomeText"></p>
 
+
         </div>
+
 
         <button
           id="logoutBtn"
@@ -79,716 +132,958 @@
           Logout
         </button>
 
+
       </header>
 
 
-      <!-- MENU -->
-      <nav class="menu">
-        <button data-section="equipmentHistorySection">
-  Equipment History
-</button>
-        <button data-section="equipmentRegistrationSection">
-  Register Equipment
-</button>
 
-        <button data-section="maintenanceSection">
+      <!-- ==================================== -->
+      <!-- MENU -->
+      <!-- ==================================== -->
+
+      <nav class="menu">
+
+
+        <button
+          type="button"
+          data-section="equipmentHistorySection"
+        >
+          Equipment History
+        </button>
+
+
+        <button
+          type="button"
+          data-section="equipmentRegistrationSection"
+        >
+          Register Equipment
+        </button>
+
+
+        <button
+          type="button"
+          data-section="maintenanceSection"
+        >
           Maintenance Report
         </button>
 
-        <button data-section="pmSection">
+
+        <button
+          type="button"
+          data-section="pmSection"
+        >
           Preventive Maintenance
         </button>
 
-        <button data-section="calibrationSection">
+
+        <button
+          type="button"
+          data-section="calibrationSection"
+        >
           Calibration
         </button>
 
-        <button data-section="reportsSection">
+
+        <button
+          type="button"
+          data-section="reportsSection"
+        >
           My Reports
         </button>
+
 
       </nav>
 
 
+
+      <!-- ==================================== -->
       <!-- MAINTENANCE REPORT -->
+      <!-- ==================================== -->
+
       <section
         id="maintenanceSection"
         class="card app-section"
       >
 
+
         <h2>
           Submit Maintenance Report
         </h2>
 
+
         <form id="maintenanceForm">
 
-          <label>
+
+          <!-- JOB ORDER NUMBER -->
+
+          <label for="jobOrderNumber">
             Job Order Number
-
-            <input
-              id="jobOrderNumber"
-              type="number"
-            >
-
           </label>
 
 
-          <label>
+          <input
+            id="jobOrderNumber"
+            type="number"
+          >
+
+
+
+          <!-- EQUIPMENT -->
+
+          <label for="equipmentId">
             Equipment
-
-            <select
-              id="equipmentId"
-              required
-            >
-
-              <option value="">
-                Select equipment
-              </option>
-
-            </select>
-
           </label>
-<label for="departmentName">
-  Department
-</label>
 
-<input
-  type="text"
-  id="departmentName"
-  readonly
-  placeholder="Department will appear automatically"
-/>
 
-          <label>
+          <select
+            id="equipmentId"
+            required
+          >
+
+            <option value="">
+              Select equipment
+            </option>
+
+          </select>
+
+
+
+          <!-- DEPARTMENT -->
+
+          <label for="departmentName">
+            Department
+          </label>
+
+
+          <input
+            type="text"
+            id="departmentName"
+            readonly
+            placeholder="Department will appear automatically"
+          >
+
+
+
+          <!-- ENGINEER -->
+
+          <label for="engineerId">
             Engineer
-
-            <select
-              id="engineerId"
-              required
-            >
-
-              <option value="">
-                Select engineer
-              </option>
-
-            </select>
-
           </label>
 
 
-          <label>
+          <select
+            id="engineerId"
+            required
+          >
+
+            <option value="">
+              Select engineer
+            </option>
+
+          </select>
+
+
+
+          <!-- MAINTENANCE TYPE -->
+
+          <label for="maintenanceTypeId">
             Maintenance Type
-
-            <select
-              id="maintenanceTypeId"
-              required
-            >
-
-              <option value="">
-                Select maintenance type
-              </option>
-
-            </select>
-
           </label>
 
 
-          <label>
+          <select
+            id="maintenanceTypeId"
+            required
+          >
+
+            <option value="">
+              Select maintenance type
+            </option>
+
+          </select>
+
+
+
+          <!-- FAULT REPORTED -->
+
+          <label for="faultReported">
             Fault Reported
-
-            <textarea
-              id="faultReported"
-            ></textarea>
-
           </label>
 
 
-          <label>
+          <textarea
+            id="faultReported"
+          ></textarea>
+
+
+
+          <!-- DIAGNOSIS -->
+
+          <label for="diagnosis">
             Diagnosis
-
-            <textarea
-              id="diagnosis"
-            ></textarea>
-
           </label>
 
 
-          <label>
+          <textarea
+            id="diagnosis"
+          ></textarea>
+
+
+
+          <!-- ACTION TAKEN -->
+
+          <label for="actionTaken">
             Action Taken
-
-            <textarea
-              id="actionTaken"
-            ></textarea>
-
           </label>
 
 
-          <label>
+          <textarea
+            id="actionTaken"
+          ></textarea>
+
+
+
+          <!-- PART USED -->
+
+          <label for="partUsed">
             Part Used
-
-            <textarea
-              id="partUsed"
-            ></textarea>
-
           </label>
 
 
-          <label>
+          <textarea
+            id="partUsed"
+          ></textarea>
+
+
+
+          <!-- REQUIRED PART -->
+
+          <label for="requiredPart">
             Required Part
-
-            <input
-              id="requiredPart"
-              type="text"
-            >
-
           </label>
 
 
-          <label>
+          <input
+            id="requiredPart"
+            type="text"
+          >
+
+
+
+          <!-- QUANTITY REQUIRED -->
+
+          <label for="quantityRequired">
             Quantity Required
-
-            <input
-              id="quantityRequired"
-              type="number"
-              min="0"
-            >
-
           </label>
 
 
-          <label>
+          <input
+            id="quantityRequired"
+            type="number"
+            min="0"
+          >
+
+
+
+          <!-- PART REQUESTED STATUS -->
+
+          <label for="partStatusId">
             Part Requested Status
-
-            <select
-              id="partStatusId"
-            >
-
-              <option value="">
-                Select part status
-              </option>
-
-            </select>
-
           </label>
 
 
-          <label>
+          <select
+            id="partStatusId"
+          >
+
+            <option value="">
+              Select part status
+            </option>
+
+          </select>
+
+
+
+          <!-- EQUIPMENT STATUS -->
+
+          <label for="statusId">
             Equipment Status
-
-            <select
-              id="statusId"
-              required
-            >
-
-              <option value="">
-                Select equipment status
-              </option>
-
-            </select>
-
           </label>
 
 
-          <label>
+          <select
+            id="statusId"
+            required
+          >
+
+            <option value="">
+              Select equipment status
+            </option>
+
+          </select>
+
+
+
+          <!-- REMARKS -->
+
+          <label for="remarks">
             Remarks
-
-            <textarea
-              id="remarks"
-            ></textarea>
-
           </label>
 
+
+          <textarea
+            id="remarks"
+          ></textarea>
+
+
+
+          <!-- SUBMIT -->
 
           <button type="submit">
             Submit Maintenance Report
           </button>
+
+
+          <!-- MESSAGE -->
 
           <p
             id="maintenanceMessage"
             class="message"
           ></p>
 
+
         </form>
+
 
       </section>
 
 
+
+      <!-- ==================================== -->
       <!-- PREVENTIVE MAINTENANCE -->
+      <!-- ==================================== -->
+
       <section
         id="pmSection"
         class="card app-section hidden"
       >
 
+
         <h2>
           Preventive Maintenance
         </h2>
+
 
         <p>
           PM form will be added next.
         </p>
 
+
       </section>
 
 
+
+      <!-- ==================================== -->
       <!-- CALIBRATION -->
+      <!-- ==================================== -->
+
       <section
         id="calibrationSection"
         class="card app-section hidden"
       >
 
+
         <h2>
           Calibration
         </h2>
+
 
         <p>
           Calibration form will be added next.
         </p>
 
+
       </section>
 
-<!-- EQUIPMENT REGISTRATION -->
-<section
-  id="equipmentRegistrationSection"
-  class="card app-section hidden"
->
 
-  <h2>
-    Register New Equipment
-  </h2>
 
-  <p>
-    Enter the details of the new medical equipment.
-  </p>
+      <!-- ==================================== -->
+      <!-- EQUIPMENT REGISTRATION -->
+      <!-- ==================================== -->
 
-
-  <form id="equipmentRegistrationForm">
-
-
-    <!-- BME NUMBER -->
-
-    <label for="newBmeNumber">
-      BME Number
-    </label>
-
-    <input
-      type="text"
-      id="newBmeNumber"
-      placeholder="Enter BME number"
-      required
-    />
-
-
-    <!-- EQUIPMENT NAME -->
-
-    <label for="newEquipmentName">
-      Equipment Name
-    </label>
-
-    <input
-      type="text"
-      id="newEquipmentName"
-      placeholder="Enter equipment name"
-      required
-    />
-
-
-    <!-- MANUFACTURER -->
-
-    <label for="newManufacturer">
-      Manufacturer
-    </label>
-
-    <input
-      type="text"
-      id="newManufacturer"
-      placeholder="Enter manufacturer"
-    />
-
-
-    <!-- MODEL -->
-
-    <label for="newModel">
-      Model
-    </label>
-
-    <input
-      type="text"
-      id="newModel"
-      placeholder="Enter model"
-    />
-
-
-    <!-- SERIAL NUMBER -->
-
-    <label for="newSerialNumber">
-      Serial Number
-    </label>
-
-    <input
-      type="text"
-      id="newSerialNumber"
-      placeholder="Enter serial number"
-    />
-
-
-    <!-- DEPARTMENT -->
-
-    <label for="newDepartmentId">
-      Department
-    </label>
-
-    <select
-      id="newDepartmentId"
-      required
-    >
-
-      <option value="">
-        Select department
-      </option>
-
-    </select>
-
-
-    <!-- CATEGORY -->
-
-    <label for="newCategoryId">
-      Category
-    </label>
-
-    <select
-      id="newCategoryId"
-      required
-    >
-
-      <option value="">
-        Select category
-      </option>
-
-    </select>
-
-
-    <!-- STATUS -->
-
-    <label for="newStatusId">
-      Equipment Status
-    </label>
-
-    <select
-      id="newStatusId"
-      required
-    >
-
-      <option value="">
-        Select status
-      </option>
-
-    </select>
-
-
-    <!-- LOCATION -->
-
-    <label for="newLocation">
-      Location
-    </label>
-
-    <input
-      type="text"
-      id="newLocation"
-      placeholder="Enter equipment location"
-    />
-
-
-    <!-- REMARKS -->
-
-    <label for="newEquipmentRemarks">
-      Remarks
-    </label>
-
-    <textarea
-      id="newEquipmentRemarks"
-      placeholder="Enter remarks"
-    ></textarea>
-
-
-    <!-- SUBMIT -->
-
-    <button
-      type="submit"
-    >
-      Register Equipment
-    </button>
-
-
-    <!-- MESSAGE -->
-
-    <p
-      id="equipmentRegistrationMessage"
-    ></p>
-
-
-  </form>
-
-</section>
-      <!-- EQUIPMENT HISTORY -->
-<section
-  id="equipmentHistorySection"
-  class="card app-section hidden"
->
-
-  <h2>
-    Equipment History
-  </h2>
-
-  <p>
-    Select an equipment to view its complete maintenance history.
-  </p>
-
-  <!-- EQUIPMENT SELECTION -->
-
-  <label for="historyEquipmentId">
-    Select Equipment
-  </label>
-
-  <select
-    id="historyEquipmentId"
-  >
-
-    <option value="">
-      Select equipment
-    </option>
-
-  </select>
-
-
-  <!-- EQUIPMENT DETAILS -->
-
-  <div
-    id="equipmentHistoryDetails"
-  >
-
-    <p>
-      Select an equipment to view its details.
-    </p>
-
-  </div>
-
-
-  <!-- HISTORY MESSAGE -->
-
-  <p
-    id="equipmentHistoryMessage"
-  ></p>
-
-
-  <!-- MAINTENANCE HISTORY TABLE -->
-
-  <div
-    style="overflow-x:auto;"
-  >
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          <th>
-            Date
-          </th>
-
-          <th>
-            Job Order
-          </th>
-
-          <th>
-            Engineer
-          </th>
-
-          <th>
-            Maintenance Type
-          </th>
-
-          <th>
-            Fault Reported
-          </th>
-
-          <th>
-            Diagnosis
-          </th>
-
-          <th>
-            Action Taken
-          </th>
-
-          <th>
-            Part Used
-          </th>
-
-          <th>
-            Required Part
-          </th>
-
-          <th>
-            Status
-          </th>
-
-          <th>
-            Remarks
-          </th>
-
-        </tr>
-
-      </thead>
-
-      <tbody
-        id="equipmentHistoryTableBody"
+      <section
+        id="equipmentRegistrationSection"
+        class="card app-section hidden"
       >
 
-        <tr>
 
-          <td
-            colspan="11"
+        <h2>
+          Register New Equipment
+        </h2>
+
+
+        <p>
+          Enter the details of the new medical equipment.
+        </p>
+
+
+        <form
+          id="equipmentRegistrationForm"
+        >
+
+
+          <!-- BME NUMBER -->
+
+          <label for="newBmeNumber">
+            BME Number
+          </label>
+
+
+          <input
+            type="text"
+            id="newBmeNumber"
+            placeholder="Enter BME number"
+            required
           >
 
-            Select an equipment to view history.
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</section>
-      <!-- MY REPORTS / MAINTENANCE HISTORY -->
-<section
-  id="reportsSection"
-  class="card app-section hidden"
->
-
-  <h2>
-    Maintenance Report History
-  </h2>
-
-  <p>
-    View submitted maintenance reports.
-  </p>
 
 
-  <!-- SEARCH -->
-  <div class="form-group">
+          <!-- EQUIPMENT NAME -->
 
-    <label for="reportSearch">
-      Search Reports
-    </label>
-
-    <input
-      type="text"
-      id="reportSearch"
-      placeholder="Search equipment, engineer, fault, or action taken"
-    />
-
-  </div>
+          <label for="newEquipmentName">
+            Equipment Name
+          </label>
 
 
-  <!-- REPORT HISTORY TABLE -->
+          <input
+            type="text"
+            id="newEquipmentName"
+            placeholder="Enter equipment name"
+            required
+          >
 
-  <div
-    id="reportsLoading"
-  >
-    Loading reports...
-  </div>
 
 
-  <div
-    class="table-container"
-  >
+          <!-- MANUFACTURER -->
 
-    <table
-      id="reportsTable"
-    >
+          <label for="newManufacturer">
+            Manufacturer
+          </label>
 
-      <thead>
 
-        <tr>
+          <input
+            type="text"
+            id="newManufacturer"
+            placeholder="Enter manufacturer"
+          >
 
-          <th>
-            Date
-          </th>
 
-          <th>
-            Job Order
-          </th>
 
-          <th>
-            Equipment
-          </th>
+          <!-- MODEL -->
 
-          <th>
+          <label for="newModel">
+            Model
+          </label>
+
+
+          <input
+            type="text"
+            id="newModel"
+            placeholder="Enter model"
+          >
+
+
+
+          <!-- SERIAL NUMBER -->
+
+          <label for="newSerialNumber">
+            Serial Number
+          </label>
+
+
+          <input
+            type="text"
+            id="newSerialNumber"
+            placeholder="Enter serial number"
+          >
+
+
+
+          <!-- DEPARTMENT -->
+
+          <label for="newDepartmentId">
             Department
-          </th>
+          </label>
 
-          <th>
-            Engineer
-          </th>
 
-          <th>
-            Maintenance Type
-          </th>
+          <select
+            id="newDepartmentId"
+            required
+          >
 
-          <th>
-            Fault Reported
-          </th>
+            <option value="">
+              Select department
+            </option>
 
-          <th>
-            Action Taken
-          </th>
+          </select>
 
-          <th>
-            Status
-          </th>
 
-          <th>
+
+          <!-- CATEGORY -->
+
+          <label for="newCategoryId">
+            Category
+          </label>
+
+
+          <select
+            id="newCategoryId"
+            required
+          >
+
+            <option value="">
+              Select category
+            </option>
+
+          </select>
+
+
+
+          <!-- EQUIPMENT STATUS -->
+
+          <label for="newStatusId">
+            Equipment Status
+          </label>
+
+
+          <select
+            id="newStatusId"
+            required
+          >
+
+            <option value="">
+              Select status
+            </option>
+
+          </select>
+
+
+
+          <!-- LOCATION -->
+
+          <label for="newLocation">
+            Location
+          </label>
+
+
+          <input
+            type="text"
+            id="newLocation"
+            placeholder="Enter equipment location"
+          >
+
+
+
+          <!-- REMARKS -->
+
+          <label for="newEquipmentRemarks">
             Remarks
-          </th>
-
-        </tr>
-
-      </thead>
+          </label>
 
 
-      <tbody
-        id="reportsTableBody"
+          <textarea
+            id="newEquipmentRemarks"
+            placeholder="Enter remarks"
+          ></textarea>
+
+
+
+          <!-- SUBMIT -->
+
+          <button
+            type="submit"
+          >
+            Register Equipment
+          </button>
+
+
+
+          <!-- MESSAGE -->
+
+          <p
+            id="equipmentRegistrationMessage"
+            class="message"
+          ></p>
+
+
+        </form>
+
+
+      </section>
+
+
+
+      <!-- ==================================== -->
+      <!-- EQUIPMENT HISTORY -->
+      <!-- ==================================== -->
+
+      <section
+        id="equipmentHistorySection"
+        class="card app-section hidden"
       >
 
-      </tbody>
 
-    </table>
+        <h2>
+          Equipment History
+        </h2>
 
-  </div>
+
+        <p>
+          Select an equipment to view its complete maintenance history.
+        </p>
 
 
-  <!-- REPORT MESSAGE -->
 
-  <p
-    id="reportsMessage"
-  ></p>
+        <!-- EQUIPMENT SELECTION -->
 
-</section>
+        <label for="historyEquipmentId">
+          Select Equipment
+        </label>
 
+
+        <select
+          id="historyEquipmentId"
+        >
+
+          <option value="">
+            Select equipment
+          </option>
+
+        </select>
+
+
+
+        <!-- EQUIPMENT DETAILS -->
+
+        <div
+          id="equipmentHistoryDetails"
+        >
+
+
+          <p>
+            Select an equipment to view its details.
+          </p>
+
+
+        </div>
+
+
+
+        <!-- HISTORY MESSAGE -->
+
+        <p
+          id="equipmentHistoryMessage"
+          class="message"
+        ></p>
+
+
+
+        <!-- MAINTENANCE HISTORY TABLE -->
+
+        <div
+          style="overflow-x:auto;"
+        >
+
+
+          <table>
+
+
+            <thead>
+
+
+              <tr>
+
+
+                <th>
+                  Date
+                </th>
+
+
+                <th>
+                  Job Order
+                </th>
+
+
+                <th>
+                  Engineer
+                </th>
+
+
+                <th>
+                  Maintenance Type
+                </th>
+
+
+                <th>
+                  Fault Reported
+                </th>
+
+
+                <th>
+                  Diagnosis
+                </th>
+
+
+                <th>
+                  Action Taken
+                </th>
+
+
+                <th>
+                  Part Used
+                </th>
+
+
+                <th>
+                  Required Part
+                </th>
+
+
+                <th>
+                  Status
+                </th>
+
+
+                <th>
+                  Remarks
+                </th>
+
+
+              </tr>
+
+
+            </thead>
+
+
+            <tbody
+              id="equipmentHistoryTableBody"
+            >
+
+
+              <tr>
+
+
+                <td
+                  colspan="11"
+                >
+
+
+                  Select an equipment to view history.
+
+
+                </td>
+
+
+              </tr>
+
+
+            </tbody>
+
+
+          </table>
+
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- ==================================== -->
+      <!-- MY REPORTS -->
+      <!-- ==================================== -->
+
+      <section
+        id="reportsSection"
+        class="card app-section hidden"
+      >
+
+
+        <h2>
+          Maintenance Report History
+        </h2>
+
+
+        <p>
+          View submitted maintenance reports.
+        </p>
+
+
+
+        <!-- SEARCH -->
+
+        <div
+          class="form-group"
+        >
+
+
+          <label for="reportSearch">
+            Search Reports
+          </label>
+
+
+          <input
+            type="text"
+            id="reportSearch"
+            placeholder="Search equipment, engineer, fault, or action taken"
+          >
+
+
+        </div>
+
+
+
+        <!-- REPORT LOADING -->
+
+        <div
+          id="reportsLoading"
+        >
+        </div>
+
+
+
+        <!-- REPORT HISTORY TABLE -->
+
+        <div
+          class="table-container"
+        >
+
+
+          <table
+            id="reportsTable"
+          >
+
+
+            <thead>
+
+
+              <tr>
+
+
+                <th>
+                  Date
+                </th>
+
+
+                <th>
+                  Job Order
+                </th>
+
+
+                <th>
+                  BME Number
+                </th>
+
+
+                <th>
+                  Equipment
+                </th>
+
+
+                <th>
+                  Department
+                </th>
+
+
+                <th>
+                  Engineer
+                </th>
+
+
+                <th>
+                  Maintenance Type
+                </th>
+
+
+                <th>
+                  Fault Reported
+                </th>
+
+
+                <th>
+                  Action Taken
+                </th>
+
+
+                <th>
+                  Status
+                </th>
+
+
+                <th>
+                  Remarks
+                </th>
+
+
+              </tr>
+
+
+            </thead>
+
+
+
+            <tbody
+              id="reportsTableBody"
+            >
+
+
+            </tbody>
+
+
+          </table>
+
+
+        </div>
+
+
+
+        <!-- REPORT MESSAGE -->
+
+        <p
+          id="reportsMessage"
+          class="message"
+        ></p>
+
+
+      </section>
+
+
+    </section>
+
+
+  </main>
+
+
+
+  <!-- ====================================== -->
   <!-- SUPABASE LIBRARY -->
+  <!-- ====================================== -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
 
 
-  <!-- OUR APPLICATION JAVASCRIPT -->
 
-  <script src="app.js">
-  </script>
+  <!-- ====================================== -->
+  <!-- APPLICATION JAVASCRIPT -->
+  <!-- ====================================== -->
+
+  <script
+    src="app.js"
+  ></script>
+
 
 </body>
 
