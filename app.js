@@ -2863,3 +2863,744 @@ async function initializeApp() {
 // ==========================================
 
 initializeApp();
+// ==========================================
+// PREVENTIVE MAINTENANCE MODULE
+// ATBUTH BIOMEDICAL CMMS
+// ==========================================
+
+
+// ==========================================
+// PM FORM ELEMENTS
+// ==========================================
+
+const preventiveMaintenanceForm =
+  document.getElementById(
+    "preventiveMaintenanceForm"
+  );
+
+
+const pmEquipmentSelect =
+  document.getElementById(
+    "pmEquipmentId"
+  );
+
+
+const pmDepartmentInput =
+  document.getElementById(
+    "pmDepartmentName"
+  );
+
+
+const pmMessage =
+  document.getElementById(
+    "pmMessage"
+  );
+
+
+// ==========================================
+// LOAD PM EQUIPMENT DROPDOWN
+// ==========================================
+
+async function loadPMEquipmentDropdown() {
+
+  const select =
+    document.getElementById(
+      "pmEquipmentId"
+    );
+
+
+  if (!select) {
+
+    console.error(
+      "PM Equipment dropdown not found."
+    );
+
+    return;
+
+  }
+
+
+  select.innerHTML =
+    '<option value="">Loading equipment...</option>';
+
+
+  try {
+
+    const {
+
+      data,
+
+      error
+
+    } = await client
+
+      .from("tblEquipment")
+
+      .select(
+        "EquipmentID, BMENumber, EquipmentName"
+      )
+
+      .order(
+        "BMENumber",
+        {
+          ascending: true
+        }
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Error loading PM equipment:",
+        error
+      );
+
+
+      select.innerHTML =
+        '<option value="">Unable to load equipment</option>';
+
+
+      return;
+
+    }
+
+
+    select.innerHTML =
+      '<option value="">Select equipment</option>';
+
+
+    if (
+
+      !data ||
+
+      data.length === 0
+
+    ) {
+
+      select.innerHTML =
+        '<option value="">No equipment found</option>';
+
+
+      return;
+
+    }
+
+
+    data.forEach(
+
+      equipment => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          equipment.EquipmentID;
+
+
+        option.textContent =
+
+          `${equipment.BMENumber || ""} — ${
+            equipment.EquipmentName || ""
+          }`;
+
+
+        select.appendChild(
+          option
+        );
+
+      }
+
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "PM equipment dropdown error:",
+      error
+    );
+
+
+    select.innerHTML =
+      '<option value="">Unable to load equipment</option>';
+
+  }
+
+}
+
+
+// ==========================================
+// LOAD PM DEPARTMENT
+// ==========================================
+
+async function loadPMDepartment(
+  equipmentId
+) {
+
+  const departmentInput =
+    document.getElementById(
+      "pmDepartmentName"
+    );
+
+
+  if (!departmentInput) {
+
+    return;
+
+  }
+
+
+  departmentInput.value = "";
+
+
+  if (!equipmentId) {
+
+    return;
+
+  }
+
+
+  departmentInput.value =
+    "Loading department...";
+
+
+  try {
+
+    // --------------------------------------
+    // GET EQUIPMENT DEPARTMENT ID
+    // --------------------------------------
+
+    const {
+
+      data: equipment,
+
+      error: equipmentError
+
+    } = await client
+
+      .from("tblEquipment")
+
+      .select(
+        "DepartmentID"
+      )
+
+      .eq(
+        "EquipmentID",
+        equipmentId
+      )
+
+      .maybeSingle();
+
+
+    if (equipmentError) {
+
+      console.error(
+        "PM equipment department error:",
+        equipmentError
+      );
+
+
+      departmentInput.value =
+        "Unable to load department";
+
+
+      return;
+
+    }
+
+
+    if (!equipment) {
+
+      departmentInput.value =
+        "Equipment not found";
+
+
+      return;
+
+    }
+
+
+    if (
+
+      equipment.DepartmentID === null ||
+
+      equipment.DepartmentID === undefined
+
+    ) {
+
+      departmentInput.value =
+        "No department assigned";
+
+
+      return;
+
+    }
+
+
+    // --------------------------------------
+    // GET DEPARTMENT NAME
+    // --------------------------------------
+
+    const {
+
+      data: department,
+
+      error: departmentError
+
+    } = await client
+
+      .from("tblDepartment")
+
+      .select(
+        "DepartmentName"
+      )
+
+      .eq(
+        "DepartmentID",
+        equipment.DepartmentID
+      )
+
+      .maybeSingle();
+
+
+    if (departmentError) {
+
+      console.error(
+        "PM department lookup error:",
+        departmentError
+      );
+
+
+      departmentInput.value =
+        "Unable to load department";
+
+
+      return;
+
+    }
+
+
+    if (!department) {
+
+      departmentInput.value =
+        "Department not found";
+
+
+      return;
+
+    }
+
+
+    departmentInput.value =
+
+      department.DepartmentName ||
+
+      "";
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Unexpected PM department error:",
+      error
+    );
+
+
+    departmentInput.value =
+      "Unable to load department";
+
+  }
+
+}
+
+
+// ==========================================
+// PM EQUIPMENT CHANGE EVENT
+// ==========================================
+
+if (pmEquipmentSelect) {
+
+  pmEquipmentSelect.addEventListener(
+
+    "change",
+
+    function() {
+
+      loadPMDepartment(
+        this.value
+      );
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// SUBMIT PREVENTIVE MAINTENANCE
+// ==========================================
+
+if (preventiveMaintenanceForm) {
+
+  preventiveMaintenanceForm.addEventListener(
+
+    "submit",
+
+    async function(event) {
+
+      event.preventDefault();
+
+
+      if (pmMessage) {
+
+        pmMessage.textContent =
+          "Submitting Preventive Maintenance report...";
+
+      }
+
+
+      // ------------------------------------
+      // CHECK AUTHENTICATED USER
+      // ------------------------------------
+
+      const {
+
+        data: authData,
+
+        error: authError
+
+      } = await client.auth.getUser();
+
+
+      if (
+
+        authError ||
+
+        !authData.user
+
+      ) {
+
+        if (pmMessage) {
+
+          pmMessage.textContent =
+
+            "Your session has expired. Please log in again.";
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ------------------------------------
+      // GET FORM VALUES
+      // ------------------------------------
+
+      const equipmentValue =
+
+        document
+
+          .getElementById(
+            "pmEquipmentId"
+          )
+
+          .value;
+
+
+      const engineerValue =
+
+        document
+
+          .getElementById(
+            "pmEngineerId"
+          )
+
+          .value;
+
+
+      const pmDateValue =
+
+        document
+
+          .getElementById(
+            "pmDate"
+          )
+
+          .value;
+
+
+      const nextPMDateValue =
+
+        document
+
+          .getElementById(
+            "nextPMDate"
+          )
+
+          .value;
+
+
+      const pmStatusValue =
+
+        document
+
+          .getElementById(
+            "pmStatus"
+          )
+
+          .value;
+
+
+      // ------------------------------------
+      // VALIDATE REQUIRED FIELDS
+      // ------------------------------------
+
+      if (
+
+        !equipmentValue ||
+
+        !engineerValue ||
+
+        !pmDateValue ||
+
+        !nextPMDateValue ||
+
+        !pmStatusValue
+
+      ) {
+
+        if (pmMessage) {
+
+          pmMessage.textContent =
+
+            "Please complete all required PM fields.";
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ====================================
+      // PREPARE PM PAYLOAD
+      // ====================================
+
+      const pmPayload = {
+
+        EquipmentID:
+
+          Number(
+            equipmentValue
+          ),
+
+
+        PMDate:
+
+          pmDateValue,
+
+
+        NextPMDate:
+
+          nextPMDateValue,
+
+
+        EngineerID:
+
+          Number(
+            engineerValue
+          ),
+
+
+        WorkPerformed:
+
+          document
+
+            .getElementById(
+              "workPerformed"
+            )
+
+            .value ||
+
+          null,
+
+
+        Findings:
+
+          document
+
+            .getElementById(
+              "pmFindings"
+            )
+
+            .value ||
+
+          null,
+
+
+        Recommendations:
+
+          document
+
+            .getElementById(
+              "pmRecommendations"
+            )
+
+            .value ||
+
+          null,
+
+
+        PMStatus:
+
+          pmStatusValue,
+
+
+        Remarks:
+
+          document
+
+            .getElementById(
+              "pmRemarks"
+            )
+
+            .value ||
+
+          null
+
+      };
+
+
+      // ====================================
+      // INSERT PM RECORD
+      // ====================================
+
+      const {
+
+        data,
+
+        error
+
+      } = await client
+
+        .from(
+          "tblPreventiveMaintenance"
+        )
+
+        .insert(
+          pmPayload
+        )
+
+        .select();
+
+
+      // ====================================
+      // HANDLE ERROR
+      // ====================================
+
+      if (error) {
+
+        console.error(
+          "Preventive Maintenance error:",
+          error
+        );
+
+
+        if (pmMessage) {
+
+          pmMessage.textContent =
+
+            "Error submitting PM report: " +
+
+            error.message;
+
+        }
+
+
+        return;
+
+      }
+
+
+      // ====================================
+      // SUCCESS
+      // ====================================
+
+      console.log(
+        "PM record inserted:",
+        data
+      );
+
+
+      if (pmMessage) {
+
+        pmMessage.textContent =
+
+          "Preventive Maintenance report submitted successfully.";
+
+      }
+
+
+      // ------------------------------------
+      // RESET FORM
+      // ------------------------------------
+
+      preventiveMaintenanceForm.reset();
+
+
+      // ------------------------------------
+      // CLEAR DEPARTMENT
+      // ------------------------------------
+
+      if (pmDepartmentInput) {
+
+        pmDepartmentInput.value =
+          "";
+
+      }
+
+    }
+
+  );
+
+}
+
+
+// ==========================================
+// INITIALIZE PM MODULE
+// ==========================================
+
+async function initializePreventiveMaintenance() {
+
+  try {
+
+    await loadPMEquipmentDropdown();
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "PM initialization error:",
+      error
+    );
+
+  }
+
+}
+
+
+// ==========================================
+// START PM MODULE
+// ==========================================
+
+initializePreventiveMaintenance();
