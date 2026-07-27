@@ -3450,7 +3450,7 @@ if (preventiveMaintenanceForm) {
           document
 
             .getElementById(
-              "workPerformed"
+              "work Performed"
             )
 
             .value ||
@@ -3710,7 +3710,7 @@ async function loadPMHistory() {
         PMDate,
         NextPMDate,
         EngineerID,
-        WorkPerformed,
+        Work Performed,
         Findings,
         Recommendations,
         PMStatus,
@@ -4227,7 +4227,7 @@ async function loadPMHistory() {
           </td>
 
           <td>
-            ${pm.WorkPerformed || ""}
+            ${pm . Work Performed || ""}
           </td>
 
           <td>
