@@ -1188,9 +1188,9 @@ async function loadUserProfile(
 async function loadMaintenanceReports() {
 
   const reportTableBody =
-    document.getElementById(
-      "maintenanceReportBody"
-    );
+  document.getElementById(
+    "reportsTableBody"
+  );
 
 
   // Your current HTML does not contain
@@ -1682,99 +1682,66 @@ if (logoutBtn) {
 
 }
 
-
 // ==========================================
 // MENU NAVIGATION
 // ==========================================
 
 document
+  .querySelectorAll(".menu button")
+  .forEach(button => {
 
-  .querySelectorAll(
-    ".menu button"
-  )
+    button.addEventListener("click", function() {
 
-  .forEach(
+      // --------------------------------------
+      // HIDE ALL APPLICATION SECTIONS
+      // --------------------------------------
 
-    button => {
-
-      button.addEventListener(
-
-        "click",
-
-        function() {
-
-          // --------------------------------
-          // HIDE ALL SECTIONS
-          // --------------------------------
-
-          document
-
-            .querySelectorAll(
-              ".app-section"
-            )
-
-            .forEach(
-
-              section =>
-
-                section.classList.add(
-                  "hidden"
-                )
-
-            );
+      document
+        .querySelectorAll(".app-section")
+        .forEach(section => {
+          section.classList.add("hidden");
+        });
 
 
-          // --------------------------------
-          // GET SELECTED SECTION
-          // --------------------------------
+      // --------------------------------------
+      // GET SELECTED SECTION
+      // --------------------------------------
 
-          const selectedSection =
-
-            document.getElementById(
-
-              button.dataset.section
-
-            );
+      const selectedSection =
+        document.getElementById(
+          button.dataset.section
+        );
 
 
-          // --------------------------------
-          // SHOW SELECTED SECTION
-          // --------------------------------
+      // --------------------------------------
+      // SHOW SELECTED SECTION
+      // --------------------------------------
 
-          if (
-            selectedSection
-          ) {
+      if (selectedSection) {
 
-            selectedSection.classList.remove(
-              "hidden"
-            );
+        selectedSection.classList.remove(
+          "hidden"
+        );
 
-          }
+      }
 
 
-          // --------------------------------
-          // REFRESH EQUIPMENT HISTORY
-          // --------------------------------
+      // --------------------------------------
+      // LOAD MY REPORTS
+      // --------------------------------------
 
-          if (
+      if (
+        button.dataset.section ===
+        "reportsSection"
+      ) {
 
-            button.dataset.section ===
-            "equipmentHistorySection"
+        loadMaintenanceReports();
 
-          ) {
+      }
 
-            loadEquipmentHistoryDropdown();
+    });
 
-          }
-
-        }
-
-      );
-
-    }
-
-  );
-
+  });
 
 // ==========================================
 // SUBMIT MAINTENANCE REPORT
