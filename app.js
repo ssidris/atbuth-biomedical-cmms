@@ -255,7 +255,31 @@ async function loadMaintenanceFormData() {
     }
 
   );
+// ----------------------------------------
+// PM ENGINEERS
+// ----------------------------------------
 
+await loadLookup(
+
+  "tblEngineers",
+
+  "EngineerID",
+
+  "FirstName",
+
+  "pmEngineerId",
+
+  "Select engineer",
+
+  row => {
+
+    return `${row.FirstName || ""} ${
+      row.LastName || ""
+    }`.trim();
+
+  }
+
+);
 
   // ----------------------------------------
   // MAINTENANCE TYPE
