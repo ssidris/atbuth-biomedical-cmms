@@ -2163,7 +2163,6 @@ document
     }
   );
 
-
 // ==========================================
 // LOGIN
 // ==========================================
@@ -2177,89 +2176,150 @@ if (loginForm) {
       event.preventDefault();
 
       if (loginMessage) {
-
-        loginMessage.textContent =
-          "Signing in...";
-
+        loginMessage.textContent = "Signing in...";
       }
 
-      const email =
-        document.getElementById(
-          "email"
-        ).value.trim();
+      const emailInput =
+        document.getElementById("email");
 
-      const password =
-        document.getElementById(
-          "password"
-        ).value;
+      const passwordInput =
+        document.getElementById("password");
 
-
-      if (
-        !email ||
-        !password
-      ) {
+      if (!emailInput || !passwordInput) {
 
         if (loginMessage) {
-
           loginMessage.textContent =
-            "Please enter your email and password.";
-
+            "Login fields were not found.";
         }
 
         return;
+      }
 
+      const email =
+        emailInput.value.trim();
+
+      const password =
+        passwordInput.value;
+
+
+      // --------------------------------------
+      // VALIDATE INPUT
+      // --------------------------------------
+
+      if (!email || !password) {
+
+        if (loginMessage) {
+          loginMessage.textContent =
+            "Please enter your email and password.";
+        }
+
+        return;
       }
 
 
       try {
+
+        console.log(
+          "Attempting Supabase login for:",
+          email
+        );
+
+
+        // --------------------------------------
+        // SUPABASE AUTHENTICATION
+        // --------------------------------------
 
         const {
           data,
           error
         } = await client.auth.signInWithPassword({
 
-          email:
-            email,
+          email: email,
 
-          password:
-            password
+          password: password
 
         });
 
 
+        // --------------------------------------
+        // AUTHENTICATION ERROR
+        // --------------------------------------
+
         if (error) {
 
-          throw error;
+          console.error(
+            "Supabase authentication error:",
+            error
+          );
+
+          throw new Error(
+            "Authentication failed: " +
+            error.message
+          );
 
         }
 
+
+        // --------------------------------------
+        // CHECK USER
+        // --------------------------------------
+
+        if (
+          !data ||
+          !data.user
+        ) {
+
+          throw new Error(
+            "Login failed because Supabase did not return a user account."
+          );
+
+        }
+
+
+        console.log(
+          "Supabase authentication successful."
+        );
+
+        console.log(
+          "Authenticated User ID:",
+          data.user.id
+        );
+
+        console.log(
+          "Authenticated Email:",
+          data.user.email
+        );
+
+
+        // --------------------------------------
+        // LOAD APPLICATION
+        // --------------------------------------
 
         await showApp(
           data.user
         );
 
 
-        if (loginMessage) {
+        console.log(
+          "Login and application loading completed."
+        );
 
-          loginMessage.textContent =
-            "";
-
-        }
 
       }
 
       catch (error) {
 
         console.error(
-          "Login error:",
+          "Complete login process error:",
           error
         );
+
 
         if (loginMessage) {
 
           loginMessage.textContent =
-            "Login failed: " +
-            error.message;
+            error.message ||
+            "Login failed. Please check your email and password.";
 
         }
 
@@ -2270,6 +2330,193 @@ if (loginForm) {
 
 }
 
+
+// ==========================================
+// SHOW APPLICATION AFTER LOGIN
+// ==========================================
+
+async function showApp(user) {
+
+  try {
+
+    console.log(
+      "Loading application for user:",
+      user.id
+    );
+
+
+    // --------------------------------------
+    // LOAD USER PROFILE
+    // --------------------------------------
+
+    const profile =
+      await loadUserProfile(
+        user.id
+      );
+
+
+    console.log(
+      "User profile successfully loaded:",
+      profile
+    );
+
+
+    // --------------------------------------
+    // HIDE LOGIN
+    // SHOW APPLICATION
+    // --------------------------------------
+
+    if (loginView) {
+
+      loginView.classList.add(
+        "hidden"
+      );
+
+    }
+
+    if (appView) {
+
+      appView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    // --------------------------------------
+    // SHOW USER NAME
+    // --------------------------------------
+
+    if (welcomeText) {
+
+      const fullName =
+        profile["Full name"] ||
+        profile.Username ||
+        user.email ||
+        "User";
+
+      welcomeText.textContent =
+        `Welcome, ${fullName}`;
+
+    }
+
+
+    // --------------------------------------
+    // LOAD FORM DROPDOWNS
+    // --------------------------------------
+
+    console.log(
+      "Loading application form data..."
+    );
+
+    await loadFormData();
+
+
+    // --------------------------------------
+    // LOAD MAINTENANCE REPORTS
+    // --------------------------------------
+
+    console.log(
+      "Loading maintenance reports..."
+    );
+
+    await loadMaintenanceReports();
+
+
+    // --------------------------------------
+    // LOAD DASHBOARD
+    // --------------------------------------
+
+    console.log(
+      "Loading dashboard..."
+    );
+
+    await loadDashboard();
+
+
+    console.log(
+      "Application loaded successfully."
+    );
+
+
+    // --------------------------------------
+    // CLEAR LOGIN MESSAGE
+    // --------------------------------------
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "";
+
+    }
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Show application error:",
+      error
+    );
+
+
+    // --------------------------------------
+    // DO NOT HIDE THE REAL ERROR
+    // --------------------------------------
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "Login succeeded, but the application could not load: " +
+        error.message;
+
+    }
+
+
+    // --------------------------------------
+    // SIGN OUT
+    // --------------------------------------
+
+    try {
+
+      await client.auth.signOut();
+
+    }
+
+    catch (signOutError) {
+
+      console.error(
+        "Sign out after failed application load:",
+        signOutError
+      );
+
+    }
+
+
+    // --------------------------------------
+    // SHOW LOGIN
+    // --------------------------------------
+
+    if (appView) {
+
+      appView.classList.add(
+        "hidden"
+      );
+
+    }
+
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+  }
+
+}
 
 // ==========================================
 // LOGOUT
