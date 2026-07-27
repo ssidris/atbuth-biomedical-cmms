@@ -96,11 +96,8 @@ async function loadLookup(
   try {
 
     const {
-
       data,
-
       error
-
     } = await client
 
       .from(table)
@@ -255,31 +252,7 @@ async function loadMaintenanceFormData() {
     }
 
   );
-// ----------------------------------------
-// PM ENGINEERS
-// ----------------------------------------
 
-await loadLookup(
-
-  "tblEngineers",
-
-  "EngineerID",
-
-  "FirstName",
-
-  "pmEngineerId",
-
-  "Select engineer",
-
-  row => {
-
-    return `${row.FirstName || ""} ${
-      row.LastName || ""
-    }`.trim();
-
-  }
-
-);
 
   // ----------------------------------------
   // MAINTENANCE TYPE
@@ -367,11 +340,12 @@ async function loadEquipmentRegistrationDropdowns() {
 
   // ----------------------------------------
   // CATEGORY
+  // IMPORTANT: TABLE IS tblCategory
   // ----------------------------------------
 
   await loadLookup(
 
-    "tblEquipmentcategory",
+    "tblCategory",
 
     "CategoryID",
 
@@ -458,11 +432,8 @@ async function loadDepartmentForEquipment(
     // --------------------------------------
 
     const {
-
       data: equipment,
-
       error: equipmentError
-
     } = await client
 
       .from("tblEquipment")
@@ -529,11 +500,8 @@ async function loadDepartmentForEquipment(
     // --------------------------------------
 
     const {
-
       data: department,
-
       error: departmentError
-
     } = await client
 
       .from("tblDepartment")
@@ -641,7 +609,6 @@ async function loadEquipmentHistoryDropdown() {
       "Equipment History dropdown not found."
     );
 
-
     return;
 
   }
@@ -655,11 +622,8 @@ async function loadEquipmentHistoryDropdown() {
   try {
 
     const {
-
       data,
-
       error
-
     } = await client
 
       .from("tblEquipment")
@@ -805,7 +769,6 @@ async function loadEquipmentHistory(
       "Equipment History elements not found."
     );
 
-
     return;
 
   }
@@ -839,11 +802,8 @@ async function loadEquipmentHistory(
     // ======================================
 
     const {
-
       data: equipment,
-
       error: equipmentError
-
     } = await client
 
       .from("tblEquipment")
@@ -920,11 +880,8 @@ async function loadEquipmentHistory(
     ) {
 
       const {
-
         data: department,
-
         error: departmentError
-
       } = await client
 
         .from("tblDepartment")
@@ -1013,15 +970,12 @@ async function loadEquipmentHistory(
 
 
     // ======================================
-    // GET MAINTENANCE HISTORY
+    // GET ONLY SELECTED EQUIPMENT HISTORY
     // ======================================
 
     const {
-
       data: history,
-
       error: historyError
-
     } = await client
 
       .from("vwMaintenanceReport")
@@ -1302,8 +1256,6 @@ if (historyEquipmentSelect) {
   );
 
 }
-
-
 // ==========================================
 // LOAD USER PROFILE
 // ==========================================
@@ -1313,11 +1265,8 @@ async function loadUserProfile(
 ) {
 
   const {
-
     data,
-
     error
-
   } = await client
 
     .from("tblUsers")
@@ -1340,7 +1289,6 @@ async function loadUserProfile(
       "User profile error:",
       error
     );
-
 
     throw error;
 
@@ -1432,11 +1380,8 @@ async function loadMaintenanceReports() {
   try {
 
     const {
-
       data,
-
       error
-
     } = await client
 
       .from(
@@ -1625,6 +1570,8 @@ async function loadMaintenanceReports() {
   }
 
 }
+
+
 // ==========================================
 // EQUIPMENT REGISTRATION
 // ==========================================
@@ -1655,142 +1602,273 @@ if (equipmentRegistrationForm) {
       }
 
 
-      // ======================================
-      // GET FORM VALUES
-      // ======================================
+      try {
 
-      const bmeNumber =
+        // ==================================
+        // GET FORM VALUES
+        // ==================================
 
-        document.getElementById(
-          "newBmeNumber"
-        ).value.trim();
+        const bmeNumber =
 
-
-      const equipmentName =
-
-        document.getElementById(
-          "newEquipmentName"
-        ).value.trim();
+          document.getElementById(
+            "newBmeNumber"
+          ).value.trim();
 
 
-      const manufacturer =
+        const equipmentName =
 
-        document.getElementById(
-          "newManufacturer"
-        ).value.trim();
-
-
-      const model =
-
-        document.getElementById(
-          "newModel"
-        ).value.trim();
+          document.getElementById(
+            "newEquipmentName"
+          ).value.trim();
 
 
-      const serialNumber =
+        const manufacturer =
 
-        document.getElementById(
-          "newSerialNumber"
-        ).value.trim();
-
-
-      const departmentId =
-
-        document.getElementById(
-          "newDepartmentId"
-        ).value;
+          document.getElementById(
+            "newManufacturer"
+          ).value.trim();
 
 
-      const categoryId =
+        const model =
 
-        document.getElementById(
-          "newCategoryId"
-        ).value;
-
-
-      const statusId =
-
-        document.getElementById(
-          "newStatusId"
-        ).value;
+          document.getElementById(
+            "newModel"
+          ).value.trim();
 
 
-      const location =
+        const serialNumber =
 
-        document.getElementById(
-          "newLocation"
-        ).value.trim();
-
-
-      const remarks =
-
-        document.getElementById(
-          "newEquipmentRemarks"
-        ).value.trim();
+          document.getElementById(
+            "newSerialNumber"
+          ).value.trim();
 
 
-      // ======================================
-      // VALIDATE REQUIRED FIELDS
-      // ======================================
+        const departmentId =
 
-      if (
+          document.getElementById(
+            "newDepartmentId"
+          ).value;
 
-        !bmeNumber ||
 
-        !equipmentName ||
+        const categoryId =
 
-        !departmentId ||
+          document.getElementById(
+            "newCategoryId"
+          ).value;
 
-        !categoryId ||
 
-        !statusId
+        const statusId =
 
-      ) {
+          document.getElementById(
+            "newStatusId"
+          ).value;
 
-        if (message) {
 
-          message.textContent =
+        const location =
 
-            "Please complete all required fields.";
+          document.getElementById(
+            "newLocation"
+          ).value.trim();
+
+
+        const remarks =
+
+          document.getElementById(
+            "newEquipmentRemarks"
+          ).value.trim();
+
+
+        // ==================================
+        // VALIDATE REQUIRED FIELDS
+        // ==================================
+
+        if (
+
+          !bmeNumber ||
+
+          !equipmentName ||
+
+          !departmentId ||
+
+          !categoryId ||
+
+          !statusId
+
+        ) {
+
+          if (message) {
+
+            message.textContent =
+
+              "Please complete all required fields.";
+
+          }
+
+          return;
 
         }
 
-        return;
 
-      }
+        // ==================================
+        // CHECK DUPLICATE BME NUMBER
+        // ==================================
 
+        const {
+          data: existingEquipment,
+          error: checkError
+        } = await client
 
-      // ======================================
-      // CHECK FOR DUPLICATE BME NUMBER
-      // ======================================
+          .from("tblEquipment")
 
-      const {
+          .select(
+            "EquipmentID"
+          )
 
-        data: existingEquipment,
+          .eq(
+            "BMENumber",
+            bmeNumber
+          )
 
-        error: checkError
-
-      } = await client
-
-        .from("tblEquipment")
-
-        .select(
-          "EquipmentID"
-        )
-
-        .eq(
-          "BMENumber",
-          bmeNumber
-        )
-
-        .maybeSingle();
+          .maybeSingle();
 
 
-      if (checkError) {
+        if (checkError) {
 
-        console.error(
-          "BME Number check error:",
-          checkError
+          console.error(
+            "BME Number check error:",
+            checkError
+          );
+
+
+          if (message) {
+
+            message.textContent =
+
+              "Unable to check BME Number: " +
+
+              checkError.message;
+
+          }
+
+
+          return;
+
+        }
+
+
+        if (existingEquipment) {
+
+          if (message) {
+
+            message.textContent =
+
+              "This BME Number already exists. Please enter a unique BME Number.";
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ==================================
+        // PREPARE EQUIPMENT DATA
+        // ==================================
+
+        const equipmentData = {
+
+          BMENumber:
+            bmeNumber,
+
+          EquipmentName:
+            equipmentName,
+
+          Manufacturer:
+            manufacturer || null,
+
+          Model:
+            model || null,
+
+          SerialNumber:
+            serialNumber || null,
+
+          DepartmentID:
+            Number(
+              departmentId
+            ),
+
+          CategoryID:
+            Number(
+              categoryId
+            ),
+
+          StatusID:
+            Number(
+              statusId
+            ),
+
+          Location:
+            location || null,
+
+          Remarks:
+            remarks || null
+
+        };
+
+
+        // ==================================
+        // INSERT EQUIPMENT
+        // ==================================
+
+        const {
+          data,
+          error
+        } = await client
+
+          .from(
+            "tblEquipment"
+          )
+
+          .insert(
+            equipmentData
+          )
+
+          .select()
+          .single();
+
+
+        if (error) {
+
+          console.error(
+            "Equipment registration error:",
+            error
+          );
+
+
+          if (message) {
+
+            message.textContent =
+
+              "Error registering equipment: " +
+
+              error.message;
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ==================================
+        // SUCCESS
+        // ==================================
+
+        console.log(
+          "Equipment registered successfully:",
+          data
         );
 
 
@@ -1798,111 +1876,53 @@ if (equipmentRegistrationForm) {
 
           message.textContent =
 
-            "Unable to check BME Number: " +
-
-            checkError.message;
+            "Equipment registered successfully.";
 
         }
 
 
-        return;
+        // ==================================
+        // RESET FORM
+        // ==================================
+
+        equipmentRegistrationForm.reset();
+
+
+        // ==================================
+        // REFRESH EQUIPMENT DROPDOWNS
+        // ==================================
+
+        await loadMaintenanceFormData();
+
+        await loadEquipmentHistoryDropdown();
+
+
+        // ==================================
+        // CLEAR MESSAGE
+        // ==================================
+
+        setTimeout(
+
+          function() {
+
+            if (message) {
+
+              message.textContent = "";
+
+            }
+
+          },
+
+          5000
+
+        );
 
       }
 
-
-      if (existingEquipment) {
-
-        if (message) {
-
-          message.textContent =
-
-            "This BME Number already exists. Please enter a unique BME Number.";
-
-        }
-
-
-        return;
-
-      }
-
-
-      // ======================================
-      // PREPARE EQUIPMENT DATA
-      // ======================================
-
-      const equipmentData = {
-
-        BMENumber:
-          bmeNumber,
-
-        EquipmentName:
-          equipmentName,
-
-        Manufacturer:
-          manufacturer || null,
-
-        Model:
-          model || null,
-
-        SerialNumber:
-          serialNumber || null,
-
-        DepartmentID:
-          Number(
-            departmentId
-          ),
-
-        CategoryID:
-          Number(
-            categoryId
-          ),
-
-        StatusID:
-          Number(
-            statusId
-          ),
-
-        Location:
-          location || null,
-
-        Remarks:
-          remarks || null
-
-      };
-
-
-      // ======================================
-      // INSERT NEW EQUIPMENT
-      // ======================================
-
-      const {
-
-        data,
-
-        error
-
-      } = await client
-
-        .from(
-          "tblEquipment"
-        )
-
-        .insert(
-          equipmentData
-        )
-
-        .select()
-        .single();
-
-
-      // ======================================
-      // HANDLE REGISTRATION ERROR
-      // ======================================
-
-      if (error) {
+      catch (error) {
 
         console.error(
-          "Equipment registration error:",
+          "Unexpected equipment registration error:",
           error
         );
 
@@ -1917,66 +1937,7 @@ if (equipmentRegistrationForm) {
 
         }
 
-
-        return;
-
       }
-
-
-      // ======================================
-      // REGISTRATION SUCCESS
-      // ======================================
-
-      console.log(
-        "Equipment registered successfully:",
-        data
-      );
-
-
-      if (message) {
-
-        message.textContent =
-
-          "Equipment registered successfully.";
-
-      }
-
-
-      // ======================================
-      // RESET FORM
-      // ======================================
-
-      equipmentRegistrationForm.reset();
-
-
-      // ======================================
-      // REFRESH EQUIPMENT DROPDOWNS
-      // ======================================
-
-      await loadMaintenanceFormData();
-
-      await loadEquipmentHistoryDropdown();
-
-
-      // ======================================
-      // CLEAR SUCCESS MESSAGE AFTER 5 SECONDS
-      // ======================================
-
-      setTimeout(
-
-        function() {
-
-          if (message) {
-
-            message.textContent = "";
-
-          }
-
-        },
-
-        5000
-
-      );
 
     }
 
@@ -1999,7 +1960,7 @@ document
 
         "click",
 
-        function() {
+        async function() {
 
           // --------------------------------
           // HIDE ALL APPLICATION SECTIONS
@@ -2055,7 +2016,7 @@ document
 
           ) {
 
-            loadMaintenanceReports();
+            await loadMaintenanceReports();
 
           }
 
@@ -2071,7 +2032,7 @@ document
 
           ) {
 
-            loadEquipmentRegistrationDropdowns();
+            await loadEquipmentRegistrationDropdowns();
 
           }
 
@@ -2087,7 +2048,25 @@ document
 
           ) {
 
-            loadEquipmentHistoryDropdown();
+            await loadEquipmentHistoryDropdown();
+
+          }
+
+
+          // --------------------------------
+          // LOAD PM DATA
+          // --------------------------------
+
+          if (
+
+            button.dataset.section ===
+            "pmSection"
+
+          ) {
+
+            await loadPMEquipmentDropdown();
+
+            await loadPMHistory();
 
           }
 
@@ -2123,309 +2102,379 @@ if (maintenanceForm) {
       }
 
 
-      // ====================================
-      // CHECK AUTHENTICATION
-      // ====================================
+      try {
 
-      const {
+        // ==================================
+        // CHECK AUTHENTICATION
+        // ==================================
 
-        data: authData,
-
-        error: authError
-
-      } = await client.auth.getUser();
-
-
-      if (
-
-        authError ||
-
-        !authData.user
-
-      ) {
-
-        if (maintenanceMessage) {
-
-          maintenanceMessage.textContent =
-
-            "Your session has expired. Please log in again.";
-
-        }
+        const {
+          data: authData,
+          error: authError
+        } = await client.auth.getUser();
 
 
-        return;
+        if (
 
-      }
+          authError ||
 
+          !authData.user
 
-      // ====================================
-      // GET FORM VALUES
-      // ====================================
+        ) {
 
-      const equipmentValue =
+          if (maintenanceMessage) {
 
-        document.getElementById(
-          "equipmentId"
-        ).value;
+            maintenanceMessage.textContent =
 
+              "Your session has expired. Please log in again.";
 
-      const engineerValue =
-
-        document.getElementById(
-          "engineerId"
-        ).value;
+          }
 
 
-      const maintenanceTypeValue =
-
-        document.getElementById(
-          "maintenanceTypeId"
-        ).value;
-
-
-      const statusValue =
-
-        document.getElementById(
-          "statusId"
-        ).value;
-
-
-      const partStatusSelect =
-
-        document.getElementById(
-          "partStatusId"
-        );
-
-
-      // ====================================
-      // GET PART STATUS
-      // ====================================
-
-      let partRequestedStatus = null;
-
-
-      if (
-
-        partStatusSelect &&
-
-        partStatusSelect.value
-
-      ) {
-
-        partRequestedStatus =
-
-          partStatusSelect
-            .selectedOptions[0]
-            .textContent
-            .trim();
-
-      }
-
-
-      // ====================================
-      // VALIDATE REQUIRED FIELDS
-      // ====================================
-
-      if (
-
-        !equipmentValue ||
-
-        !engineerValue ||
-
-        !maintenanceTypeValue ||
-
-        !statusValue
-
-      ) {
-
-        if (maintenanceMessage) {
-
-          maintenanceMessage.textContent =
-
-            "Please complete all required fields.";
+          return;
 
         }
 
 
-        return;
+        // ==================================
+        // GET FORM VALUES
+        // ==================================
 
-      }
-
-
-      // ====================================
-      // PREPARE MAINTENANCE REPORT
-      // ====================================
-
-      const payload = {
-
-        JobOrderNumber:
+        const equipmentValue =
 
           document.getElementById(
-            "jobOrderNumber"
-          ).value
-
-            ? Number(
-
-                document.getElementById(
-                  "jobOrderNumber"
-                ).value
-
-              )
-
-            : null,
+            "equipmentId"
+          ).value;
 
 
-        ReportDate:
-
-          new Date().toISOString(),
-
-
-        EquipmentID:
-
-          Number(
-            equipmentValue
-          ),
-
-
-        EngineerID:
-
-          Number(
-            engineerValue
-          ),
-
-
-        MaintenanceTypeID:
-
-          Number(
-            maintenanceTypeValue
-          ),
-
-
-        FaultReported:
+        const engineerValue =
 
           document.getElementById(
-            "faultReported"
-          ).value ||
-
-          null,
+            "engineerId"
+          ).value;
 
 
-        Diagnosis:
+        const maintenanceTypeValue =
 
           document.getElementById(
-            "diagnosis"
-          ).value ||
-
-          null,
+            "maintenanceTypeId"
+          ).value;
 
 
-        ActionTaken:
+        const statusValue =
 
           document.getElementById(
-            "actionTaken"
-          ).value ||
-
-          null,
+            "statusId"
+          ).value;
 
 
-        PartUsed:
+        const partStatusSelect =
 
           document.getElementById(
-            "partUsed"
-          ).value ||
-
-          null,
+            "partStatusId"
+          );
 
 
-        RequiredPart:
+        // ==================================
+        // GET PART STATUS
+        // ==================================
 
-          document.getElementById(
-            "requiredPart"
-          ).value ||
-
-          null,
+        let partRequestedStatus = null;
 
 
-        QuantityRequired:
-
-          document.getElementById(
-            "quantityRequired"
-          ).value
-
-            ? Number(
-
-                document.getElementById(
-                  "quantityRequired"
-                ).value
-
-              )
-
-            : null,
-
-
-        PartRequestedStatus:
-
-          partRequestedStatus,
-
-
-        PartStatusID:
+        if (
 
           partStatusSelect &&
 
           partStatusSelect.value
 
-            ? Number(
-                partStatusSelect.value
-              )
+        ) {
 
-            : null,
+          partRequestedStatus =
 
+            partStatusSelect
+              .selectedOptions[0]
+              .textContent
+              .trim();
 
-        StatusID:
-
-          Number(
-            statusValue
-          ),
+        }
 
 
-        Remarks:
+        // ==================================
+        // VALIDATE REQUIRED FIELDS
+        // ==================================
 
-          document.getElementById(
-            "remarks"
-          ).value ||
+        if (
 
-          null
+          !equipmentValue ||
 
-      };
+          !engineerValue ||
+
+          !maintenanceTypeValue ||
+
+          !statusValue
+
+        ) {
+
+          if (maintenanceMessage) {
+
+            maintenanceMessage.textContent =
+
+              "Please complete all required fields.";
+
+          }
 
 
-      // ====================================
-      // INSERT MAINTENANCE REPORT
-      // ====================================
+          return;
 
-      const {
+        }
 
-        error
 
-      } = await client
+        // ==================================
+        // PREPARE MAINTENANCE PAYLOAD
+        // ==================================
 
-        .from(
-          "tblMaintenanceReport"
-        )
+        const payload = {
 
-        .insert(
-          payload
+          JobOrderNumber:
+
+            document.getElementById(
+              "jobOrderNumber"
+            ).value
+
+              ? Number(
+
+                  document.getElementById(
+                    "jobOrderNumber"
+                  ).value
+
+                )
+
+              : null,
+
+
+          ReportDate:
+
+            new Date().toISOString(),
+
+
+          EquipmentID:
+
+            Number(
+              equipmentValue
+            ),
+
+
+          EngineerID:
+
+            Number(
+              engineerValue
+            ),
+
+
+          MaintenanceTypeID:
+
+            Number(
+              maintenanceTypeValue
+            ),
+
+
+          FaultReported:
+
+            document.getElementById(
+              "faultReported"
+            ).value ||
+
+            null,
+
+
+          Diagnosis:
+
+            document.getElementById(
+              "diagnosis"
+            ).value ||
+
+            null,
+
+
+          ActionTaken:
+
+            document.getElementById(
+              "actionTaken"
+            ).value ||
+
+            null,
+
+
+          PartUsed:
+
+            document.getElementById(
+              "partUsed"
+            ).value ||
+
+            null,
+
+
+          RequiredPart:
+
+            document.getElementById(
+              "requiredPart"
+            ).value ||
+
+            null,
+
+
+          QuantityRequired:
+
+            document.getElementById(
+              "quantityRequired"
+            ).value
+
+              ? Number(
+
+                  document.getElementById(
+                    "quantityRequired"
+                  ).value
+
+                )
+
+              : null,
+
+
+          PartRequestedStatus:
+
+            partRequestedStatus,
+
+
+          PartStatusID:
+
+            partStatusSelect &&
+
+            partStatusSelect.value
+
+              ? Number(
+                  partStatusSelect.value
+                )
+
+              : null,
+
+
+          StatusID:
+
+            Number(
+              statusValue
+            ),
+
+
+          Remarks:
+
+            document.getElementById(
+              "remarks"
+            ).value ||
+
+            null
+
+        };
+
+
+        // ==================================
+        // INSERT MAINTENANCE REPORT
+        // ==================================
+
+        const {
+          error
+        } = await client
+
+          .from(
+            "tblMaintenanceReport"
+          )
+
+          .insert(
+            payload
+          );
+
+
+        // ==================================
+        // HANDLE ERROR
+        // ==================================
+
+        if (error) {
+
+          console.error(
+            "Maintenance report error:",
+            error
+          );
+
+
+          if (maintenanceMessage) {
+
+            maintenanceMessage.textContent =
+
+              "Error submitting report: " +
+
+              error.message;
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ==================================
+        // SUCCESS
+        // ==================================
+
+        if (maintenanceMessage) {
+
+          maintenanceMessage.textContent =
+
+            "Maintenance report submitted successfully.";
+
+        }
+
+
+        // ==================================
+        // RESET FORM
+        // ==================================
+
+        maintenanceForm.reset();
+
+
+        if (departmentInput) {
+
+          departmentInput.value = "";
+
+        }
+
+
+        // ==================================
+        // CLEAR MESSAGE
+        // ==================================
+
+        setTimeout(
+
+          function() {
+
+            if (maintenanceMessage) {
+
+              maintenanceMessage.textContent = "";
+
+            }
+
+          },
+
+          5000
+
         );
 
+      }
 
-      // ====================================
-      // HANDLE ERROR
-      // ====================================
-
-      if (error) {
+      catch (error) {
 
         console.error(
-          "Maintenance report error:",
+          "Unexpected maintenance submission error:",
           error
         );
 
@@ -2440,73 +2489,13 @@ if (maintenanceForm) {
 
         }
 
-
-        return;
-
       }
-
-
-      // ====================================
-      // SUCCESS
-      // ====================================
-
-      if (maintenanceMessage) {
-
-        maintenanceMessage.textContent =
-
-          "Maintenance report submitted successfully.";
-
-      }
-
-
-      // ====================================
-      // RESET FORM
-      // ====================================
-
-      maintenanceForm.reset();
-
-
-      if (departmentInput) {
-
-        departmentInput.value = "";
-
-      }
-
-
-      // ====================================
-      // REFRESH REPORTS
-      // ====================================
-
-      await loadMaintenanceReports();
-
-
-      // ====================================
-      // CLEAR MESSAGE
-      // ====================================
-
-      setTimeout(
-
-        function() {
-
-          if (maintenanceMessage) {
-
-            maintenanceMessage.textContent = "";
-
-          }
-
-        },
-
-        5000
-
-      );
 
     }
 
   );
 
 }
-
-
 // ==========================================
 // LOGIN
 // ==========================================
@@ -2530,97 +2519,117 @@ if (loginForm) {
       }
 
 
-      const email =
-
-        document
-          .getElementById(
-            "email"
-          )
-          .value
-          .trim();
-
-
-      const password =
-
-        document
-          .getElementById(
-            "password"
-          )
-          .value;
-
-
-      if (
-
-        !email ||
-
-        !password
-
-      ) {
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-
-            "Please enter your email and password.";
-
-        }
-
-
-        return;
-
-      }
-
-
-      // ====================================
-      // SUPABASE LOGIN
-      // ====================================
-
-      const {
-
-        data,
-
-        error
-
-      } = await client.auth.signInWithPassword({
-
-        email:
-          email,
-
-        password:
-          password
-
-      });
-
-
-      if (error) {
-
-        console.error(
-          "Login error:",
-          error
-        );
-
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-
-            "Login failed: " +
-
-            error.message;
-
-        }
-
-
-        return;
-
-      }
-
-
-      // ====================================
-      // LOAD APPLICATION
-      // ====================================
-
       try {
+
+        // ==================================
+        // GET LOGIN VALUES
+        // ==================================
+
+        const emailInput =
+          document.getElementById(
+            "email"
+          );
+
+
+        const passwordInput =
+          document.getElementById(
+            "password"
+          );
+
+
+        if (!emailInput || !passwordInput) {
+
+          throw new Error(
+            "Login fields could not be found."
+          );
+
+        }
+
+
+        const email =
+          emailInput.value.trim();
+
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email || !password) {
+
+          if (loginMessage) {
+
+            loginMessage.textContent =
+
+              "Please enter your email and password.";
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ==================================
+        // SUPABASE LOGIN
+        // ==================================
+
+        const {
+          data,
+          error
+        } = await client.auth.signInWithPassword({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+        if (error) {
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          if (loginMessage) {
+
+            loginMessage.textContent =
+
+              "Login failed: " +
+
+              error.message;
+
+          }
+
+
+          return;
+
+        }
+
+
+        if (
+
+          !data ||
+
+          !data.user
+
+        ) {
+
+          throw new Error(
+            "Login was unsuccessful. No user session was returned."
+          );
+
+        }
+
+
+        // ==================================
+        // LOAD APPLICATION
+        // ==================================
 
         await showApp(
           data.user
@@ -2636,15 +2645,32 @@ if (loginForm) {
 
       }
 
-      catch (profileError) {
+      catch (error) {
 
         console.error(
-          "Application loading error:",
-          profileError
+          "Application login error:",
+          error
         );
 
 
-        await client.auth.signOut();
+        // ----------------------------------
+        // SIGN OUT IF APPLICATION LOAD FAILS
+        // ----------------------------------
+
+        try {
+
+          await client.auth.signOut();
+
+        }
+
+        catch (signOutError) {
+
+          console.error(
+            "Sign out error:",
+            signOutError
+          );
+
+        }
 
 
         if (loginMessage) {
@@ -2653,7 +2679,7 @@ if (loginForm) {
 
             "Login successful, but application loading failed: " +
 
-            profileError.message;
+            error.message;
 
         }
 
@@ -2678,7 +2704,20 @@ if (logoutBtn) {
 
     async function() {
 
-      await client.auth.signOut();
+      try {
+
+        await client.auth.signOut();
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
 
 
       if (appView) {
@@ -2802,6 +2841,13 @@ async function showApp(
 
 
   // ----------------------------------------
+  // LOAD PM EQUIPMENT
+  // ----------------------------------------
+
+  await loadPMEquipmentDropdown();
+
+
+  // ----------------------------------------
   // LOAD REPORTS
   // ----------------------------------------
 
@@ -2819,11 +2865,8 @@ async function initializeApp() {
   try {
 
     const {
-
       data,
-
       error
-
     } = await client.auth.getSession();
 
 
@@ -2833,7 +2876,6 @@ async function initializeApp() {
         "Session error:",
         error
       );
-
 
       return;
 
@@ -2869,6 +2911,24 @@ async function initializeApp() {
     await client.auth.signOut();
 
 
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    if (appView) {
+
+      appView.classList.add(
+        "hidden"
+      );
+
+    }
+
+
     if (loginMessage) {
 
       loginMessage.textContent =
@@ -2882,11 +2942,6 @@ async function initializeApp() {
 }
 
 
-// ==========================================
-// START APPLICATION
-// ==========================================
-
-initializeApp();
 // ==========================================
 // PREVENTIVE MAINTENANCE MODULE
 // ATBUTH BIOMEDICAL CMMS
@@ -2935,7 +2990,7 @@ async function loadPMEquipmentDropdown() {
 
   if (!select) {
 
-    console.error(
+    console.warn(
       "PM Equipment dropdown not found."
     );
 
@@ -2951,11 +3006,8 @@ async function loadPMEquipmentDropdown() {
   try {
 
     const {
-
       data,
-
       error
-
     } = await client
 
       .from("tblEquipment")
@@ -3099,11 +3151,8 @@ async function loadPMDepartment(
     // --------------------------------------
 
     const {
-
       data: equipment,
-
       error: equipmentError
-
     } = await client
 
       .from("tblEquipment")
@@ -3170,11 +3219,8 @@ async function loadPMDepartment(
     // --------------------------------------
 
     const {
-
       data: department,
-
       error: departmentError
-
     } = await client
 
       .from("tblDepartment")
@@ -3284,257 +3330,387 @@ if (preventiveMaintenanceForm) {
       if (pmMessage) {
 
         pmMessage.textContent =
+
           "Submitting Preventive Maintenance report...";
 
       }
 
 
-      // ------------------------------------
-      // CHECK AUTHENTICATED USER
-      // ------------------------------------
+      try {
 
-      const {
+        // ------------------------------------
+        // CHECK AUTHENTICATED USER
+        // ------------------------------------
 
-        data: authData,
-
-        error: authError
-
-      } = await client.auth.getUser();
-
-
-      if (
-
-        authError ||
-
-        !authData.user
-
-      ) {
-
-        if (pmMessage) {
-
-          pmMessage.textContent =
-
-            "Your session has expired. Please log in again.";
-
-        }
+        const {
+          data: authData,
+          error: authError
+        } = await client.auth.getUser();
 
 
-        return;
+        if (
 
-      }
+          authError ||
 
+          !authData.user
 
-      // ------------------------------------
-      // GET FORM VALUES
-      // ------------------------------------
+        ) {
 
-      const equipmentValue =
+          if (pmMessage) {
 
-        document
+            pmMessage.textContent =
 
-          .getElementById(
-            "pmEquipmentId"
-          )
+              "Your session has expired. Please log in again.";
 
-          .value;
+          }
 
 
-      const engineerValue =
-
-        document
-
-          .getElementById(
-            "pmEngineerId"
-          )
-
-          .value;
-
-
-      const pmDateValue =
-
-        document
-
-          .getElementById(
-            "pmDate"
-          )
-
-          .value;
-
-
-      const nextPMDateValue =
-
-        document
-
-          .getElementById(
-            "nextPMDate"
-          )
-
-          .value;
-
-
-      const pmStatusValue =
-
-        document
-
-          .getElementById(
-            "pmStatus"
-          )
-
-          .value;
-
-
-      // ------------------------------------
-      // VALIDATE REQUIRED FIELDS
-      // ------------------------------------
-
-      if (
-
-        !equipmentValue ||
-
-        !engineerValue ||
-
-        !pmDateValue ||
-
-        !nextPMDateValue ||
-
-        !pmStatusValue
-
-      ) {
-
-        if (pmMessage) {
-
-          pmMessage.textContent =
-
-            "Please complete all required PM fields.";
+          return;
 
         }
 
 
-        return;
+        // ------------------------------------
+        // GET FORM VALUES
+        // ------------------------------------
 
-      }
-
-
-      // ====================================
-      // PREPARE PM PAYLOAD
-      // ====================================
-
-      const pmPayload = {
-
-        EquipmentID:
-
-          Number(
-            equipmentValue
-          ),
-
-
-        PMDate:
-
-          pmDateValue,
-
-
-        NextPMDate:
-
-          nextPMDateValue,
-
-
-        EngineerID:
-
-          Number(
-            engineerValue
-          ),
-
-
-        WorkPerformed:
+        const equipmentValue =
 
           document
 
             .getElementById(
-              "work Performed"
+              "pmEquipmentId"
             )
 
-            .value ||
-
-          null,
+            .value;
 
 
-        Findings:
+        const engineerValue =
 
           document
 
             .getElementById(
-              "pmFindings"
+              "pmEngineerId"
             )
 
-            .value ||
-
-          null,
+            .value;
 
 
-        Recommendations:
+        const pmDateValue =
 
           document
 
             .getElementById(
-              "pmRecommendations"
+              "pmDate"
             )
 
-            .value ||
-
-          null,
+            .value;
 
 
-        PMStatus:
-
-          pmStatusValue,
-
-
-        Remarks:
+        const nextPMDateValue =
 
           document
 
             .getElementById(
-              "pmRemarks"
+              "nextPMDate"
             )
 
-            .value ||
-
-          null
-
-      };
+            .value;
 
 
-      // ====================================
-      // INSERT PM RECORD
-      // ====================================
+        const pmStatusValue =
 
-      const {
+          document
 
-        data,
+            .getElementById(
+              "pmStatus"
+            )
 
-        error
+            .value;
 
-      } = await client
 
-        .from(
-          "tblPreventiveMaintenance"
-        )
+        // ------------------------------------
+        // WORK PERFORMED
+        // IMPORTANT:
+        // HTML ID = workPerformed
+        // DATABASE COLUMN = "Work Performed"
+        // ------------------------------------
 
-        .insert(
+        const workPerformedElement =
+
+          document.getElementById(
+            "workPerformed"
+          );
+
+
+        // ------------------------------------
+        // FINDINGS
+        // ------------------------------------
+
+        const findingsElement =
+
+          document.getElementById(
+            "pmFindings"
+          );
+
+
+        // ------------------------------------
+        // RECOMMENDATIONS
+        // ------------------------------------
+
+        const recommendationsElement =
+
+          document.getElementById(
+            "pmRecommendations"
+          );
+
+
+        // ------------------------------------
+        // REMARKS
+        // ------------------------------------
+
+        const remarksElement =
+
+          document.getElementById(
+            "pmRemarks"
+          );
+
+
+        // ------------------------------------
+        // VALIDATE REQUIRED FIELDS
+        // ------------------------------------
+
+        if (
+
+          !equipmentValue ||
+
+          !engineerValue ||
+
+          !pmDateValue ||
+
+          !nextPMDateValue ||
+
+          !pmStatusValue
+
+        ) {
+
+          if (pmMessage) {
+
+            pmMessage.textContent =
+
+              "Please complete all required PM fields.";
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ====================================
+        // PREPARE PM PAYLOAD
+        // ====================================
+
+        const pmPayload = {
+
+          EquipmentID:
+
+            Number(
+              equipmentValue
+            ),
+
+
+          PMDate:
+
+            pmDateValue,
+
+
+          NextPMDate:
+
+            nextPMDateValue,
+
+
+          EngineerID:
+
+            Number(
+              engineerValue
+            ),
+
+
+          // IMPORTANT:
+          // This is the actual Supabase
+          // database column name.
+
+          "Work Performed":
+
+            workPerformedElement
+
+              ? workPerformedElement.value || null
+
+              : null,
+
+
+          Findings:
+
+            findingsElement
+
+              ? findingsElement.value || null
+
+              : null,
+
+
+          Recommendations:
+
+            recommendationsElement
+
+              ? recommendationsElement.value || null
+
+              : null,
+
+
+          PMStatus:
+
+            pmStatusValue,
+
+
+          Remarks:
+
+            remarksElement
+
+              ? remarksElement.value || null
+
+              : null
+
+        };
+
+
+        console.log(
+          "PM payload:",
           pmPayload
-        )
-
-        .select();
+        );
 
 
-      // ====================================
-      // HANDLE ERROR
-      // ====================================
+        // ====================================
+        // INSERT PM RECORD
+        // ====================================
 
-      if (error) {
+        const {
+          data,
+          error
+        } = await client
+
+          .from(
+            "tblPreventiveMaintenance"
+          )
+
+          .insert(
+            pmPayload
+          )
+
+          .select();
+
+
+        // ====================================
+        // HANDLE ERROR
+        // ====================================
+
+        if (error) {
+
+          console.error(
+            "Preventive Maintenance error:",
+            error
+          );
+
+
+          if (pmMessage) {
+
+            pmMessage.textContent =
+
+              "Error submitting PM report: " +
+
+              error.message;
+
+          }
+
+
+          return;
+
+        }
+
+
+        // ====================================
+        // SUCCESS
+        // ====================================
+
+        console.log(
+          "PM record inserted:",
+          data
+        );
+
+
+        if (pmMessage) {
+
+          pmMessage.textContent =
+
+            "Preventive Maintenance report submitted successfully.";
+
+        }
+
+
+        // ------------------------------------
+        // RESET FORM
+        // ------------------------------------
+
+        preventiveMaintenanceForm.reset();
+
+
+        // ------------------------------------
+        // CLEAR DEPARTMENT
+        // ------------------------------------
+
+        if (pmDepartmentInput) {
+
+          pmDepartmentInput.value =
+            "";
+
+        }
+
+
+        // ------------------------------------
+        // REFRESH PM HISTORY
+        // ------------------------------------
+
+        await loadPMHistory();
+
+
+        // ------------------------------------
+        // CLEAR MESSAGE
+        // ------------------------------------
+
+        setTimeout(
+
+          function() {
+
+            if (pmMessage) {
+
+              pmMessage.textContent =
+                "";
+
+            }
+
+          },
+
+          5000
+
+        );
+
+      }
+
+      catch (error) {
 
         console.error(
-          "Preventive Maintenance error:",
+          "Unexpected PM submission error:",
           error
         );
 
@@ -3549,47 +3725,6 @@ if (preventiveMaintenanceForm) {
 
         }
 
-
-        return;
-
-      }
-
-
-      // ====================================
-      // SUCCESS
-      // ====================================
-
-      console.log(
-        "PM record inserted:",
-        data
-      );
-
-
-      if (pmMessage) {
-
-        pmMessage.textContent =
-
-          "Preventive Maintenance report submitted successfully.";
-
-      }
-
-
-      // ------------------------------------
-      // RESET FORM
-      // ------------------------------------
-
-      preventiveMaintenanceForm.reset();
-
-
-      // ------------------------------------
-      // CLEAR DEPARTMENT
-      // ------------------------------------
-
-      if (pmDepartmentInput) {
-
-        pmDepartmentInput.value =
-          "";
-
       }
 
     }
@@ -3600,41 +3735,7 @@ if (preventiveMaintenanceForm) {
 
 
 // ==========================================
-// INITIALIZE PM MODULE
-// ==========================================
-
-async function initializePreventiveMaintenance() {
-
-  try {
-
-    await loadPMEquipmentDropdown();
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "PM initialization error:",
-      error
-    );
-
-  }
-
-}
-
-
-// ==========================================
-// START PM MODULE
-// ==========================================
-
-initializePreventiveMaintenance();
-// ==========================================
 // PREVENTIVE MAINTENANCE HISTORY
-// ==========================================
-
-
-// ==========================================
-// LOAD PM HISTORY
 // ==========================================
 
 async function loadPMHistory() {
@@ -3653,7 +3754,7 @@ async function loadPMHistory() {
 
   if (!tableBody) {
 
-    console.error(
+    console.warn(
       "PM history table body not found."
     );
 
@@ -3665,6 +3766,7 @@ async function loadPMHistory() {
   if (loadingMessage) {
 
     loadingMessage.textContent =
+
       "Loading Preventive Maintenance records...";
 
   }
@@ -3692,11 +3794,8 @@ async function loadPMHistory() {
     // ======================================
 
     const {
-
       data: pmRecords,
-
       error: pmError
-
     } = await client
 
       .from(
@@ -3710,7 +3809,7 @@ async function loadPMHistory() {
         PMDate,
         NextPMDate,
         EngineerID,
-        Work Performed,
+        "Work Performed",
         Findings,
         Recommendations,
         PMStatus,
@@ -3808,11 +3907,8 @@ async function loadPMHistory() {
     // ======================================
 
     const {
-
       data: equipmentData,
-
       error: equipmentError
-
     } = await client
 
       .from(
@@ -3841,11 +3937,8 @@ async function loadPMHistory() {
     // ======================================
 
     const {
-
       data: departmentData,
-
       error: departmentError
-
     } = await client
 
       .from(
@@ -3872,11 +3965,8 @@ async function loadPMHistory() {
     // ======================================
 
     const {
-
       data: engineerData,
-
       error: engineerError
-
     } = await client
 
       .from(
@@ -4227,7 +4317,7 @@ async function loadPMHistory() {
           </td>
 
           <td>
-            ${pm . Work Performed || ""}
+            ${pm["Work Performed"] || ""}
           </td>
 
           <td>
@@ -4303,72 +4393,38 @@ async function loadPMHistory() {
 
 
 // ==========================================
-// LOAD PM HISTORY WHEN MENU IS OPENED
+// INITIALIZE PM MODULE
 // ==========================================
 
-document
+async function initializePreventiveMaintenance() {
 
-  .querySelectorAll(
-    ".menu button"
-  )
+  try {
 
-  .forEach(
+    await loadPMEquipmentDropdown();
 
-    button => {
+  }
 
-      button.addEventListener(
+  catch (error) {
 
-        "click",
+    console.error(
+      "PM initialization error:",
+      error
+    );
 
-        function() {
-
-          if (
-
-            this.dataset.section ===
-
-            "pmSection"
-
-          ) {
-
-            loadPMHistory();
-
-          }
-
-        }
-
-      );
-
-    }
-
-  );
-
-
-// ==========================================
-// REFRESH PM HISTORY AFTER SUBMISSION
-// ==========================================
-
-if (preventiveMaintenanceForm) {
-
-  preventiveMaintenanceForm.addEventListener(
-
-    "submit",
-
-    async function() {
-
-      setTimeout(
-
-        function() {
-
-          loadPMHistory();
-
-        },
-
-        1000
-
-      );
-
-    }
-
-  );
+  }
 
 }
+
+
+// ==========================================
+// START APPLICATION
+// ==========================================
+
+initializeApp();
+
+
+// ==========================================
+// START PM MODULE
+// ==========================================
+
+initializePreventiveMaintenance();
