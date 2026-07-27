@@ -3604,3 +3604,747 @@ async function initializePreventiveMaintenance() {
 // ==========================================
 
 initializePreventiveMaintenance();
+// ==========================================
+// PREVENTIVE MAINTENANCE HISTORY
+// ==========================================
+
+
+// ==========================================
+// LOAD PM HISTORY
+// ==========================================
+
+async function loadPMHistory() {
+
+  const tableBody =
+    document.getElementById(
+      "pmTableBody"
+    );
+
+
+  const loadingMessage =
+    document.getElementById(
+      "pmLoading"
+    );
+
+
+  if (!tableBody) {
+
+    console.error(
+      "PM history table body not found."
+    );
+
+    return;
+
+  }
+
+
+  if (loadingMessage) {
+
+    loadingMessage.textContent =
+      "Loading Preventive Maintenance records...";
+
+  }
+
+
+  tableBody.innerHTML = `
+
+    <tr>
+
+      <td colspan="12">
+
+        Loading Preventive Maintenance records...
+
+      </td>
+
+    </tr>
+
+  `;
+
+
+  try {
+
+    // ======================================
+    // GET PM RECORDS
+    // ======================================
+
+    const {
+
+      data: pmRecords,
+
+      error: pmError
+
+    } = await client
+
+      .from(
+        "tblPreventiveMaintenance"
+      )
+
+      .select(
+        `
+        PMID,
+        EquipmentID,
+        PMDate,
+        NextPMDate,
+        EngineerID,
+        WorkPerformed,
+        Findings,
+        Recommendations,
+        PMStatus,
+        Remarks
+        `
+      )
+
+      .order(
+        "PMDate",
+        {
+          ascending: false
+        }
+      );
+
+
+    if (pmError) {
+
+      console.error(
+        "PM history error:",
+        pmError
+      );
+
+
+      tableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="12">
+
+            Error loading PM records:
+            ${pmError.message}
+
+          </td>
+
+        </tr>
+
+      `;
+
+
+      if (loadingMessage) {
+
+        loadingMessage.textContent =
+          "";
+
+      }
+
+
+      return;
+
+    }
+
+
+    // ======================================
+    // NO PM RECORDS
+    // ======================================
+
+    if (
+
+      !pmRecords ||
+
+      pmRecords.length === 0
+
+    ) {
+
+      tableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="12">
+
+            No Preventive Maintenance records found.
+
+          </td>
+
+        </tr>
+
+      `;
+
+
+      if (loadingMessage) {
+
+        loadingMessage.textContent =
+          "";
+
+      }
+
+
+      return;
+
+    }
+
+
+    // ======================================
+    // LOAD EQUIPMENT DATA
+    // ======================================
+
+    const {
+
+      data: equipmentData,
+
+      error: equipmentError
+
+    } = await client
+
+      .from(
+        "tblEquipment"
+      )
+
+      .select(
+        `
+        EquipmentID,
+        BMENumber,
+        EquipmentName,
+        DepartmentID
+        `
+      );
+
+
+    if (equipmentError) {
+
+      throw equipmentError;
+
+    }
+
+
+    // ======================================
+    // LOAD DEPARTMENT DATA
+    // ======================================
+
+    const {
+
+      data: departmentData,
+
+      error: departmentError
+
+    } = await client
+
+      .from(
+        "tblDepartment"
+      )
+
+      .select(
+        `
+        DepartmentID,
+        DepartmentName
+        `
+      );
+
+
+    if (departmentError) {
+
+      throw departmentError;
+
+    }
+
+
+    // ======================================
+    // LOAD ENGINEER DATA
+    // ======================================
+
+    const {
+
+      data: engineerData,
+
+      error: engineerError
+
+    } = await client
+
+      .from(
+        "tblEngineers"
+      )
+
+      .select(
+        `
+        EngineerID,
+        FirstName,
+        LastName
+        `
+      );
+
+
+    if (engineerError) {
+
+      throw engineerError;
+
+    }
+
+
+    // ======================================
+    // CREATE LOOKUP MAPS
+    // ======================================
+
+    const equipmentMap =
+      new Map();
+
+
+    const departmentMap =
+      new Map();
+
+
+    const engineerMap =
+      new Map();
+
+
+    (equipmentData || []).forEach(
+
+      equipment => {
+
+        equipmentMap.set(
+
+          String(
+            equipment.EquipmentID
+          ),
+
+          equipment
+
+        );
+
+      }
+
+    );
+
+
+    (departmentData || []).forEach(
+
+      department => {
+
+        departmentMap.set(
+
+          String(
+            department.DepartmentID
+          ),
+
+          department.DepartmentName
+
+        );
+
+      }
+
+    );
+
+
+    (engineerData || []).forEach(
+
+      engineer => {
+
+        engineerMap.set(
+
+          String(
+            engineer.EngineerID
+          ),
+
+          `${engineer.FirstName || ""} ${
+            engineer.LastName || ""
+          }`.trim()
+
+        );
+
+      }
+
+    );
+
+
+    // ======================================
+    // DISPLAY PM RECORDS
+    // ======================================
+
+    tableBody.innerHTML =
+      "";
+
+
+    pmRecords.forEach(
+
+      pm => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+
+        // ----------------------------------
+        // EQUIPMENT
+        // ----------------------------------
+
+        const equipment =
+          equipmentMap.get(
+
+            String(
+              pm.EquipmentID
+            )
+
+          );
+
+
+        const equipmentName =
+
+          equipment
+
+            ? equipment.EquipmentName || ""
+
+            : "";
+
+
+        const bmeNumber =
+
+          equipment
+
+            ? equipment.BMENumber || ""
+
+            : "";
+
+
+        // ----------------------------------
+        // DEPARTMENT
+        // ----------------------------------
+
+        const departmentName =
+
+          equipment &&
+
+          equipment.DepartmentID !== null
+
+            ? (
+
+                departmentMap.get(
+
+                  String(
+                    equipment.DepartmentID
+                  )
+
+                ) || ""
+
+              )
+
+            : "";
+
+
+        // ----------------------------------
+        // ENGINEER
+        // ----------------------------------
+
+        const engineerName =
+
+          engineerMap.get(
+
+            String(
+              pm.EngineerID
+            )
+
+          ) || "";
+
+
+        // ----------------------------------
+        // PM DATE
+        // ----------------------------------
+
+        const pmDate =
+
+          pm.PMDate
+
+            ? new Date(
+                pm.PMDate
+              ).toLocaleDateString()
+
+            : "";
+
+
+        // ----------------------------------
+        // NEXT PM DATE
+        // ----------------------------------
+
+        const nextPMDate =
+
+          pm.NextPMDate
+
+            ? new Date(
+                pm.NextPMDate
+              ).toLocaleDateString()
+
+            : "";
+
+
+        // ==================================
+        // DETERMINE PM DUE STATUS
+        // ==================================
+
+        let dueStatus =
+          "";
+
+
+        if (pm.NextPMDate) {
+
+          const today =
+            new Date();
+
+
+          today.setHours(
+            0,
+            0,
+            0,
+            0
+          );
+
+
+          const nextDate =
+            new Date(
+              pm.NextPMDate
+            );
+
+
+          nextDate.setHours(
+            0,
+            0,
+            0,
+            0
+          );
+
+
+          const difference =
+
+            nextDate.getTime() -
+
+            today.getTime();
+
+
+          const daysRemaining =
+
+            Math.ceil(
+
+              difference /
+
+              (
+                1000 *
+
+                60 *
+
+                60 *
+
+                24
+
+              )
+
+            );
+
+
+          if (daysRemaining < 0) {
+
+            dueStatus =
+              "OVERDUE";
+
+          }
+
+          else if (
+            daysRemaining === 0
+          ) {
+
+            dueStatus =
+              "DUE TODAY";
+
+          }
+
+          else if (
+            daysRemaining <= 30
+          ) {
+
+            dueStatus =
+              "DUE SOON";
+
+          }
+
+          else {
+
+            dueStatus =
+              "NOT DUE";
+
+          }
+
+        }
+
+
+        // ==================================
+        // CREATE TABLE ROW
+        // ==================================
+
+        row.innerHTML = `
+
+          <td>
+            ${bmeNumber}
+          </td>
+
+          <td>
+            ${equipmentName}
+          </td>
+
+          <td>
+            ${departmentName}
+          </td>
+
+          <td>
+            ${pmDate}
+          </td>
+
+          <td>
+            ${nextPMDate}
+          </td>
+
+          <td>
+            ${dueStatus}
+          </td>
+
+          <td>
+            ${engineerName}
+          </td>
+
+          <td>
+            ${pm.WorkPerformed || ""}
+          </td>
+
+          <td>
+            ${pm.Findings || ""}
+          </td>
+
+          <td>
+            ${pm.Recommendations || ""}
+          </td>
+
+          <td>
+            ${pm.PMStatus || ""}
+          </td>
+
+          <td>
+            ${pm.Remarks || ""}
+          </td>
+
+        `;
+
+
+        tableBody.appendChild(
+          row
+        );
+
+      }
+
+    );
+
+
+    if (loadingMessage) {
+
+      loadingMessage.textContent =
+        "";
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Unexpected PM history error:",
+      error
+    );
+
+
+    tableBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="12">
+
+          Unable to load Preventive Maintenance history.
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    if (loadingMessage) {
+
+      loadingMessage.textContent =
+        error.message;
+
+    }
+
+  }
+
+}
+
+
+// ==========================================
+// LOAD PM HISTORY WHEN MENU IS OPENED
+// ==========================================
+
+document
+
+  .querySelectorAll(
+    ".menu button"
+  )
+
+  .forEach(
+
+    button => {
+
+      button.addEventListener(
+
+        "click",
+
+        function() {
+
+          if (
+
+            this.dataset.section ===
+
+            "pmSection"
+
+          ) {
+
+            loadPMHistory();
+
+          }
+
+        }
+
+      );
+
+    }
+
+  );
+
+
+// ==========================================
+// REFRESH PM HISTORY AFTER SUBMISSION
+// ==========================================
+
+if (preventiveMaintenanceForm) {
+
+  preventiveMaintenanceForm.addEventListener(
+
+    "submit",
+
+    async function() {
+
+      setTimeout(
+
+        function() {
+
+          loadPMHistory();
+
+        },
+
+        1000
+
+      );
+
+    }
+
+  );
+
+}
