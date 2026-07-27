@@ -1447,6 +1447,18 @@ async function loadMaintenanceReports() {
   }
 
 }
+
+
+// ==========================================
+// PART 1 OF 3 ENDS HERE
+// ==========================================
+// ==========================================
+// PART 2
+// PREVENTIVE MAINTENANCE MODULE
+// ATBUTH BIOMEDICAL CMMS
+// ==========================================
+
+
 // ==========================================
 // PM FORM ELEMENTS
 // ==========================================
@@ -2972,6 +2984,13 @@ if (preventiveMaintenanceForm) {
   );
 
 }
+// ==========================================
+// ATBUTH BIOMEDICAL CMMS
+// PART 3
+// PREVENTIVE MAINTENANCE + HISTORY + LOGIN
+// ==========================================
+
+
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM ELEMENTS
 // ==========================================
