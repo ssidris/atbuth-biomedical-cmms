@@ -2164,172 +2164,167 @@ document
   );
 
 // ==========================================
+// ==========================================
 // LOGIN
 // ==========================================
 
 if (loginForm) {
 
-  loginForm.addEventListener(
-    "submit",
-    async function(event) {
+loginForm.addEventListener(
+"submit",
+async function(event) {
 
-      event.preventDefault();
+  event.preventDefault();
 
-      if (loginMessage) {
-        loginMessage.textContent = "Signing in...";
-      }
+  console.log("Login form submitted.");
 
-      const emailInput =
-        document.getElementById("email");
+  if (loginMessage) {
+    loginMessage.textContent = "Signing in...";
+  }
 
-      const passwordInput =
-        document.getElementById("password");
+  const emailInput =
+    document.getElementById("email");
 
-      if (!emailInput || !passwordInput) {
+  const passwordInput =
+    document.getElementById("password");
 
-        if (loginMessage) {
-          loginMessage.textContent =
-            "Login fields were not found.";
-        }
+  if (!emailInput || !passwordInput) {
 
-        return;
-      }
+    console.error(
+      "Email or password input was not found."
+    );
 
-      const email =
-        emailInput.value.trim();
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Login fields were not found.";
+    }
 
-      const password =
-        passwordInput.value;
+    return;
+  }
 
+  const email =
+    emailInput.value.trim();
 
-      // --------------------------------------
-      // VALIDATE INPUT
-      // --------------------------------------
+  const password =
+    passwordInput.value;
 
-      if (!email || !password) {
+  // --------------------------------------
+  // VALIDATE LOGIN INPUT
+  // --------------------------------------
 
-        if (loginMessage) {
-          loginMessage.textContent =
-            "Please enter your email and password.";
-        }
+  if (!email || !password) {
 
-        return;
-      }
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Please enter your email and password.";
+    }
 
+    return;
+  }
 
-      try {
+  try {
 
-        console.log(
-          "Attempting Supabase login for:",
-          email
-        );
+    console.log(
+      "Attempting Supabase login:",
+      email
+    );
 
+    // --------------------------------------
+    // SUPABASE LOGIN
+    // --------------------------------------
 
-        // --------------------------------------
-        // SUPABASE AUTHENTICATION
-        // --------------------------------------
+    const {
+      data,
+      error
+    } = await client.auth.signInWithPassword({
 
-        const {
-          data,
-          error
-        } = await client.auth.signInWithPassword({
+      email: email,
 
-          email: email,
+      password: password
 
-          password: password
+    });
 
-        });
+    // --------------------------------------
+    // CHECK LOGIN ERROR
+    // --------------------------------------
 
+    if (error) {
 
-        // --------------------------------------
-        // AUTHENTICATION ERROR
-        // --------------------------------------
+      console.error(
+        "Supabase login error:",
+        error
+      );
 
-        if (error) {
-
-          console.error(
-            "Supabase authentication error:",
-            error
-          );
-
-          throw new Error(
-            "Authentication failed: " +
-            error.message
-          );
-
-        }
-
-
-        // --------------------------------------
-        // CHECK USER
-        // --------------------------------------
-
-        if (
-          !data ||
-          !data.user
-        ) {
-
-          throw new Error(
-            "Login failed because Supabase did not return a user account."
-          );
-
-        }
-
-
-        console.log(
-          "Supabase authentication successful."
-        );
-
-        console.log(
-          "Authenticated User ID:",
-          data.user.id
-        );
-
-        console.log(
-          "Authenticated Email:",
-          data.user.email
-        );
-
-
-        // --------------------------------------
-        // LOAD APPLICATION
-        // --------------------------------------
-
-        await showApp(
-          data.user
-        );
-
-
-        console.log(
-          "Login and application loading completed."
-        );
-
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "Complete login process error:",
-          error
-        );
-
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-            error.message ||
-            "Login failed. Please check your email and password.";
-
-        }
-
-      }
+      throw new Error(
+        error.message
+      );
 
     }
-  );
+
+    // --------------------------------------
+    // CHECK USER
+    // --------------------------------------
+
+    if (
+      !data ||
+      !data.user
+    ) {
+
+      throw new Error(
+        "Login failed. No authenticated user was returned."
+      );
+
+    }
+
+    console.log(
+      "Login successful."
+    );
+
+    console.log(
+      "User ID:",
+      data.user.id
+    );
+
+    console.log(
+      "User Email:",
+      data.user.email
+    );
+
+    // --------------------------------------
+    // LOAD APPLICATION
+    // --------------------------------------
+
+    await showApp(
+      data.user
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Login process error:",
+      error
+    );
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "Login failed: " +
+        (
+          error.message ||
+          "Please check your email and password."
+        );
+
+    }
+
+  }
 
 }
 
+);
+
+}
 
 // ==========================================
 // SHOW APPLICATION AFTER LOGIN
@@ -2583,328 +2578,6 @@ if (logoutBtn) {
 // ==========================================
 
 
-// ==========================================
-// SHOW APPLICATION AFTER LOGIN
-// ==========================================
-
-async function showApp(user) {
-
-  try {
-
-    // --------------------------------------
-    // LOAD USER PROFILE
-    // --------------------------------------
-
-    const profile =
-      await loadUserProfile(
-        user.id
-      );
-
-
-    // --------------------------------------
-    // HIDE LOGIN
-    // SHOW APPLICATION
-    // --------------------------------------
-
-    if (loginView) {
-
-      loginView.classList.add(
-        "hidden"
-      );
-
-    }
-
-    if (appView) {
-
-      appView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-    // --------------------------------------
-    // SHOW USER NAME
-    // --------------------------------------
-
-    if (welcomeText) {
-
-      const fullName =
-        profile["Full name"] ||
-        profile.Username ||
-        user.email ||
-        "User";
-
-      welcomeText.textContent =
-        `Welcome, ${fullName}`;
-
-    }
-
-
-    // --------------------------------------
-    // LOAD ALL FORM DROPDOWNS
-    // --------------------------------------
-
-    await loadFormData();
-
-
-    // --------------------------------------
-    // LOAD MAINTENANCE REPORTS
-    // --------------------------------------
-
-    await loadMaintenanceReports();
-
-
-    // --------------------------------------
-    // LOAD DASHBOARD
-    // --------------------------------------
-
-    await loadDashboard();
-
-
-    console.log(
-      "Application loaded successfully."
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "Show application error:",
-      error
-    );
-
-
-    // --------------------------------------
-    // SIGN OUT IF PROFILE LOAD FAILS
-    // --------------------------------------
-
-    await client.auth.signOut();
-
-
-    if (appView) {
-
-      appView.classList.add(
-        "hidden"
-      );
-
-    }
-
-    if (loginView) {
-
-      loginView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-    if (loginMessage) {
-
-      loginMessage.textContent =
-        error.message;
-
-    }
-
-  }
-
-}
-
-
-// ==========================================
-// LOAD PM HISTORY
-// ==========================================
-
-async function loadPMHistory() {
-
-  const tableBody =
-    document.getElementById(
-      "pmHistoryTableBody"
-    );
-
-  const message =
-    document.getElementById(
-      "pmHistoryMessage"
-    );
-
-
-  if (!tableBody) {
-
-    console.warn(
-      "pmHistoryTableBody not found."
-    );
-
-    return;
-
-  }
-
-
-  tableBody.innerHTML =
-    `<tr>
-      <td colspan="8">
-        Loading preventive maintenance history...
-      </td>
-    </tr>`;
-
-
-  if (message) {
-
-    message.textContent =
-      "";
-
-  }
-
-
-  try {
-
-    // --------------------------------------
-    // LOAD PM RECORDS
-    // --------------------------------------
-
-    const {
-      data,
-      error
-    } = await client
-      .from(
-        "tblPreventiveMaintenance"
-      )
-      .select("*")
-      .order(
-        "PMDate",
-        {
-          ascending: false
-        }
-      );
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    // --------------------------------------
-    // NO RECORDS
-    // --------------------------------------
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-      tableBody.innerHTML =
-        `<tr>
-          <td colspan="8">
-            No preventive maintenance records found.
-          </td>
-        </tr>`;
-
-      return;
-
-    }
-
-
-    // --------------------------------------
-    // CLEAR TABLE
-    // --------------------------------------
-
-    tableBody.innerHTML =
-      "";
-
-
-    // --------------------------------------
-    // DISPLAY EACH PM RECORD
-    // --------------------------------------
-
-    for (
-      const pm of data
-    ) {
-
-      let equipmentName =
-        "";
-
-      let bmeNumber =
-        "";
-
-      let engineerName =
-        "";
-
-
-      // ------------------------------------
-      // LOAD EQUIPMENT INFORMATION
-      // ------------------------------------
-
-      if (
-        pm.EquipmentID !== null &&
-        pm.EquipmentID !== undefined
-      ) {
-
-        const {
-          data: equipment
-        } = await client
-          .from(
-            "tblEquipment"
-          )
-          .select(
-            "EquipmentName, BMENumber"
-          )
-          .eq(
-            "EquipmentID",
-            pm.EquipmentID
-          )
-          .maybeSingle();
-
-
-        if (equipment) {
-
-          equipmentName =
-            equipment.EquipmentName ||
-            "";
-
-          bmeNumber =
-            equipment.BMENumber ||
-            "";
-
-        }
-
-      }
-
-
-      // ------------------------------------
-      // LOAD ENGINEER INFORMATION
-      // ------------------------------------
-
-      if (
-        pm.EngineerID !== null &&
-        pm.EngineerID !== undefined
-      ) {
-
-        const {
-          data: engineer
-        } = await client
-          .from(
-            "tblEngineers"
-          )
-          .select(
-            "FirstName, LastName"
-          )
-          .eq(
-            "EngineerID",
-            pm.EngineerID
-          )
-          .maybeSingle();
-
-
-        if (engineer) {
-
-          engineerName =
-            `${engineer.FirstName || ""} ${
-              engineer.LastName || ""
-            }`.trim();
-
-        }
 // ==========================================
 // LOAD PREVENTIVE MAINTENANCE HISTORY
 // ==========================================
