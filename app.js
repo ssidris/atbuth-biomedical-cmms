@@ -3281,10 +3281,7 @@ if (pmSection) {
           )
         ) {
 
-          loadPMEquipmentDropdown();
-
-          loadPMEngineerDropdown();
-
+  
           loadPMHistory();
 
         }
