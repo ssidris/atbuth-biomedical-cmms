@@ -2584,7 +2584,7 @@ if (logoutBtn) {
 
 async function loadPMHistory() {
 
-  const pmTableBody = document.getElementById("pmTableBody");
+  const pmTableBody = document.getElementById("pmHistoryTableBody");
   const pmLoading = document.getElementById("pmLoading");
   const pmHistoryMessage = document.getElementById("pmHistoryMessage");
 
