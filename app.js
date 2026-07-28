@@ -2023,6 +2023,9 @@ if (preventiveMaintenanceForm) {
         // REFRESH PM HISTORY
 
         await loadPMHistory();
+        // REFRESH PM DUE TODAY AND OVERDUE COUNTERS
+
+await loadPMCounters();
 
 
         setTimeout(
