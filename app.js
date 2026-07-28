@@ -2785,11 +2785,9 @@ async function loadPMHistory() {
 
     if (pmLoading) {
 
-      pmLoading.textContent =
-        `${data.length} PM record(s) loaded successfully.`;
+  pmLoading.textContent = "";
 
-    }
-
+}
 
   } catch (err) {
 
