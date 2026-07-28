@@ -2144,19 +2144,20 @@ document
 
           // PM
 
-          if (
-            this.dataset.section ===
-            "pmSection"
-          ) {
+if (
+  this.dataset.section ===
+  "pmSection"
+) {
 
-            loadPMEquipmentDropdown();
+  loadPMEquipmentDropdown();
 
-            loadPMEngineerDropdown();
+  loadPMEngineerDropdown();
 
-            loadPMHistory();
+  loadPMHistory();
 
-          }
+  loadPMCounters();
 
+}
         }
       );
 
@@ -3017,6 +3018,202 @@ async function loadPMHistory() {
 
 }
 // ==========================================
+// LOAD PM DUE TODAY AND OVERDUE COUNTERS
+// ==========================================
+
+async function loadPMCounters() {
+
+  const pmDueTodayCount =
+    document.getElementById(
+      "pmDueTodayCount"
+    );
+
+  const pmOverdueCount =
+    document.getElementById(
+      "pmOverdueCount"
+    );
+
+
+  // ----------------------------------------
+  // CHECK COUNTER ELEMENTS
+  // ----------------------------------------
+
+  if (
+    !pmDueTodayCount ||
+    !pmOverdueCount
+  ) {
+
+    console.warn(
+      "PM counter elements not found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  pmDueTodayCount.textContent =
+    "...";
+
+  pmOverdueCount.textContent =
+    "...";
+
+
+  try {
+
+    // --------------------------------------
+    // LOAD PM HISTORY
+    // --------------------------------------
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("NextPMDate");
+
+
+    // --------------------------------------
+    // CHECK DATABASE ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    // --------------------------------------
+    // GET TODAY'S DATE
+    // --------------------------------------
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    // --------------------------------------
+    // INITIALIZE COUNTERS
+    // --------------------------------------
+
+    let dueToday =
+      0;
+
+    let overdue =
+      0;
+
+
+    // --------------------------------------
+    // CHECK EACH PM RECORD
+    // --------------------------------------
+
+    (data || []).forEach(
+      pm => {
+
+        if (!pm.NextPMDate) {
+
+          return;
+
+        }
+
+
+        const nextPMDate =
+          new Date(
+            pm.NextPMDate
+          );
+
+
+        nextPMDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+
+        // ----------------------------------
+        // PM DUE TODAY
+        // ----------------------------------
+
+        if (
+          nextPMDate.getTime() ===
+          today.getTime()
+        ) {
+
+          dueToday++;
+
+        }
+
+
+        // ----------------------------------
+        // PM OVERDUE
+        // ----------------------------------
+
+        else if (
+          nextPMDate < today
+        ) {
+
+          overdue++;
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------------
+    // DISPLAY COUNTERS
+    // --------------------------------------
+
+    pmDueTodayCount.textContent =
+      dueToday;
+
+    pmOverdueCount.textContent =
+      overdue;
+
+
+    console.log(
+      "PM Due Today:",
+      dueToday
+    );
+
+    console.log(
+      "PM Overdue:",
+      overdue
+    );
+
+  }
+
+
+  catch (error) {
+
+    console.error(
+      "Error loading PM counters:",
+      error
+    );
+
+
+    pmDueTodayCount.textContent =
+      "0";
+
+    pmOverdueCount.textContent =
+      "0";
+
+  }
+
+}
+// ==========================================
 // LOAD DASHBOARD
 // ==========================================
 
@@ -3478,6 +3675,7 @@ if (pmSection) {
 
   
           loadPMHistory();
+          loadPMCounters();
 
         }
 
