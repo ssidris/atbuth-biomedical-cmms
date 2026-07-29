@@ -3781,3 +3781,133 @@ if (pmSection) {
 console.log(
   "ATBUTH Biomedical CMMS JavaScript loaded successfully - Parts 1, 2 and 3."
 );
+// ==========================================
+// PM HISTORY SEARCH
+// ==========================================
+
+const pmHistorySearch =
+  document.getElementById(
+    "pmHistorySearch"
+  );
+
+
+if (pmHistorySearch) {
+
+  pmHistorySearch.addEventListener(
+    "input",
+    function() {
+
+      const searchText =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+      const pmTableBody =
+        document.getElementById(
+          "pmHistoryTableBody"
+        );
+
+
+      if (!pmTableBody) {
+        return;
+      }
+
+
+      const rows =
+        pmTableBody.querySelectorAll(
+          "tr"
+        );
+
+
+      let visibleRows = 0;
+
+
+      rows.forEach(
+        row => {
+
+          const rowText =
+            row.textContent
+              .toLowerCase();
+
+
+          if (
+            searchText === "" ||
+            rowText.includes(
+              searchText
+            )
+          ) {
+
+            row.style.display =
+              "";
+
+            visibleRows++;
+
+          }
+
+          else {
+
+            row.style.display =
+              "none";
+
+          }
+
+        }
+      );
+
+
+      // --------------------------------------
+      // SHOW SEARCH RESULT MESSAGE
+      // --------------------------------------
+
+      const pmHistoryMessage =
+        document.getElementById(
+          "pmHistoryMessage"
+        );
+
+
+      if (
+        searchText !== ""
+      ) {
+
+        if (
+          visibleRows === 0
+        ) {
+
+          if (pmHistoryMessage) {
+
+            pmHistoryMessage.textContent =
+              "No matching PM records found.";
+
+          }
+
+        }
+
+        else {
+
+          if (pmHistoryMessage) {
+
+            pmHistoryMessage.textContent =
+              `${visibleRows} matching PM record(s) found.`;
+
+          }
+
+        }
+
+      }
+
+      else {
+
+        if (pmHistoryMessage) {
+
+          pmHistoryMessage.textContent =
+            "";
+
+        }
+
+      }
+
+    }
+  );
+
+}
