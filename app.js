@@ -2878,33 +2878,112 @@ async function loadPMHistory() {
     data.forEach(pm => {
 
       // Calculate Due Status
-      let dueStatus = "";
 
-      if (pm.NextPMDate) {
+let dueStatus = "";
 
-        const today = new Date();
-        const nextPMDate = new Date(pm.NextPMDate);
+if (pm.NextPMDate) {
 
-        // Remove time portion
-        today.setHours(0, 0, 0, 0);
-        nextPMDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+
+  const nextPMDate =
+    new Date(pm.NextPMDate);
 
 
-        if (nextPMDate < today) {
+  // Remove time portion
 
-          dueStatus = "Overdue";
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
-        } else if (
-          nextPMDate.getTime() === today.getTime()
-        ) {
+  nextPMDate.setHours(
+    0,
+    0,
+    0,
+    0
+  );
 
-          dueStatus = "Due Today";
 
-        } else {
+  // Calculate difference in days
 
-          dueStatus = "Not Due";
+  const differenceInMilliseconds =
+    nextPMDate.getTime() -
+    today.getTime();
 
-        }
+  const differenceInDays =
+    Math.ceil(
+      differenceInMilliseconds /
+      (1000 * 60 * 60 * 24)
+    );
+
+
+  // ------------------------------------
+  // OVERDUE
+  // ------------------------------------
+
+  if (
+    differenceInDays < 0
+  ) {
+
+    dueStatus =
+      "Overdue";
+
+  }
+
+
+  // ------------------------------------
+  // DUE TODAY
+  // ------------------------------------
+
+  else if (
+    differenceInDays === 0
+  ) {
+
+    dueStatus =
+      "Due Today";
+
+  }
+
+
+  // ------------------------------------
+  // DUE SOON
+  // WITHIN 7 DAYS
+  // ------------------------------------
+
+  else if (
+    differenceInDays <= 7
+  ) {
+
+    dueStatus =
+      "Due Soon";
+
+  }
+
+
+  // ------------------------------------
+  // NOT DUE
+  // MORE THAN 7 DAYS
+  // ------------------------------------
+
+  else {
+
+    dueStatus =
+      "Not Due";
+
+  }
+
+}
+
+
+else {
+
+  dueStatus =
+    "No Date";
+
+}
+      
 
       } else {
 
