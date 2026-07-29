@@ -3014,8 +3014,12 @@ else {
         </td>
 
         <td>
-          ${dueStatus}
-        </td>
+  <span class="pm-due-status ${dueStatus
+    .toLowerCase()
+    .replace(/\s+/g, "-")}">
+    ${dueStatus}
+  </span>
+</td>
 
         <td>
           ${pm.EngineerName || ""}
