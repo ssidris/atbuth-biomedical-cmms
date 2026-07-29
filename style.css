@@ -126,3 +126,44 @@ button.secondary {
   }
 
 }
+/* ==========================================
+   PM DUE STATUS COLORS
+   ========================================== */
+
+.pm-due-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* OVERDUE */
+.pm-due-status.overdue {
+  color: #ffffff;
+  background-color: #dc3545;
+}
+
+/* DUE TODAY */
+.pm-due-status.due-today {
+  color: #ffffff;
+  background-color: #fd7e14;
+}
+
+/* DUE SOON */
+.pm-due-status.due-soon {
+  color: #000000;
+  background-color: #ffc107;
+}
+
+/* NOT DUE */
+.pm-due-status.not-due {
+  color: #ffffff;
+  background-color: #198754;
+}
+
+/* NO DATE */
+.pm-due-status.no-date {
+  color: #ffffff;
+  background-color: #6c757d;
+}
