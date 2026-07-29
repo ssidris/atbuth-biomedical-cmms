@@ -2026,6 +2026,7 @@ if (preventiveMaintenanceForm) {
         // REFRESH PM DUE TODAY AND OVERDUE COUNTERS
 
 await loadPMCounters();
+        await loadPMNotifications();
 
 
         setTimeout(
