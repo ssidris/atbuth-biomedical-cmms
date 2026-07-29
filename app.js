@@ -3292,6 +3292,174 @@ async function loadPMCounters() {
 
 }
 // ==========================================
+// LOAD PM DUE NOTIFICATIONS
+// ==========================================
+
+async function loadPMNotifications() {
+
+  const tableBody =
+    document.getElementById(
+      "pmNotificationTableBody"
+    );
+
+  const message =
+    document.getElementById(
+      "pmNotificationMessage"
+    );
+
+  if (!tableBody || !message) {
+    return;
+  }
+
+  message.textContent =
+    "Loading PM notifications...";
+  try {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("*")
+      .order(
+        "NextPMDate",
+        {
+          ascending: true
+        }
+      );
+
+    if (error) {
+
+      throw error;
+
+    }
+
+    tableBody.innerHTML = "";
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    let records = 0;
+
+    (data || []).forEach(
+      pm => {
+
+        if (!pm.NextPMDate) {
+
+          return;
+
+        }
+
+        const nextPM =
+          new Date(
+            pm.NextPMDate
+          );
+
+        nextPM.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+        const days =
+          Math.ceil(
+            (nextPM - today) /
+            (1000 * 60 * 60 * 24)
+          );
+
+        let status = "";
+        if (days < 0) {
+
+          status = "🔴 Overdue";
+
+        }
+
+        else if (days === 0) {
+
+          status = "🟠 Due Today";
+
+        }
+
+        else if (days <= 7) {
+
+          status = "🟡 Due Soon";
+
+        }
+
+        else {
+
+          return;
+
+        }
+
+        records++;
+
+        tableBody.innerHTML += `
+
+          <tr>
+
+            <td>${pm.BMENumber || ""}</td>
+
+            <td>${pm.EquipmentName || ""}</td>
+
+            <td>${pm.DepartmentName || ""}</td>
+
+            <td>${pm.NextPMDate || ""}</td>
+
+            <td>${status}</td>
+
+          </tr>
+
+        `;
+
+      }
+    );
+
+    if (records === 0) {
+
+      tableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="5">
+
+            No PM notifications.
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+
+    message.textContent =
+      `${records} notification(s).`;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "PM notification error:",
+      error
+    );
+
+    message.textContent =
+      "Unable to load PM notifications.";
+
+  }
+
+}
+// ==========================================
 // LOAD DASHBOARD
 // ==========================================
 
