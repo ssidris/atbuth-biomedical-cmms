@@ -2159,6 +2159,7 @@ if (
   loadPMHistory();
 
   loadPMCounters();
+  loadPMCounters();
 
 }
         }
