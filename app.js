@@ -4143,6 +4143,19 @@ async function loadDashboard() {
 
     totalEquipment.textContent =
       equipmentCount || 0;
+    // Total Maintenance Reports
+
+const {
+  count: maintenanceCount
+} = await client
+  .from("tblMaintenanceReport")
+  .select("*", {
+    count: "exact",
+    head: true
+  });
+
+totalMaintenance.textContent =
+  maintenanceCount || 0;
 
   }
 
