@@ -4128,5 +4128,31 @@ async function loadDashboard() {
   ) {
     return;
   }
+  try {
+
+    // Total Equipment
+
+    const {
+      count: equipmentCount
+    } = await client
+      .from("tblEquipment")
+      .select("*", {
+        count: "exact",
+        head: true
+      });
+
+    totalEquipment.textContent =
+      equipmentCount || 0;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Dashboard error:",
+      error
+    );
+
+  }
 
 }
