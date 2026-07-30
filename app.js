@@ -4156,6 +4156,20 @@ const {
 
 totalMaintenance.textContent =
   maintenanceCount || 0;
+    // Under Repair Equipment
+
+const {
+  count: underRepairCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 2);
+
+underRepair.textContent =
+  underRepairCount || 0;
 
   }
 
