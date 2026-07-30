@@ -4170,6 +4170,20 @@ const {
 
 underRepair.textContent =
   underRepairCount || 0;
+    // Awaiting Parts Equipment
+
+const {
+  count: awaitingPartsCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 4);
+
+awaitingParts.textContent =
+  awaitingPartsCount || 0;
 
   }
 
