@@ -4240,63 +4240,7 @@ const {
 
 awaitingParts.textContent =
   awaitingPartsCount || 0;
-    // PM Due Today
-
-const {
-  data: pmRecords
-} = await client
-  .from("vwPMHistory")
-  .select("NextPMDate");
-
-const today = new Date();
-
-today.setHours(
-  0,
-  0,
-  0,
-  0
-);
-
-let dueToday = 0;
-let overdue = 0;
-
-(pmRecords || []).forEach(pm => {
-
-  if (!pm.NextPMDate) {
-    return;
-  }
-
-  const nextPM = new Date(
-    pm.NextPMDate
-  );
-
-  nextPM.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  if (nextPM.getTime() === today.getTime()) {
-
-    dueToday++;
-
-  }
-
-  else if (nextPM < today) {
-
-    overdue++;
-
-  }
-
-});
-
-pmDueToday.textContent =
-  dueToday;
-
-pmOverdue.textContent =
-  overdue;
-
+    
   }
 
   catch (error) {
