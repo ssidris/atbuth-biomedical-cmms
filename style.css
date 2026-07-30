@@ -167,3 +167,50 @@ button.secondary {
   color: #ffffff;
   background-color: #6c757d;
 }
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+.dashboard-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 15px;
+
+  margin-top: 20px;
+
+}
+
+.dashboard-card {
+
+  background: #ffffff;
+
+  border-radius: 10px;
+
+  padding: 20px;
+
+  text-align: center;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+}
+
+.dashboard-card h3 {
+
+  margin-bottom: 10px;
+
+  font-size: 16px;
+
+}
+
+.dashboard-card p {
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  margin: 0;
+
+}
