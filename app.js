@@ -4088,4 +4088,45 @@ if (pmHistorySearch) {
 
 async function loadDashboard() {
 
+  const totalEquipment =
+    document.getElementById(
+      "dashboardTotalEquipment"
+    );
+
+  const totalMaintenance =
+    document.getElementById(
+      "dashboardTotalMaintenance"
+    );
+
+  const underRepair =
+    document.getElementById(
+      "dashboardUnderRepair"
+    );
+
+  const awaitingParts =
+    document.getElementById(
+      "dashboardAwaitingParts"
+    );
+
+  const pmDueToday =
+    document.getElementById(
+      "dashboardPMDueToday"
+    );
+
+  const pmOverdue =
+    document.getElementById(
+      "dashboardPMOverdue"
+    );
+
+  if (
+    !totalEquipment ||
+    !totalMaintenance ||
+    !underRepair ||
+    !awaitingParts ||
+    !pmDueToday ||
+    !pmOverdue
+  ) {
+    return;
+  }
+
 }
