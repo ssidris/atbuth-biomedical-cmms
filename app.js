@@ -4253,3 +4253,57 @@ awaitingParts.textContent =
   }
 
 }
+
+// ==========================================
+// MAINTENANCE REPORT SEARCH
+// ==========================================
+
+const maintenanceSearch =
+  document.getElementById("maintenanceSearch");
+
+if (maintenanceSearch) {
+
+  maintenanceSearch.addEventListener(
+    "input",
+    function () {
+
+      const searchText =
+        this.value.toLowerCase().trim();
+
+      const tableBody =
+        document.getElementById(
+          "reportsTableBody"
+        );
+
+      if (!tableBody) return;
+
+      const rows =
+        tableBody.querySelectorAll("tr");
+
+      let visibleRows = 0;
+
+      rows.forEach(row => {
+
+        const rowText =
+          row.textContent.toLowerCase();
+
+        if (
+          searchText === "" ||
+          rowText.includes(searchText)
+        ) {
+
+          row.style.display = "";
+          visibleRows++;
+
+        } else {
+
+          row.style.display = "none";
+
+        }
+
+      });
+
+    }
+  );
+
+}
