@@ -4258,52 +4258,39 @@ awaitingParts.textContent =
 // MAINTENANCE REPORT SEARCH
 // ==========================================
 
-const maintenanceSearch =
-  document.getElementById("maintenanceSearch");
+const reportSearch =
+  document.getElementById("reportSearch");
 
-if (maintenanceSearch) {
+if (reportSearch) {
 
-  maintenanceSearch.addEventListener(
-    "input",
-    function () {
+  reportSearch.addEventListener("input", function () {
 
-      const searchText =
-        this.value.toLowerCase().trim();
+    const search =
+      this.value.toLowerCase().trim();
 
-      const tableBody =
-        document.getElementById(
-          "reportsTableBody"
-        );
+    const rows =
+      document.querySelectorAll(
+        "#reportsTableBody tr"
+      );
 
-      if (!tableBody) return;
+    rows.forEach(row => {
 
-      const rows =
-        tableBody.querySelectorAll("tr");
+      if (
+        row.textContent
+          .toLowerCase()
+          .includes(search)
+      ) {
 
-      let visibleRows = 0;
+        row.style.display = "";
 
-      rows.forEach(row => {
+      } else {
 
-        const rowText =
-          row.textContent.toLowerCase();
+        row.style.display = "none";
 
-        if (
-          searchText === "" ||
-          rowText.includes(searchText)
-        ) {
+      }
 
-          row.style.display = "";
-          visibleRows++;
+    });
 
-        } else {
-
-          row.style.display = "none";
-
-        }
-
-      });
-
-    }
-  );
+  });
 
 }
