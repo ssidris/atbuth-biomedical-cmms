@@ -2420,12 +2420,12 @@ async function showApp(user) {
     console.log(
       "Loading maintenance reports..."
     );
-
     await loadMaintenanceReports();
-
+await loadRecentMaintenanceReports();
 // ==========================================
 // LOAD PM DUE TODAY AND OVERDUE COUNTERS
 // ==========================================
+  
 
 async function loadPMCounters() {
 
@@ -3457,6 +3457,99 @@ async function loadPMNotifications() {
 
     message.textContent =
       "Unable to load PM notifications.";
+
+  }
+
+}
+// ==========================================
+// LOAD RECENT MAINTENANCE REPORTS
+// ==========================================
+
+async function loadRecentMaintenanceReports() {
+
+  const loading =
+    document.getElementById("dashboardReportsLoading");
+
+  const tableBody =
+    document.getElementById("dashboardReportsBody");
+
+  if (!loading || !tableBody) {
+    return;
+  }
+
+  loading.textContent =
+    "Loading recent reports...";
+
+  try {
+
+    const { data, error } = await client
+      .from("vwMaintenanceReport")
+      .select("*")
+      .order("ReportDate", { ascending: false })
+      .limit(5);
+
+    if (error) {
+      throw error;
+    }
+
+    tableBody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            No maintenance reports found.
+          </td>
+        </tr>
+      `;
+
+      loading.textContent = "";
+
+      return;
+    }
+
+    data.forEach(report => {
+
+      tableBody.innerHTML += `
+        <tr>
+
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(report.ReportDate).toLocaleDateString()
+                : ""
+            }
+          </td>
+
+          <td>${report.BMENumber || ""}</td>
+
+          <td>${report.EquipmentName || ""}</td>
+
+          <td>${report.DepartmentName || ""}</td>
+
+          <td>${report.EngineerName || ""}</td>
+
+          <td>${report.StatusName || ""}</td>
+
+        </tr>
+      `;
+
+    });
+
+    loading.textContent = "";
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Recent reports error:",
+      error
+    );
+
+    loading.textContent =
+      "Unable to load recent reports.";
 
   }
 
