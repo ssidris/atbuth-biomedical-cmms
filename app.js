@@ -4387,3 +4387,54 @@ if (reportSearch) {
   });
 
 }
+const printReportsBtn =
+document.getElementById(
+"printReportsBtn"
+);
+
+if (printReportsBtn) {
+
+  printReportsBtn.addEventListener(
+    "click",
+    function () {
+
+      window.print();
+
+    }
+  );
+
+}
+const printEquipmentHistoryBtn =
+document.getElementById(
+"printEquipmentHistoryBtn"
+);
+
+if (printEquipmentHistoryBtn) {
+
+  printEquipmentHistoryBtn.addEventListener(
+    "click",
+    function () {
+
+      window.print();
+
+    }
+  );
+
+}
+const printPMBtn =
+document.getElementById(
+"printPMBtn"
+);
+
+if (printPMBtn) {
+
+  printPMBtn.addEventListener(
+    "click",
+    function () {
+
+      window.print();
+
+    }
+  );
+
+}
