@@ -4500,8 +4500,27 @@ if (printEquipmentHistoryBtn) {
 
 }
 
-const printPMBtn =
-document.getElementById("printPMBtn");
+document.addEventListener("DOMContentLoaded", function () {
+
+  const printPMBtn =
+    document.getElementById("printPMBtn");
+
+  if (printPMBtn) {
+
+    printPMBtn.addEventListener("click", function () {
+
+      printSection("pmPrintArea");
+
+    });
+
+  }
+
+});
+console.log("Bottom of app.js reached.");
+
+const printPMBtn = document.getElementById("printPMBtn");
+
+console.log(printPMBtn);
 
 if (printPMBtn) {
 
