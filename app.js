@@ -4387,6 +4387,85 @@ if (reportSearch) {
   });
 
 }
+function printTable(sectionId, title) {
+
+  const section = document.getElementById(sectionId);
+
+  if (!section) {
+    alert("Section not found.");
+    return;
+  }
+
+  const table = section.querySelector("table");
+
+  if (!table) {
+    alert("Table not found.");
+    return;
+  }
+
+  const printWindow = window.open("", "_blank");
+
+  printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${title}</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+margin:20px;
+}
+
+h1,h2{
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid #000;
+padding:8px;
+font-size:12px;
+text-align:left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>ATBUTH Biomedical CMMS</h1>
+
+<h2>${title}</h2>
+
+${table.outerHTML}
+
+</body>
+
+</html>
+`);
+
+  printWindow.document.close();
+
+  setTimeout(() => {
+
+    printWindow.focus();
+
+    printWindow.print();
+
+    printWindow.close();
+
+  }, 800);
+
+}
 const printReportsBtn =
 document.getElementById(
 "printReportsBtn"
