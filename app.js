@@ -4500,19 +4500,14 @@ if (printEquipmentHistoryBtn) {
 
 }
 const printPMBtn =
-document.getElementById(
-"printPMBtn"
-);
+document.getElementById("printPMBtn");
 
 if (printPMBtn) {
 
-  printPMBtn.addEventListener(
-    "click",
-    function () {
+  printPMBtn.addEventListener("click", function () {
 
-      printSection("pmSection");
+    printSection("pmPrintArea");
 
-    }
-  );
+  });
 
 }
