@@ -4398,7 +4398,7 @@ if (printReportsBtn) {
     "click",
     function () {
 
-      window.print();
+      printSection("reportsSection");
 
     }
   );
@@ -4415,7 +4415,7 @@ if (printEquipmentHistoryBtn) {
     "click",
     function () {
 
-      window.print();
+      printSection("equipmentHistorySection");
 
     }
   );
@@ -4432,7 +4432,7 @@ if (printPMBtn) {
     "click",
     function () {
 
-      window.print();
+      printSection("pmSection");
 
     }
   );
