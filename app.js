@@ -4460,7 +4460,6 @@ ${table.outerHTML}
     printWindow.focus();
 
     printWindow.print();
-
   }, 800);
 
 }
