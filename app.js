@@ -4461,8 +4461,6 @@ ${table.outerHTML}
 
     printWindow.print();
 
-    printWindow.close();
-
   }, 800);
 
 }
