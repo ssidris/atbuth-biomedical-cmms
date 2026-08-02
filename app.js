@@ -4499,7 +4499,6 @@ if (printEquipmentHistoryBtn) {
   );
 
 }
-
 const printPMBtn = document.getElementById("printPMBtn");
 
 if (printPMBtn) {
