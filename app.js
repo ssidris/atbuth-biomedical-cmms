@@ -4516,17 +4516,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 });
-console.log("Bottom of app.js reached.");
-
 const printPMBtn = document.getElementById("printPMBtn");
-
-console.log(printPMBtn);
 
 if (printPMBtn) {
 
   printPMBtn.addEventListener("click", function () {
 
-    alert("PM button clicked");
+    printSection("pmPrintArea");
 
   });
 
