@@ -4506,7 +4506,10 @@ if (printPMBtn) {
 
   printPMBtn.addEventListener("click", function () {
 
-    printSection("pmPrintArea");
+    printTable(
+      "pmPrintArea",
+      "Preventive Maintenance History"
+    );
 
   });
 
