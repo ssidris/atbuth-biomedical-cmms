@@ -4499,6 +4499,7 @@ if (printEquipmentHistoryBtn) {
   );
 
 }
+
 const printPMBtn =
 document.getElementById("printPMBtn");
 
@@ -4506,7 +4507,7 @@ if (printPMBtn) {
 
   printPMBtn.addEventListener("click", function () {
 
-    printSection("pmPrintArea");
+    alert("PM button clicked");
 
   });
 
