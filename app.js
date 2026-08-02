@@ -4477,8 +4477,10 @@ if (printReportsBtn) {
     "click",
     function () {
 
-      printSection("reportsSection");
-
+      printTable(
+  "reportsSection",
+  "Maintenance Report History"
+);
     }
   );
 
