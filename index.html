@@ -716,136 +716,93 @@ Loading PM notifications...
   </form>
 
 
+<!-- ================================== -->
+<!-- PM HISTORY -->
+<!-- ================================== -->
 
-  <!-- ================================== -->
-  <!-- PM HISTORY -->
-  <!-- ================================== -->
+<hr>
 
-  <hr>
+<h2>
+  Preventive Maintenance History
+</h2>
 
-
-  <h2>
-    Preventive Maintenance History
-  </h2>
 <div id="pmPrintArea">
-<button
-  id="printPMBtn"
-  class="secondary"
-  type="button">
-  Print PM History
-</button>
+
+  <button
+    id="printPMBtn"
+    class="secondary"
+    type="button">
+    Print PM History
+  </button>
+
   <p id="pmLoading">
     Loading preventive maintenance history...
   </p>
 
-
   <p
     id="pmHistoryMessage"
-    class="message"
-  ></p>
-<!-- ======================================
-     PM HISTORY SEARCH
-     ====================================== -->
+    class="message">
+  </p>
 
-<div class="pm-history-search">
+  <!-- ======================================
+       PM HISTORY SEARCH
+       ====================================== -->
 
-  <label for="pmHistorySearch">
-    Search PM History
-  </label>
+  <div class="pm-history-search">
 
-  <input
-    type="search"
-    id="pmHistorySearch"
-    placeholder="Search BME Number, equipment, department, engineer, status..."
-  >
+    <label for="pmHistorySearch">
+      Search PM History
+    </label>
 
-</div>
+    <input
+      type="search"
+      id="pmHistorySearch"
+      placeholder="Search BME Number, equipment, department, engineer, status..."
+    >
+
+  </div>
 
   <div
     class="table-container"
-    <table id="pmHistoryTable">
+    style="overflow-x:auto;">
 
+    <table id="pmHistoryTable">
 
       <thead>
 
         <tr>
-
-          <th>
-            BME Number
-          </th>
-
-          <th>
-            Equipment
-          </th>
-
-          <th>
-            Department
-          </th>
-
-          <th>
-            PM Date
-          </th>
-
-          <th>
-            Next PM Date
-          </th>
-
-          <th>
-            Due Status
-          </th>
-
-          <th>
-            Engineer
-          </th>
-
-          <th>
-            Work Performed
-          </th>
-
-          <th>
-            Findings
-          </th>
-
-          <th>
-            Recommendations
-          </th>
-
-          <th>
-            PM Status
-          </th>
-
-          <th>
-            Remarks
-          </th>
-
+          <th>BME Number</th>
+          <th>Equipment</th>
+          <th>Department</th>
+          <th>PM Date</th>
+          <th>Next PM Date</th>
+          <th>Due Status</th>
+          <th>Engineer</th>
+          <th>Work Performed</th>
+          <th>Findings</th>
+          <th>Recommendations</th>
+          <th>PM Status</th>
+          <th>Remarks</th>
         </tr>
 
       </thead>
 
-
-
-      <tbody
-        id="pmHistoryTableBody"
-      >
+      <tbody id="pmHistoryTableBody">
 
         <tr>
-
           <td colspan="12">
             No PM records loaded.
           </td>
-
         </tr>
 
       </tbody>
 
-
     </table>
-
 
   </div>
 
-
-</section>
+</div>
+  
 
 
 
