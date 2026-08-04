@@ -2158,7 +2158,10 @@ document
             loadEquipmentHistoryDropdown();
 
           }
-
+if (sectionId ===
+   "usersSection") {
+  await loadUsers();
+ } 
 
           // PM
 
@@ -4413,7 +4416,7 @@ awaitingParts.textContent =
     );
 
   }
-
+await loadUsers();
 }
 
 // ==========================================
@@ -4641,5 +4644,87 @@ alert(
 );
     }
   );
+
+}
+// ==========================================
+// LOAD USERS
+// ==========================================
+
+async function loadUsers() {
+
+  const usersTableBody =
+    document.getElementById("usersTableBody");
+
+  if (!usersTableBody) {
+    return;
+  }
+
+  usersTableBody.innerHTML = `
+    <tr>
+      <td colspan="5">Loading users...</td>
+    </tr>
+  `;
+
+  try {
+
+    const { data, error } = await client
+      .from("tblUsers")
+      .select(`
+        Username,
+        "Full name",
+        UserRole,
+        Status
+      `)
+      .order("Username");
+
+    if (error) {
+      throw error;
+    }
+
+    usersTableBody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+      usersTableBody.innerHTML = `
+        <tr>
+          <td colspan="5">
+            No users found.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+    data.forEach(user => {
+
+      usersTableBody.innerHTML += `
+        <tr>
+          <td>${user.Username || ""}</td>
+          <td>${user["Full name"] || ""}</td>
+          <td></td>
+          <td>${user.UserRole || ""}</td>
+          <td>${user.Status || ""}</td>
+        </tr>
+      `;
+
+    });
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    usersTableBody.innerHTML = `
+      <tr>
+        <td colspan="5">
+          Unable to load users.
+        </td>
+      </tr>
+    `;
+
+  }
 
 }
