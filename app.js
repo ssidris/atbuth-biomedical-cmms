@@ -1043,8 +1043,8 @@ async function loadUserProfile(userId) {
   } = await client
     .from("tblUsers")
     .select(
-      'UserID, Username, "Full name", UserRole, Status, AuthUserID'
-    )
+'UserID, Username, "Full name", UserRole, Status, AuthUserID, EngineerID'
+)
     .eq(
       "AuthUserID",
       userId
