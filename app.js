@@ -203,7 +203,21 @@ async function loadMaintenanceFormData() {
 
     }
   );
+// ==========================================
+// AUTO-SELECT LOGGED-IN ENGINEER
+// ==========================================
 
+if (
+  window.currentUser &&
+  window.currentUser.EngineerID
+) {
+
+  document.getElementById(
+    "engineerId"
+  ).value =
+    window.currentUser.EngineerID;
+
+}
 
   // MAINTENANCE TYPE
 
