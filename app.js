@@ -4599,10 +4599,46 @@ if (userForm) {
 
       event.preventDefault();
 
-      alert(
-        "Create User button clicked successfully."
-      );
+      const newUser = {
 
+  fullName:
+    document.getElementById(
+      "userFullName"
+    ).value.trim(),
+
+  username:
+    document.getElementById(
+      "userUsername"
+    ).value.trim(),
+
+  email:
+    document.getElementById(
+      "userEmail"
+    ).value.trim(),
+
+  password:
+    document.getElementById(
+      "userPassword"
+    ).value,
+
+  role:
+    document.getElementById(
+      "userRole"
+    ).value,
+
+  status:
+    document.getElementById(
+      "userStatus"
+    ).value
+
+};
+
+console.log(newUser);
+
+alert(
+  "User information captured successfully.\n\n" +
+  "Next step: Create the Supabase Auth account using the secure Edge Function."
+);
     }
   );
 
