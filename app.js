@@ -4565,10 +4565,10 @@ if (printEquipmentHistoryBtn) {
     "click",
     function () {
 
-      printSection("equipmentHistorySection");
-
-    }
-  );
+      printTable(
+  "equipmentHistorySection",
+  "Equipment History"
+);
 
 }
 const printPMBtn = document.getElementById("printPMBtn");
