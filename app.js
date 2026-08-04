@@ -2376,7 +2376,7 @@ async function showApp(user) {
       await loadUserProfile(
         user.id
       );
-
+window.currentUser = profile;
 
     console.log(
       "User profile successfully loaded:",
