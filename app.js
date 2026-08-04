@@ -4582,3 +4582,28 @@ if (printPMBtn) {
   });
 
 }
+// ==========================================
+// USER MANAGEMENT
+// ==========================================
+
+const userForm =
+document.getElementById(
+  "userForm"
+);
+
+if (userForm) {
+
+  userForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+      alert(
+        "Create User button clicked successfully."
+      );
+
+    }
+  );
+
+}
