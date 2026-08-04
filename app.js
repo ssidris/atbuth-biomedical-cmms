@@ -2318,7 +2318,7 @@ async function(event) {
 // --------------------------------------
 
 const profile = await loadUserProfile(data.user.id);
-
+console.log("PROFILE:", profile);
 if (!profile) {
 
   throw new Error(
