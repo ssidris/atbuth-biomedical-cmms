@@ -2377,7 +2377,14 @@ async function showApp(user) {
         user.id
       );
 window.currentUser = profile;
+// ==========================================
+// USER ROLE
+// ==========================================
 
+const userRole =
+  (profile.UserRole || "")
+  .trim()
+  .toLowerCase();
     console.log(
       "User profile successfully loaded:",
       profile
@@ -2431,7 +2438,33 @@ window.currentUser = profile;
     console.log(
       "Loading application form data..."
     );
+// ==========================================
+// MENU PERMISSIONS
+// ==========================================
 
+document
+  .querySelectorAll(".menu button")
+  .forEach(button => {
+
+    button.style.display = "";
+
+  });
+
+// Hide User Management from engineers
+if (userRole === "engineer") {
+
+  const userManagementButton =
+    document.querySelector(
+      '[data-section="usersSection"]'
+    );
+
+  if (userManagementButton) {
+
+    userManagementButton.style.display = "none";
+
+  }
+
+}
     await loadFormData();
 
 
