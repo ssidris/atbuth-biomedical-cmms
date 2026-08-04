@@ -2297,12 +2297,34 @@ async function(event) {
     );
 
     // --------------------------------------
-    // LOAD APPLICATION
-    // --------------------------------------
+// LOAD USER PROFILE
+// --------------------------------------
 
-    await showApp(
-      data.user
-    );
+const profile = await loadUserProfile(data.user.id);
+
+if (!profile) {
+
+  throw new Error(
+    "Your user profile was not found."
+  );
+
+}
+
+if (profile.Status.toLowerCase() !== "active") {
+
+  await client.auth.signOut();
+
+  throw new Error(
+    "Your account has been disabled. Please contact the administrator."
+  );
+
+}
+
+// Store the logged-in user profile globally
+window.currentUser = profile;
+
+// Load the application
+await showApp(data.user);
 
   }
 
