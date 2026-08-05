@@ -4363,3 +4363,265 @@ if (printPMBtn) {
 
 
 }
+// ==========================================
+// USER MANAGEMENT
+// ==========================================
+
+const userForm =
+  document.getElementById(
+    "userForm"
+  );
+
+
+if (userForm) {
+
+
+  userForm.addEventListener(
+    "submit",
+    async function(event) {
+
+
+      event.preventDefault();
+
+
+
+      const newUser = {
+
+
+        fullName:
+          document.getElementById(
+            "userFullName"
+          ).value.trim(),
+
+
+        username:
+          document.getElementById(
+            "userUsername"
+          ).value.trim(),
+
+
+        email:
+          document.getElementById(
+            "userEmail"
+          ).value.trim(),
+
+
+        password:
+          document.getElementById(
+            "userPassword"
+          ).value,
+
+
+        role:
+          document.getElementById(
+            "userRole"
+          ).value,
+
+
+        status:
+          document.getElementById(
+            "userStatus"
+          ).value
+
+
+      };
+
+
+
+      console.log(
+        "New user information:",
+        newUser
+      );
+
+
+
+      alert(
+        "User information captured successfully.\n\n" +
+        "Next step: Create Supabase Auth account securely."
+      );
+
+
+    }
+  );
+
+}
+
+
+
+
+// ==========================================
+// LOAD USERS
+// ==========================================
+
+async function loadUsers() {
+
+
+  const usersTableBody =
+    document.getElementById(
+      "usersTableBody"
+    );
+
+
+
+  if (!usersTableBody) {
+
+    return;
+
+  }
+
+
+
+  usersTableBody.innerHTML = `
+
+    <tr>
+
+      <td colspan="4">
+        Loading users...
+      </td>
+
+    </tr>
+
+  `;
+
+
+
+  try {
+
+
+    const {
+      data,
+      error
+    } = await client
+      .from(
+        "tblUsers"
+      )
+      .select(
+        `
+        Username,
+        "Full name",
+        UserRole,
+        Status
+        `
+      )
+      .order(
+        "Username"
+      );
+
+
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+
+    usersTableBody.innerHTML =
+      "";
+
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+
+      usersTableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="4">
+            No users found.
+          </td>
+
+        </tr>
+
+      `;
+
+
+      return;
+
+    }
+
+
+
+
+    data.forEach(
+      user => {
+
+
+        usersTableBody.innerHTML += `
+
+          <tr>
+
+            <td>
+              ${user.Username || ""}
+            </td>
+
+
+            <td>
+              ${user["Full name"] || ""}
+            </td>
+
+
+            <td>
+              ${user.UserRole || ""}
+            </td>
+
+
+            <td>
+              ${user.Status || ""}
+            </td>
+
+
+          </tr>
+
+        `;
+
+
+      }
+    );
+
+
+  }
+
+
+  catch(error) {
+
+
+    console.error(
+      "Load users error:",
+      error
+    );
+
+
+
+    usersTableBody.innerHTML = `
+
+      <tr>
+
+        <td colspan="4">
+          Unable to load users.
+        </td>
+
+      </tr>
+
+    `;
+
+
+  }
+
+
+}
+
+
+
+// ==========================================
+// FINAL STARTUP MESSAGE
+// ==========================================
+
+console.log(
+  "ATBUTH Biomedical CMMS JavaScript loaded successfully."
+);
