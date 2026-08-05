@@ -1,3 +1,4 @@
+alert("JavaScript loaded");
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
 // SUPABASE MOBILE WEB APPLICATION
