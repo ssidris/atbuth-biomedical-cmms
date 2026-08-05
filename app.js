@@ -4331,14 +4331,13 @@ if (equipmentPrintBtn) {
     newWindow.document.close();
 
 
-    setTimeout(function(){
+    newWindow.onload = function(){
 
-      newWindow.print();
+  newWindow.focus();
 
-      newWindow.close();
+  newWindow.print();
 
-    },500);
-
+};
 
   };
 
