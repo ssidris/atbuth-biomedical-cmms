@@ -4101,3 +4101,131 @@ if (reportSearch) {
   });
 
 }
+
+
+// ==========================================
+// PRINT MAINTENANCE REPORT HISTORY
+// ==========================================
+
+const printReportsBtn =
+  document.getElementById("printReportsBtn");
+
+
+if (printReportsBtn) {
+
+  printReportsBtn.addEventListener(
+    "click",
+    function () {
+
+      const table =
+        document.getElementById(
+          "reportsTable"
+        );
+
+
+      if (!table) {
+
+        alert(
+          "Report table not found"
+        );
+
+        return;
+
+      }
+
+
+      const printWindow =
+        window.open(
+          "",
+          "_blank"
+        );
+
+
+      if (!printWindow) {
+
+        alert(
+          "Allow popup window for printing"
+        );
+
+        return;
+
+      }
+
+
+      printWindow.document.write(`
+
+        <html>
+
+        <head>
+
+        <title>
+          Maintenance Report History
+        </title>
+
+
+        <style>
+
+        body {
+          font-family: Arial;
+          padding: 20px;
+        }
+
+
+        table {
+          width:100%;
+          border-collapse:collapse;
+        }
+
+
+        th, td {
+          border:1px solid black;
+          padding:6px;
+          font-size:12px;
+        }
+
+
+        </style>
+
+
+        </head>
+
+
+        <body>
+
+
+        <h2>
+        ATBUTH Biomedical CMMS
+        </h2>
+
+
+        <h3>
+        Maintenance Report History
+        </h3>
+
+
+        ${table.outerHTML}
+
+
+        </body>
+
+
+        </html>
+
+      `);
+
+
+      printWindow.document.close();
+
+
+      printWindow.onload =
+        function () {
+
+          printWindow.print();
+
+        };
+
+
+    }
+  );
+
+}
