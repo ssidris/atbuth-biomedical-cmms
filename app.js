@@ -4111,8 +4111,11 @@ if (printReportsBtn) {
 
   printReportsBtn.addEventListener("click", function () {
 
-    const printContents =
-      document.querySelector("#reportsSection .table-container").innerHTML;
+    const reportTable =
+  document.getElementById("reportsTable");
+
+const printContents =
+  reportTable.outerHTML;
 
     const newWindow = window.open("", "", "width=1200,height=700");
 
@@ -4154,9 +4157,7 @@ if (printReportsBtn) {
       </body>
 
       </html>
-    `);
-
-    newWindow.document.close();
+    new window.documemt.cloce();
 
     newWindow.focus();
 
