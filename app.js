@@ -4232,56 +4232,45 @@ if (printReportsBtn) {
 }
 
 // ==========================================
-// EQUIPMENT HISTORY PRINT (ANDROID SAFE)
+// EQUIPMENT HISTORY PRINT
 // ==========================================
 
-document.addEventListener(
-  "click",
-  function(e) {
+const equipmentPrintBtn =
+  document.getElementById(
+    "printEquipmentHistoryBtn"
+  );
 
-    if (
-      e.target &&
-      e.target.id === "printEquipmentHistoryBtn"
-    ) {
+if (equipmentPrintBtn) {
 
-
-      const printArea =
-        document.querySelector(
-          "#equipmentHistorySection .table-container"
-        );
+  equipmentPrintBtn.onclick = function () {
 
 
-      if (!printArea) {
-
-        alert(
-          "Equipment history table not found"
-        );
-
-        return;
-
-      }
+    const printContents =
+      document.querySelector(
+        "#equipmentHistorySection"
+      ).innerHTML;
 
 
-      const newWindow =
-        window.open(
-          "",
-          "",
-          "width=1200,height=700"
-        );
+    const newWindow =
+      window.open(
+        "",
+        "",
+        "width=1200,height=700"
+      );
 
 
-      if (!newWindow) {
+    if (!newWindow) {
 
-        alert(
-          "Please allow popup for printing"
-        );
+      alert(
+        "Popup blocked. Allow popup and try again."
+      );
 
-        return;
+      return;
 
-      }
+    }
 
 
-      newWindow.document.write(`
+    newWindow.document.write(`
 
       <html>
 
@@ -4291,7 +4280,6 @@ document.addEventListener(
       Equipment History
       </title>
 
-
       <style>
 
       body{
@@ -4299,18 +4287,19 @@ document.addEventListener(
         padding:20px;
       }
 
-
       table{
         width:100%;
         border-collapse:collapse;
       }
-
 
       th,td{
         border:1px solid black;
         padding:6px;
       }
 
+      button,input,select{
+        display:none;
+      }
 
       </style>
 
@@ -4319,44 +4308,43 @@ document.addEventListener(
 
       <body>
 
-
       <h2>
       ATBUTH Biomedical CMMS
       </h2>
 
 
       <h3>
-      Equipment Maintenance History
+      Equipment History
       </h3>
 
 
-      ${printArea.innerHTML}
+      ${printContents}
 
 
       </body>
 
       </html>
 
-      `);
+    `);
 
 
-      newWindow.document.close();
+    newWindow.document.close();
 
 
-      newWindow.onload =
-        function(){
+    setTimeout(function(){
 
-          newWindow.print();
+      newWindow.print();
 
-        };
+      newWindow.close();
+
+    },500);
 
 
-    }
+  };
 
-  }
-);
+}
 
 
 console.log(
-"Equipment History Print Loaded"
+  "Equipment History Print Ready"
 );
