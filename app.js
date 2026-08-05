@@ -3890,3 +3890,209 @@ document.addEventListener(
 
   }
 );
+// ==========================================
+// PM HISTORY SEARCH
+// ==========================================
+
+const pmHistorySearch =
+  document.getElementById(
+    "pmHistorySearch"
+  );
+
+
+if (pmHistorySearch) {
+
+  pmHistorySearch.addEventListener(
+    "input",
+    function() {
+
+
+      const searchText =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+
+      const rows =
+        document.querySelectorAll(
+          "#pmHistoryTableBody tr"
+        );
+
+
+
+      let visibleRows = 0;
+
+
+
+      rows.forEach(
+        row => {
+
+
+          const text =
+            row.textContent
+              .toLowerCase();
+
+
+
+          if (
+            searchText === "" ||
+            text.includes(searchText)
+          ) {
+
+
+            row.style.display =
+              "";
+
+            visibleRows++;
+
+
+          }
+
+          else {
+
+
+            row.style.display =
+              "none";
+
+
+          }
+
+
+        }
+      );
+
+
+
+      const message =
+        document.getElementById(
+          "pmHistoryMessage"
+        );
+
+
+
+      if (
+        searchText !== ""
+      ) {
+
+
+        if (
+          visibleRows === 0
+        ) {
+
+
+          if (message) {
+
+            message.textContent =
+              "No matching PM records found.";
+
+          }
+
+
+        }
+
+        else {
+
+
+          if (message) {
+
+            message.textContent =
+              `${visibleRows} matching PM record(s) found.`;
+
+          }
+
+
+        }
+
+
+      }
+
+      else {
+
+
+        if (message) {
+
+          message.textContent =
+            "";
+
+        }
+
+
+      }
+
+
+    }
+  );
+
+}
+
+
+
+// ==========================================
+// MAINTENANCE REPORT SEARCH
+// ==========================================
+
+const reportSearch =
+  document.getElementById(
+    "reportSearch"
+  );
+
+
+
+if (reportSearch) {
+
+
+  reportSearch.addEventListener(
+    "input",
+    function() {
+
+
+      const search =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+
+      const rows =
+        document.querySelectorAll(
+          "#reportsTableBody tr"
+        );
+
+
+
+      rows.forEach(
+        row => {
+
+
+          if (
+            row.textContent
+              .toLowerCase()
+              .includes(search)
+          ) {
+
+
+            row.style.display =
+              "";
+
+
+          }
+
+          else {
+
+
+            row.style.display =
+              "none";
+
+
+          }
+
+
+        }
+      );
+
+
+    }
+  );
+
+}
