@@ -4328,8 +4328,6 @@ if (equipmentPrintBtn) {
     `);
 
 
-    newWindow.document.close();
-
 
     newWindow.onload = function(){
 
