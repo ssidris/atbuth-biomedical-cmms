@@ -4102,114 +4102,7 @@ if (reportSearch) {
 
 }
 
-// ==========================================
-// PRINT EQUIPMENT HISTORY
-// ==========================================
-
-const printEquipmentHistoryBtn =
-  document.getElementById("printEquipmentHistoryBtn");
-
-if (printEquipmentHistoryBtn) {
-
-  printEquipmentHistoryBtn.addEventListener(
-    "click",
-    function () {
-
-      const printContents =
-        document.querySelector(
-          "#equipmentHistorySection .table-container"
-        ).innerHTML;
-
-
-      const newWindow =
-        window.open(
-          "",
-          "",
-          "width=1200,height=700"
-        );
-
-
-      newWindow.document.write(`
-
-        <html>
-
-        <head>
-
-        <title>
-        Equipment History
-        </title>
-
-
-        <style>
-
-        body{
-          font-family:Arial,sans-serif;
-          padding:20px;
-        }
-
-        table{
-          width:100%;
-          border-collapse:collapse;
-        }
-
-        th,td{
-          border:1px solid #000;
-          padding:6px;
-          text-align:left;
-        }
-
-        h2{
-          text-align:center;
-        }
-
-        </style>
-
-        </head>
-
-
-        <body>
-
-
-        <h2>
-        ATBUTH Biomedical CMMS
-        </h2>
-
-
-        <h3>
-        Equipment Maintenance History
-        </h3>
-
-
-        ${printContents}
-
-
-        </body>
-
-
-        </html>
-
-      `);
-
-
-      newWindow.document.close();
-
-      newWindow.focus();
-
-      newWindow.print();
-
-      newWindow.close();
-
-
-    }
-  );
-
-}
-
-
-console.log(
-  "Equipment History Print script loaded"
-);
-
+        
 
 // ==========================================
 // PRINT MAINTENANCE REPORT HISTORY
@@ -4338,23 +4231,132 @@ if (printReportsBtn) {
 
 }
 
-// TEST EQUIPMENT PRINT BUTTON
+// ==========================================
+// EQUIPMENT HISTORY PRINT (ANDROID SAFE)
+// ==========================================
 
-const testPrintBtn = document.getElementById(
-  "printEquipmentHistoryBtn"
+document.addEventListener(
+  "click",
+  function(e) {
+
+    if (
+      e.target &&
+      e.target.id === "printEquipmentHistoryBtn"
+    ) {
+
+
+      const printArea =
+        document.querySelector(
+          "#equipmentHistorySection .table-container"
+        );
+
+
+      if (!printArea) {
+
+        alert(
+          "Equipment history table not found"
+        );
+
+        return;
+
+      }
+
+
+      const newWindow =
+        window.open(
+          "",
+          "",
+          "width=1200,height=700"
+        );
+
+
+      if (!newWindow) {
+
+        alert(
+          "Please allow popup for printing"
+        );
+
+        return;
+
+      }
+
+
+      newWindow.document.write(`
+
+      <html>
+
+      <head>
+
+      <title>
+      Equipment History
+      </title>
+
+
+      <style>
+
+      body{
+        font-family:Arial;
+        padding:20px;
+      }
+
+
+      table{
+        width:100%;
+        border-collapse:collapse;
+      }
+
+
+      th,td{
+        border:1px solid black;
+        padding:6px;
+      }
+
+
+      </style>
+
+      </head>
+
+
+      <body>
+
+
+      <h2>
+      ATBUTH Biomedical CMMS
+      </h2>
+
+
+      <h3>
+      Equipment Maintenance History
+      </h3>
+
+
+      ${printArea.innerHTML}
+
+
+      </body>
+
+      </html>
+
+      `);
+
+
+      newWindow.document.close();
+
+
+      newWindow.onload =
+        function(){
+
+          newWindow.print();
+
+        };
+
+
+    }
+
+  }
 );
+
 
 console.log(
-  "Equipment print button:",
-  testPrintBtn
+"Equipment History Print Loaded"
 );
-
-if (testPrintBtn) {
-
-  testPrintBtn.onclick = function(){
-
-    alert("Equipment Print Button Detected");
-
-  };
-
-}
