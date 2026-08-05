@@ -4348,3 +4348,5 @@ if (equipmentPrintBtn) {
 console.log(
   "Equipment History Print Ready"
 );
+
+alert("NEW APP.JS LOADED");
