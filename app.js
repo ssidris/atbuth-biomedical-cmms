@@ -4096,3 +4096,270 @@ if (reportSearch) {
   );
 
 }
+// ==========================================
+// PRINT TABLE FUNCTION
+// ==========================================
+
+function printTable(
+  sectionId,
+  title
+) {
+
+
+  const section =
+    document.getElementById(
+      sectionId
+    );
+
+
+
+  if (!section) {
+
+    alert(
+      "Section not found."
+    );
+
+    return;
+
+  }
+
+
+
+  const table =
+    section.querySelector(
+      "table"
+    );
+
+
+
+  if (!table) {
+
+    alert(
+      "Table not found."
+    );
+
+    return;
+
+  }
+
+
+
+  const printWindow =
+    window.open(
+      "",
+      "_blank"
+    );
+
+
+
+  printWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+${title}
+</title>
+
+
+<style>
+
+body {
+
+  font-family: Arial, sans-serif;
+
+  margin: 20px;
+
+}
+
+
+h1,
+h2 {
+
+  text-align: center;
+
+}
+
+
+table {
+
+  width:100%;
+
+  border-collapse:collapse;
+
+  margin-top:20px;
+
+}
+
+
+th,
+td {
+
+  border:1px solid black;
+
+  padding:8px;
+
+  font-size:12px;
+
+  text-align:left;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<h1>
+ATBUTH Biomedical CMMS
+</h1>
+
+
+<h2>
+${title}
+</h2>
+
+
+${table.outerHTML}
+
+
+</body>
+
+
+</html>
+
+`);
+
+
+
+
+  printWindow.document.close();
+
+
+
+  setTimeout(
+    function() {
+
+
+      printWindow.focus();
+
+
+      printWindow.print();
+
+
+
+    },
+    800
+  );
+
+
+}
+
+
+
+
+// ==========================================
+// PRINT REPORTS
+// ==========================================
+
+const printReportsBtn =
+  document.getElementById(
+    "printReportsBtn"
+  );
+
+
+if (printReportsBtn) {
+
+
+  printReportsBtn.addEventListener(
+    "click",
+    function() {
+
+
+      printTable(
+        "reportsSection",
+        "Maintenance Report History"
+      );
+
+
+    }
+  );
+
+
+}
+
+
+
+// ==========================================
+// PRINT EQUIPMENT HISTORY
+// ==========================================
+
+const printEquipmentHistoryBtn =
+  document.getElementById(
+    "printEquipmentHistoryBtn"
+  );
+
+
+
+if (printEquipmentHistoryBtn) {
+
+
+  printEquipmentHistoryBtn.addEventListener(
+    "click",
+    function() {
+
+
+      printTable(
+        "equipmentHistorySection",
+        "Equipment History"
+      );
+
+
+    }
+  );
+
+
+}
+
+
+
+// ==========================================
+// PRINT PM HISTORY
+// ==========================================
+
+const printPMBtn =
+  document.getElementById(
+    "printPMBtn"
+  );
+
+
+
+if (printPMBtn) {
+
+
+  printPMBtn.addEventListener(
+    "click",
+    function() {
+
+
+      printTable(
+        "pmPrintArea",
+        "Preventive Maintenance History"
+      );
+
+
+    }
+  );
+
+
+}
