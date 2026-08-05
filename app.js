@@ -4168,3 +4168,4 @@ if (printReportsBtn) {
 
 }
 console.log("Print Reports script loaded");
+alert("END OF APP.JS LOADED");
