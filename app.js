@@ -4115,26 +4115,17 @@ if (printEquipmentHistoryBtn) {
     "click",
     function () {
 
-      const printArea =
+      const printContents =
         document.querySelector(
           "#equipmentHistorySection .table-container"
-        );
-
-      if (!printArea) {
-
-        alert(
-          "Equipment history table not found."
-        );
-
-        return;
-
-      }
+        ).innerHTML;
 
 
       const newWindow =
         window.open(
           "",
-          "_blank"
+          "",
+          "width=1200,height=700"
         );
 
 
@@ -4148,10 +4139,11 @@ if (printEquipmentHistoryBtn) {
         Equipment History
         </title>
 
+
         <style>
 
         body{
-          font-family: Arial;
+          font-family:Arial,sans-serif;
           padding:20px;
         }
 
@@ -4161,7 +4153,7 @@ if (printEquipmentHistoryBtn) {
         }
 
         th,td{
-          border:1px solid black;
+          border:1px solid #000;
           padding:6px;
           text-align:left;
         }
@@ -4177,18 +4169,22 @@ if (printEquipmentHistoryBtn) {
 
         <body>
 
+
         <h2>
         ATBUTH Biomedical CMMS
         </h2>
+
 
         <h3>
         Equipment Maintenance History
         </h3>
 
-        ${printArea.innerHTML}
+
+        ${printContents}
 
 
         </body>
+
 
         </html>
 
@@ -4197,12 +4193,11 @@ if (printEquipmentHistoryBtn) {
 
       newWindow.document.close();
 
+      newWindow.focus();
 
-      setTimeout(function(){
+      newWindow.print();
 
-        newWindow.print();
-
-      },500);
+      newWindow.close();
 
 
     }
@@ -4212,8 +4207,9 @@ if (printEquipmentHistoryBtn) {
 
 
 console.log(
-  "Equipment History Print loaded"
+  "Equipment History Print script loaded"
 );
+
 
 // ==========================================
 // PRINT MAINTENANCE REPORT HISTORY
