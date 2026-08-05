@@ -4101,8 +4101,8 @@ if (reportSearch) {
   });
 
 }
-// ==========================================
-// PRINT MAINTENANCE REPORTS
+          // ==========================================
+// PRINT MAINTENANCE REPORT HISTORY
 // ==========================================
 
 const printReportsBtn =
@@ -4119,10 +4119,11 @@ if (printReportsBtn) {
           "reportsTable"
         );
 
+
       if (!table) {
 
         alert(
-          "Report table not found."
+          "Maintenance report table not found."
         );
 
         return;
@@ -4130,86 +4131,123 @@ if (printReportsBtn) {
       }
 
 
-      const originalContent =
-        document.body.innerHTML;
+      const printWindow =
+        window.open(
+          "",
+          "_blank"
+        );
 
 
-      const printContent = `
+      if (!printWindow) {
 
-        <h2 style="text-align:center;">
-          ATBUTH Biomedical CMMS
-        </h2>
+        alert(
+          "Please allow popups to print."
+        );
 
-        <h3 style="text-align:center;">
-          Maintenance Report History
-        </h3>
+        return;
 
-        ${table.outerHTML}
-
-      `;
+      }
 
 
-      document.body.innerHTML =
-        printContent;
+      printWindow.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+          <title>
+            Maintenance Report History
+          </title>
 
 
-      window.print();
+          <style>
+
+            body {
+
+              font-family: Arial, sans-serif;
+              padding: 20px;
+
+            }
 
 
-      document.body.innerHTML =
-        originalContent;
+            h2,
+            h3 {
+
+              text-align: center;
+
+            }
 
 
-      location.reload();
+            table {
+
+              width: 100%;
+              border-collapse: collapse;
+
+            }
+
+
+            th,
+            td {
+
+              border: 1px solid black;
+              padding: 6px;
+              font-size: 12px;
+
+            }
+
+
+            th {
+
+              background: #eeeeee;
+
+            }
+
+
+          </style>
+
+        </head>
+
+
+        <body>
+
+
+          <h2>
+            ATBUTH Biomedical CMMS
+          </h2>
+
+
+          <h3>
+            Maintenance Report History
+          </h3>
+
+
+          ${table.outerHTML}
+
+
+        </body>
+
+
+        </html>
+
+      `);
+
+
+      printWindow.document.close();
+
+
+      printWindow.onload =
+        function () {
+
+          printWindow.focus();
+
+          printWindow.print();
+
+        };
+
 
     }
   );
 
-}
-
-          table{
-            width:100%;
-            border-collapse:collapse;
-          }
-
-          th,td{
-            border:1px solid #000;
-            padding:6px;
-            text-align:left;
-          }
-
-          h2{
-            text-align:center;
-          }
-        </style>
-      </head>
-
-      <body>
-
-        <h2>ATBUTH Biomedical CMMS</h2>
-
-        <h3>Maintenance Report History</h3>
-
-        ${printContents}
-
-      </body>
-
-      </html>
-    new window.documemt.cloce();
-
-    newWindow.focus();
-
-    newWindow.print();
-
-    newWindow.close();
-
-  });
-
-}
-console.log("Print Reports button:", printReportsBtn);
-
-if (printReportsBtn) {
-  alert("Button found");
-} else {
-  alert("Button NOT found");
 }
