@@ -1,4 +1,3 @@
-
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
 // SUPABASE MOBILE WEB APPLICATION
@@ -79,14 +78,11 @@ async function loadLookup(
     document.getElementById(selectId);
 
   if (!select) {
-
     console.warn(
       "Dropdown not found:",
       selectId
     );
-
     return;
-
   }
 
   select.innerHTML =
@@ -118,8 +114,8 @@ async function loadLookup(
         `<option value="">Unable to load data</option>`;
 
       return;
-
     }
+
     (data || []).forEach(
       row => {
 
@@ -158,6 +154,8 @@ async function loadLookup(
   }
 
 }
+
+
 // ==========================================
 // LOAD MAINTENANCE FORM DROPDOWNS
 // ==========================================
@@ -199,30 +197,29 @@ async function loadMaintenanceFormData() {
     row => {
 
       return (
-        `${row.FirstName || ""} ${row.LastName || ""}`
+        `${row.FirstName || ""} ` +
+        `${row.LastName || ""}`
       ).trim();
 
     }
   );
+// ==========================================
+// AUTO-SELECT LOGGED-IN ENGINEER
+// ==========================================
 
-  // ==========================================
-  // AUTO-SELECT LOGGED-IN ENGINEER
-  // ==========================================
+if (
+  window.currentUser &&
+  window.currentUser.EngineerID
+) {
 
-  if (
-    window.currentUser &&
-    window.currentUser.EngineerID
-  ) {
+  document.getElementById(
+    "engineerId"
+  ).value =
+    window.currentUser.EngineerID;
 
-    document.getElementById(
-      "engineerId"
-    ).value =
-      window.currentUser.EngineerID;
+}
 
-  }
-  // ==========================================
   // MAINTENANCE TYPE
-  // ==========================================
 
   await loadLookup(
     "tblMaintenanceType",
@@ -232,9 +229,8 @@ async function loadMaintenanceFormData() {
     "Select maintenance type"
   );
 
-  // ==========================================
+
   // PART REQUESTED STATUS
-  // ==========================================
 
   await loadLookup(
     "tblPartRequestedStatus",
@@ -244,9 +240,8 @@ async function loadMaintenanceFormData() {
     "Select part status"
   );
 
-  // ==========================================
+
   // EQUIPMENT STATUS
-  // ==========================================
 
   await loadLookup(
     "tblEquipmentStatus",
@@ -257,6 +252,8 @@ async function loadMaintenanceFormData() {
   );
 
 }
+
+
 // ==========================================
 // LOAD PM ENGINEER DROPDOWN
 // ==========================================
@@ -272,7 +269,8 @@ async function loadPMEngineerDropdown() {
     row => {
 
       return (
-        `${row.FirstName || ""} ${row.LastName || ""}`
+        `${row.FirstName || ""} ` +
+        `${row.LastName || ""}`
       ).trim();
 
     }
@@ -309,6 +307,8 @@ async function loadPMEquipmentDropdown() {
   );
 
 }
+
+
 // ==========================================
 // LOAD EQUIPMENT REGISTRATION DROPDOWNS
 // ==========================================
@@ -325,6 +325,7 @@ async function loadEquipmentRegistrationDropdowns() {
     "Select department"
   );
 
+
   // CATEGORY
   // IMPORTANT:
   // TABLE NAME IS tblEquipmentcategory
@@ -336,6 +337,7 @@ async function loadEquipmentRegistrationDropdowns() {
     "newCategoryId",
     "Select category"
   );
+
 
   // EQUIPMENT STATUS
 
@@ -367,6 +369,8 @@ async function loadFormData() {
   await loadEquipmentHistoryDropdown();
 
 }
+
+
 // ==========================================
 // LOAD DEPARTMENT FOR EQUIPMENT
 // ==========================================
@@ -461,6 +465,8 @@ async function loadDepartmentForEquipment(
   }
 
 }
+
+
 // ==========================================
 // MAINTENANCE EQUIPMENT CHANGE
 // ==========================================
@@ -531,7 +537,6 @@ async function loadPMDepartment(
         "Equipment not found";
 
       return;
-
     }
 
     if (
@@ -543,7 +548,6 @@ async function loadPMDepartment(
         "No department assigned";
 
       return;
-
     }
 
     const {
@@ -607,6 +611,8 @@ if (pmEquipmentSelect) {
   );
 
 }
+
+
 // ==========================================
 // LOAD EQUIPMENT HISTORY DROPDOWN
 // ==========================================
@@ -661,7 +667,9 @@ async function loadEquipmentHistoryDropdown() {
           equipment.EquipmentID;
 
         option.textContent =
-          `${equipment.BMENumber || ""} — ${equipment.EquipmentName || ""}`;
+          `${equipment.BMENumber || ""} — ${
+            equipment.EquipmentName || ""
+          }`;
 
         select.appendChild(
           option
@@ -685,6 +693,8 @@ async function loadEquipmentHistoryDropdown() {
   }
 
 }
+
+
 // ==========================================
 // EQUIPMENT HISTORY
 // ==========================================
@@ -733,7 +743,8 @@ async function loadEquipmentHistory(
       error: equipmentError
     } = await client
       .from("tblEquipment")
-      .select(`
+      .select(
+        `
         EquipmentID,
         BMENumber,
         EquipmentName,
@@ -742,7 +753,8 @@ async function loadEquipmentHistory(
         SerialNumber,
         Location,
         DepartmentID
-      `)
+        `
+      )
       .eq(
         "EquipmentID",
         equipmentId
@@ -766,7 +778,6 @@ async function loadEquipmentHistory(
         </tr>`;
 
       return;
-
     }
 
     let departmentName =
@@ -789,11 +800,9 @@ async function loadEquipmentHistory(
         .maybeSingle();
 
       if (department) {
-
         departmentName =
           department.DepartmentName ||
           "Not assigned";
-
       }
 
     }
@@ -802,30 +811,46 @@ async function loadEquipmentHistory(
 
       <div class="equipment-history-info">
 
-        <p><strong>BME Number:</strong>
-        ${equipment.BMENumber || ""}</p>
+        <p>
+          <strong>BME Number:</strong>
+          ${equipment.BMENumber || ""}
+        </p>
 
-        <p><strong>Equipment Name:</strong>
-        ${equipment.EquipmentName || ""}</p>
+        <p>
+          <strong>Equipment Name:</strong>
+          ${equipment.EquipmentName || ""}
+        </p>
 
-        <p><strong>Manufacturer:</strong>
-        ${equipment.Manufacturer || ""}</p>
+        <p>
+          <strong>Manufacturer:</strong>
+          ${equipment.Manufacturer || ""}
+        </p>
 
-        <p><strong>Model:</strong>
-        ${equipment.Model || ""}</p>
+        <p>
+          <strong>Model:</strong>
+          ${equipment.Model || ""}
+        </p>
 
-        <p><strong>Serial Number:</strong>
-        ${equipment.SerialNumber || ""}</p>
+        <p>
+          <strong>Serial Number:</strong>
+          ${equipment.SerialNumber || ""}
+        </p>
 
-        <p><strong>Department:</strong>
-        ${departmentName}</p>
+        <p>
+          <strong>Department:</strong>
+          ${departmentName}
+        </p>
 
-        <p><strong>Location:</strong>
-        ${equipment.Location || ""}</p>
+        <p>
+          <strong>Location:</strong>
+          ${equipment.Location || ""}
+        </p>
 
       </div>
 
     `;
+
+
     const {
       data: history,
       error: historyError
@@ -860,7 +885,6 @@ async function loadEquipmentHistory(
         </tr>`;
 
       return;
-
     }
 
     tableBody.innerHTML = "";
@@ -885,25 +909,45 @@ async function loadEquipmentHistory(
             }
           </td>
 
-          <td>${report.JobOrderNumber || ""}</td>
+          <td>
+            ${report.JobOrderNumber || ""}
+          </td>
 
-          <td>${report.EngineerName || ""}</td>
+          <td>
+            ${report.EngineerName || ""}
+          </td>
 
-          <td>${report.MaintenanceType || ""}</td>
+          <td>
+            ${report.MaintenanceType || ""}
+          </td>
 
-          <td>${report.FaultReported || ""}</td>
+          <td>
+            ${report.FaultReported || ""}
+          </td>
 
-          <td>${report.Diagnosis || ""}</td>
+          <td>
+            ${report.Diagnosis || ""}
+          </td>
 
-          <td>${report.ActionTaken || ""}</td>
+          <td>
+            ${report.ActionTaken || ""}
+          </td>
 
-          <td>${report.PartUsed || ""}</td>
+          <td>
+            ${report.PartUsed || ""}
+          </td>
 
-          <td>${report.RequiredPart || ""}</td>
+          <td>
+            ${report.RequiredPart || ""}
+          </td>
 
-          <td>${report.StatusName || ""}</td>
+          <td>
+            ${report.StatusName || ""}
+          </td>
 
-          <td>${report.Remarks || ""}</td>
+          <td>
+            ${report.Remarks || ""}
+          </td>
 
         `;
 
@@ -931,15 +975,15 @@ async function loadEquipmentHistory(
       </tr>`;
 
     if (message) {
-
       message.textContent =
         error.message;
-
     }
 
   }
 
 }
+
+
 // ==========================================
 // HISTORY CHANGE EVENT
 // ==========================================
@@ -976,21 +1020,17 @@ if (historyEquipmentSelect) {
           );
 
         if (details) {
-
           details.innerHTML =
             "<p>Select an equipment to view its details.</p>";
-
         }
 
         if (tableBody) {
-
           tableBody.innerHTML =
             `<tr>
               <td colspan="11">
                 Select an equipment to view history.
               </td>
             </tr>`;
-
         }
 
       }
@@ -1000,31 +1040,100 @@ if (historyEquipmentSelect) {
 
 }
 // ==========================================
+// ATBUTH BIOMEDICAL CMMS
+// JAVASCRIPT - PART 2 OF 3
+// ==========================================
+
+
+// ==========================================
+// LOAD USER PROFILE
+// ==========================================
+
+async function loadUserProfile(userId) {
+
+  const {
+    data,
+    error
+  } = await client
+    .from("tblUsers")
+    .select(
+'UserID, Username, "Full name", UserRole, Status, AuthUserID, EngineerID'
+)
+    .eq(
+      "AuthUserID",
+      userId
+    )
+    .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "User profile error:",
+      error
+    );
+
+    throw error;
+
+  }
+
+  if (!data) {
+
+    throw new Error(
+      "Your Supabase account is authenticated, " +
+      "but no matching profile was found in tblUsers. " +
+      "Please make sure AuthUserID in tblUsers matches your Authentication User ID."
+    );
+
+  }
+
+  if (
+    String(data.Status).toLowerCase() !==
+    "active"
+  ) {
+
+    throw new Error(
+      "Your account is not active. " +
+      "Please contact the administrator."
+    );
+
+  }
+
+  return data;
+
+}
+
+
+// ==========================================
 // LOAD MAINTENANCE REPORTS
 // ==========================================
 
 async function loadMaintenanceReports() {
 
-  const reportsTableBody =
+  const reportTableBody =
     document.getElementById(
       "reportsTableBody"
     );
 
-  const reportsLoading =
+  const loading =
     document.getElementById(
       "reportsLoading"
     );
 
-  if (!reportsTableBody) {
+  if (!reportTableBody) {
     return;
   }
 
-  if (reportsLoading) {
-    reportsLoading.textContent =
-      "Loading maintenance reports...";
+  if (loading) {
+    loading.textContent =
+      "Loading reports...";
   }
 
-  reportsTableBody.innerHTML = "";
+  reportTableBody.innerHTML =
+    `<tr>
+      <td colspan="11">
+        Loading maintenance reports...
+      </td>
+    </tr>`;
 
   try {
 
@@ -1042,96 +1151,130 @@ async function loadMaintenanceReports() {
       );
 
     if (error) {
-      throw error;
+
+      console.error(
+        "Error loading maintenance reports:",
+        error
+      );
+
+      reportTableBody.innerHTML =
+        `<tr>
+          <td colspan="11">
+            Error loading reports:
+            ${error.message}
+          </td>
+        </tr>`;
+
+      return;
     }
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
-      reportsTableBody.innerHTML =
+      reportTableBody.innerHTML =
         `<tr>
           <td colspan="11">
             No maintenance reports found.
           </td>
         </tr>`;
 
-      if (reportsLoading) {
-        reportsLoading.textContent = "";
-      }
-
       return;
-
     }
 
-    data.forEach(report => {
+    reportTableBody.innerHTML = "";
 
-      const row =
-        document.createElement("tr");
+    data.forEach(
+      report => {
 
-      row.innerHTML = `
+        const row =
+          document.createElement(
+            "tr"
+          );
 
-        <td>
-          ${
-            report.ReportDate
-              ? new Date(
-                  report.ReportDate
-                ).toLocaleDateString()
-              : ""
-          }
-        </td>
+        row.innerHTML = `
 
-        <td>${report.JobOrderNumber || ""}</td>
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : ""
+            }
+          </td>
 
-        <td>${report.BMENumber || ""}</td>
+          <td>
+            ${report.JobOrderNumber || ""}
+          </td>
 
-        <td>${report.EquipmentName || ""}</td>
+          <td>
+            ${report.BMENumber || ""}
+          </td>
 
-        <td>${report.DepartmentName || ""}</td>
+          <td>
+            ${report.EquipmentName || ""}
+          </td>
 
-        <td>${report.EngineerName || ""}</td>
+          <td>
+            ${report.DepartmentName || ""}
+          </td>
 
-        <td>${report.MaintenanceType || ""}</td>
+          <td>
+            ${report.EngineerName || ""}
+          </td>
 
-        <td>${report.FaultReported || ""}</td>
+          <td>
+            ${report.MaintenanceType || ""}
+          </td>
 
-        <td>${report.ActionTaken || ""}</td>
+          <td>
+            ${report.FaultReported || ""}
+          </td>
 
-        <td>${report.StatusName || ""}</td>
+          <td>
+            ${report.ActionTaken || ""}
+          </td>
 
-        <td>${report.Remarks || ""}</td>
+          <td>
+            ${report.StatusName || ""}
+          </td>
 
-      `;
+          <td>
+            ${report.Remarks || ""}
+          </td>
 
-      reportsTableBody.appendChild(row);
+        `;
 
-    });
+        reportTableBody.appendChild(
+          row
+        );
 
-    if (reportsLoading) {
-      reportsLoading.textContent = "";
-    }
+      }
+    );
 
   }
 
   catch (error) {
 
     console.error(
-      "Maintenance reports error:",
+      "Unexpected maintenance reports error:",
       error
     );
 
-    reportsTableBody.innerHTML =
+    reportTableBody.innerHTML =
       `<tr>
         <td colspan="11">
           Unable to load maintenance reports.
         </td>
       </tr>`;
 
-    if (reportsLoading) {
-      reportsLoading.textContent = "";
-    }
-
   }
 
 }
+
+
 // ==========================================
 // EQUIPMENT REGISTRATION
 // ==========================================
@@ -1140,38 +1283,82 @@ if (equipmentRegistrationForm) {
 
   equipmentRegistrationForm.addEventListener(
     "submit",
-    async function (event) {
+    async function(event) {
 
       event.preventDefault();
 
+      const message =
+        document.getElementById(
+          "equipmentRegistrationMessage"
+        );
+
+      if (message) {
+
+        message.textContent =
+          "Registering equipment...";
+
+      }
+
       try {
 
+        // ------------------------------------
+        // GET FORM VALUES
+        // ------------------------------------
+
         const bmeNumber =
-          document.getElementById("newBMENumber").value.trim();
+          document.getElementById(
+            "newBmeNumber"
+          ).value.trim();
 
         const equipmentName =
-          document.getElementById("newEquipmentName").value.trim();
+          document.getElementById(
+            "newEquipmentName"
+          ).value.trim();
 
         const manufacturer =
-          document.getElementById("newManufacturer").value.trim();
+          document.getElementById(
+            "newManufacturer"
+          ).value.trim();
 
         const model =
-          document.getElementById("newModel").value.trim();
+          document.getElementById(
+            "newModel"
+          ).value.trim();
 
         const serialNumber =
-          document.getElementById("newSerialNumber").value.trim();
-
-        const location =
-          document.getElementById("newLocation").value.trim();
+          document.getElementById(
+            "newSerialNumber"
+          ).value.trim();
 
         const departmentId =
-          document.getElementById("newDepartmentId").value;
+          document.getElementById(
+            "newDepartmentId"
+          ).value;
 
         const categoryId =
-          document.getElementById("newCategoryId").value;
+          document.getElementById(
+            "newCategoryId"
+          ).value;
 
         const statusId =
-          document.getElementById("newStatusId").value;
+          document.getElementById(
+            "newStatusId"
+          ).value;
+
+        const location =
+          document.getElementById(
+            "newLocation"
+          ).value.trim();
+
+        const remarks =
+          document.getElementById(
+            "newEquipmentRemarks"
+          ).value.trim();
+
+
+        // ------------------------------------
+        // VALIDATION
+        // ------------------------------------
 
         if (
           !bmeNumber ||
@@ -1181,54 +1368,110 @@ if (equipmentRegistrationForm) {
           !statusId
         ) {
 
-          throw new Error(
-            "Please complete all required fields."
-          );
+          if (message) {
+
+            message.textContent =
+              "Please complete all required fields.";
+
+          }
+
+          return;
 
         }
 
-        // Check duplicate BME Number
+
+        // ------------------------------------
+        // CHECK DUPLICATE BME NUMBER
+        // ------------------------------------
 
         const {
-          data: existingEquipment
+          data: existingEquipment,
+          error: checkError
         } = await client
           .from("tblEquipment")
           .select("EquipmentID")
-          .eq("BMENumber", bmeNumber)
+          .eq(
+            "BMENumber",
+            bmeNumber
+          )
           .maybeSingle();
 
-        if (existingEquipment) {
+        if (checkError) {
 
           throw new Error(
-            "This BME Number already exists."
+            "Unable to check BME Number: " +
+            checkError.message
           );
 
         }
 
-        const { error } =
-          await client
-            .from("tblEquipment")
-            .insert({
+        if (existingEquipment) {
 
-              BMENumber: bmeNumber,
+          if (message) {
 
-              EquipmentName: equipmentName,
+            message.textContent =
+              "This BME Number already exists. Please enter a unique BME Number.";
 
-              Manufacturer: manufacturer || null,
+          }
 
-              Model: model || null,
+          return;
 
-              SerialNumber: serialNumber || null,
+        }
 
-              Location: location || null,
 
-              DepartmentID: Number(departmentId),
+        // ------------------------------------
+        // PREPARE EQUIPMENT DATA
+        // ------------------------------------
 
-              CategoryID: Number(categoryId),
+        const equipmentData = {
 
-              StatusID: Number(statusId)
+          BMENumber:
+            bmeNumber,
 
-            });
+          EquipmentName:
+            equipmentName,
+
+          Manufacturer:
+            manufacturer || null,
+
+          Model:
+            model || null,
+
+          SerialNumber:
+            serialNumber || null,
+
+          DepartmentID:
+            Number(departmentId),
+
+          CategoryID:
+            Number(categoryId),
+
+          StatusID:
+            Number(statusId),
+
+          Location:
+            location || null,
+
+          Remarks:
+            remarks || null
+
+        };
+
+
+        // ------------------------------------
+        // INSERT EQUIPMENT
+        // ------------------------------------
+
+        const {
+          data,
+          error
+        } = await client
+          .from("tblEquipment")
+          .insert(
+            equipmentData
+          )
+          .select()
+          .single();
 
         if (error) {
 
@@ -1236,13 +1479,30 @@ if (equipmentRegistrationForm) {
 
         }
 
-        alert(
-          "Equipment registered successfully."
+
+        // ------------------------------------
+        // SUCCESS
+        // ------------------------------------
+
+        console.log(
+          "Equipment registered successfully:",
+          data
         );
+
+        if (message) {
+
+          message.textContent =
+            "Equipment registered successfully.";
+
+        }
+
 
         equipmentRegistrationForm.reset();
 
-        await loadEquipmentRegistrationDropdowns();
+
+        // ------------------------------------
+        // REFRESH DROPDOWNS
+        // ------------------------------------
 
         await loadMaintenanceFormData();
 
@@ -1250,7 +1510,17 @@ if (equipmentRegistrationForm) {
 
         await loadEquipmentHistoryDropdown();
 
-        await loadDashboard();
+
+        setTimeout(
+          function() {
+
+            if (message) {
+              message.textContent = "";
+            }
+
+          },
+          5000
+        );
 
       }
 
@@ -1261,7 +1531,13 @@ if (equipmentRegistrationForm) {
           error
         );
 
-        alert(error.message);
+        if (message) {
+
+          message.textContent =
+            "Error registering equipment: " +
+            error.message;
+
+        }
 
       }
 
@@ -1269,106 +1545,232 @@ if (equipmentRegistrationForm) {
   );
 
 }
+
+
 // ==========================================
-// MAINTENANCE REPORT FORM
+// SUBMIT MAINTENANCE REPORT
 // ==========================================
 
 if (maintenanceForm) {
 
   maintenanceForm.addEventListener(
     "submit",
-    async function (event) {
+    async function(event) {
 
       event.preventDefault();
 
       if (maintenanceMessage) {
+
         maintenanceMessage.textContent =
-          "Submitting maintenance report...";
+          "Submitting report...";
+
       }
 
       try {
+
+        // ----------------------------------
+        // CHECK LOGIN
+        // ----------------------------------
 
         const {
           data: authData,
           error: authError
         } = await client.auth.getUser();
 
-        if (authError || !authData.user) {
+        if (
+          authError ||
+          !authData.user
+        ) {
+
           throw new Error(
             "Your session has expired. Please log in again."
           );
+
         }
 
+
+        // ----------------------------------
+        // GET VALUES
+        // ----------------------------------
+
         const equipmentValue =
-          document.getElementById("equipmentId").value;
+          document.getElementById(
+            "equipmentId"
+          ).value;
 
         const engineerValue =
-          document.getElementById("engineerId").value;
+          document.getElementById(
+            "engineerId"
+          ).value;
+
+        const maintenanceTypeValue =
+          document.getElementById(
+            "maintenanceTypeId"
+          ).value;
+
+        const statusValue =
+          document.getElementById(
+            "statusId"
+          ).value;
+
+        const partStatusSelect =
+          document.getElementById(
+            "partStatusId"
+          );
+
+
+        // ----------------------------------
+        // VALIDATE
+        // ----------------------------------
+
+        if (
+          !equipmentValue ||
+          !engineerValue ||
+          !maintenanceTypeValue ||
+          !statusValue
+        ) {
+
+          throw new Error(
+            "Please complete all required fields."
+          );
+
+        }
+
+
+        // ----------------------------------
+        // PREPARE PAYLOAD
+        // ----------------------------------
+
+        let partRequestedStatus =
+          null;
+
+        if (
+          partStatusSelect &&
+          partStatusSelect.value
+        ) {
+
+          partRequestedStatus =
+            partStatusSelect
+              .selectedOptions[0]
+              .textContent
+              .trim();
+
+        }
+
 
         const payload = {
 
-          EquipmentID:
-            Number(equipmentValue),
+          JobOrderNumber:
+            document.getElementById(
+              "jobOrderNumber"
+            ).value
+              ? Number(
+                  document.getElementById(
+                    "jobOrderNumber"
+                  ).value
+                )
+              : null,
 
           ReportDate:
-            document.getElementById("reportDate").value,
+            new Date().toISOString(),
 
-          JobOrderNumber:
-            document.getElementById("jobOrderNumber").value || null,
+          EquipmentID:
+            Number(
+              equipmentValue
+            ),
 
           EngineerID:
-            Number(engineerValue),
+            Number(
+              engineerValue
+            ),
 
           MaintenanceTypeID:
             Number(
-              document.getElementById("maintenanceTypeId").value
+              maintenanceTypeValue
             ),
 
           FaultReported:
-            document.getElementById("faultReported").value || null,
+            document.getElementById(
+              "faultReported"
+            ).value || null,
 
           Diagnosis:
-            document.getElementById("diagnosis").value || null,
+            document.getElementById(
+              "diagnosis"
+            ).value || null,
 
           ActionTaken:
-            document.getElementById("actionTaken").value || null,
+            document.getElementById(
+              "actionTaken"
+            ).value || null,
 
           PartUsed:
-            document.getElementById("partUsed").value || null,
+            document.getElementById(
+              "partUsed"
+            ).value || null,
 
           RequiredPart:
-            document.getElementById("requiredPart").value || null,
+            document.getElementById(
+              "requiredPart"
+            ).value || null,
+
+          QuantityRequired:
+            document.getElementById(
+              "quantityRequired"
+            ).value
+              ? Number(
+                  document.getElementById(
+                    "quantityRequired"
+                  ).value
+                )
+              : null,
+
+          PartRequestedStatus:
+            partRequestedStatus,
 
           PartStatusID:
-            document.getElementById("partStatusId").value
-              ? Number(document.getElementById("partStatusId").value)
+            partStatusSelect &&
+            partStatusSelect.value
+              ? Number(
+                  partStatusSelect.value
+                )
               : null,
 
           StatusID:
             Number(
-              document.getElementById("statusId").value
+              statusValue
             ),
 
           Remarks:
-            document.getElementById("remarks").value || null
+            document.getElementById(
+              "remarks"
+            ).value || null
 
         };
-       // ==================================
-        // INSERT REPORT
-        // ==================================
 
-        const { error } =
-          await client
-            .from("tblMaintenanceReport")
-            .insert(payload);
+
+        // ----------------------------------
+        // INSERT REPORT
+        // ----------------------------------
+
+        const {
+          error
+        } = await client
+          .from(
+            "tblMaintenanceReport"
+          )
+          .insert(
+            payload
+          );
 
         if (error) {
           throw error;
         }
 
-        // ==================================
+
+        // ----------------------------------
         // SUCCESS
-        // ==================================
+        // ----------------------------------
 
         if (maintenanceMessage) {
 
@@ -1380,26 +1782,22 @@ if (maintenanceForm) {
         maintenanceForm.reset();
 
         if (departmentInput) {
-
           departmentInput.value = "";
-
         }
 
         await loadMaintenanceReports();
 
-        await loadRecentMaintenanceReports();
 
-        await loadDashboard();
+        setTimeout(
+          function() {
 
-        setTimeout(() => {
+            if (maintenanceMessage) {
+              maintenanceMessage.textContent = "";
+            }
 
-          if (maintenanceMessage) {
-
-            maintenanceMessage.textContent = "";
-
-          }
-
-        }, 5000);
+          },
+          5000
+        );
 
       }
 
@@ -1421,10 +1819,11 @@ if (maintenanceForm) {
       }
 
     }
-
   );
 
 }
+
+
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
@@ -1444,11 +1843,12 @@ const pmDepartmentInput =
     "pmDepartmentName"
   );
 
+
 if (preventiveMaintenanceForm) {
 
   preventiveMaintenanceForm.addEventListener(
     "submit",
-    async function (event) {
+    async function(event) {
 
       event.preventDefault();
 
@@ -1461,12 +1861,19 @@ if (preventiveMaintenanceForm) {
 
       try {
 
+        // ----------------------------------
+        // CHECK LOGIN
+        // ----------------------------------
+
         const {
           data: authData,
           error: authError
         } = await client.auth.getUser();
 
-        if (authError || !authData.user) {
+        if (
+          authError ||
+          !authData.user
+        ) {
 
           throw new Error(
             "Your session has expired. Please log in again."
@@ -1474,20 +1881,40 @@ if (preventiveMaintenanceForm) {
 
         }
 
+
+        // ----------------------------------
+        // GET PM VALUES
+        // ----------------------------------
+
         const equipmentValue =
-          document.getElementById("pmEquipmentId").value;
+          document.getElementById(
+            "pmEquipmentId"
+          ).value;
 
         const engineerValue =
-          document.getElementById("pmEngineerId").value;
+          document.getElementById(
+            "pmEngineerId"
+          ).value;
 
         const pmDateValue =
-          document.getElementById("pmDate").value;
+          document.getElementById(
+            "pmDate"
+          ).value;
 
         const nextPMDateValue =
-          document.getElementById("nextPMDate").value;
+          document.getElementById(
+            "nextPMDate"
+          ).value;
 
         const pmStatusValue =
-          document.getElementById("pmStatus").value;
+          document.getElementById(
+            "pmStatus"
+          ).value;
+
+
+        // ----------------------------------
+        // VALIDATE
+        // ----------------------------------
 
         if (
           !equipmentValue ||
@@ -1503,10 +1930,17 @@ if (preventiveMaintenanceForm) {
 
         }
 
+
+        // ----------------------------------
+        // PREPARE PM PAYLOAD
+        // ----------------------------------
+
         const pmPayload = {
 
           EquipmentID:
-            Number(equipmentValue),
+            Number(
+              equipmentValue
+            ),
 
           PMDate:
             pmDateValue,
@@ -1515,34 +1949,54 @@ if (preventiveMaintenanceForm) {
             nextPMDateValue,
 
           EngineerID:
-            Number(engineerValue),
+            Number(
+              engineerValue
+            ),
+
+          // IMPORTANT:
+          // Database column has a SPACE
+          // Work Performed
 
           "Work Performed":
-            document.getElementById("workPerformed").value || null,
+            document.getElementById(
+              "workPerformed"
+            ).value || null,
 
           Findings:
-            document.getElementById("pmFindings").value || null,
+            document.getElementById(
+              "pmFindings"
+            ).value || null,
 
           Recommendations:
-            document.getElementById("pmRecommendations").value || null,
+            document.getElementById(
+              "pmRecommendations"
+            ).value || null,
 
           PMStatus:
             pmStatusValue,
 
           Remarks:
-            document.getElementById("pmRemarks").value || null
+            document.getElementById(
+              "pmRemarks"
+            ).value || null
 
         };
-       // ==================================
+
+
+        // ----------------------------------
         // INSERT PM REPORT
-        // ==================================
+        // ----------------------------------
 
         const {
           data,
           error
         } = await client
-          .from("tblPreventiveMaintenance")
-          .insert(pmPayload)
+          .from(
+            "tblPreventiveMaintenance"
+          )
+          .insert(
+            pmPayload
+          )
           .select();
 
         if (error) {
@@ -1551,14 +2005,16 @@ if (preventiveMaintenanceForm) {
 
         }
 
+
         console.log(
           "PM record inserted:",
           data
         );
 
-        // ==================================
+
+        // ----------------------------------
         // SUCCESS
-        // ==================================
+        // ----------------------------------
 
         if (pmMessage) {
 
@@ -1567,33 +2023,36 @@ if (preventiveMaintenanceForm) {
 
         }
 
+
         preventiveMaintenanceForm.reset();
 
         if (pmDepartmentInput) {
 
-          pmDepartmentInput.value = "";
+          pmDepartmentInput.value =
+            "";
 
         }
 
-        // Refresh PM information
+
+        // REFRESH PM HISTORY
 
         await loadPMHistory();
+        // REFRESH PM DUE TODAY AND OVERDUE COUNTERS
 
-        await loadPMCounters();
-
+await loadPMCounters();
         await loadPMNotifications();
 
-        await loadDashboard();
+        
+        setTimeout(
+          function() {
 
-        setTimeout(function () {
+            if (pmMessage) {
+              pmMessage.textContent = "";
+            }
 
-          if (pmMessage) {
-
-            pmMessage.textContent = "";
-
-          }
-
-        }, 5000);
+          },
+          5000
+        );
 
       }
 
@@ -1615,226 +2074,300 @@ if (preventiveMaintenanceForm) {
       }
 
     }
-
   );
 
 }
+
+
 // ==========================================
 // MENU NAVIGATION
 // ==========================================
 
 document
-  .querySelectorAll(".menu button")
-  .forEach(button => {
+  .querySelectorAll(
+    ".menu button"
+  )
+  .forEach(
+    button => {
 
-    button.addEventListener(
-      "click",
-      async function () {
+      button.addEventListener(
+        "click",
+        function() {
 
-        const sectionId =
-          this.dataset.section;
+          document
+            .querySelectorAll(
+              ".app-section"
+            )
+            .forEach(
+              section => {
 
-        document
-          .querySelectorAll(".app-section")
-          .forEach(section => {
+                section.classList.add(
+                  "hidden"
+                );
 
-            section.classList.add(
+              }
+            );
+
+
+          const selectedSection =
+            document.getElementById(
+              this.dataset.section
+            );
+
+
+          if (selectedSection) {
+
+            selectedSection.classList.remove(
               "hidden"
             );
 
-          });
+          }
 
-        const selectedSection =
-          document.getElementById(
-            sectionId
-          );
 
-        if (selectedSection) {
+          // REPORTS
 
-          selectedSection.classList.remove(
-            "hidden"
-          );
+          if (
+            this.dataset.section ===
+            "reportsSection"
+          ) {
 
+            loadMaintenanceReports();
+
+          }
+
+
+          // EQUIPMENT REGISTRATION
+
+          if (
+            this.dataset.section ===
+            "equipmentRegistrationSection"
+          ) {
+
+            loadEquipmentRegistrationDropdowns();
+
+          }
+
+
+          // EQUIPMENT HISTORY
+
+          if (
+            this.dataset.section ===
+            "equipmentHistorySection"
+          ) {
+
+            loadEquipmentHistoryDropdown();
+
+          }
+
+
+          // PM
+
+if (
+  this.dataset.section ===
+  "pmSection"
+) {
+
+  loadPMEquipmentDropdown();
+
+  loadPMEngineerDropdown();
+
+  loadPMHistory();
+
+  loadPMCounters();
+  loadPMNotifications();
+
+}
         }
+      );
 
-        // Maintenance Reports
+    }
+  );
 
-        if (
-          sectionId ===
-          "reportsSection"
-        ) {
-
-          await loadMaintenanceReports();
-
-        }
-
-        // Equipment Registration
-
-        if (
-          sectionId ===
-          "equipmentRegistrationSection"
-        ) {
-
-          await loadEquipmentRegistrationDropdowns();
-
-        }
-
-        // Equipment History
-
-        if (
-          sectionId ===
-          "equipmentHistorySection"
-        ) {
-
-          await loadEquipmentHistoryDropdown();
-
-        }
-
-        // Preventive Maintenance
-
-        if (
-          sectionId ===
-          "pmSection"
-        ) {
-
-          await loadPMEquipmentDropdown();
-
-          await loadPMEngineerDropdown();
-
-          await loadPMHistory();
-
-          await loadPMCounters();
-
-          await loadPMNotifications();
-
-        }
-
-        // User Management
-
-        if (
-          sectionId ===
-          "usersSection"
-        ) {
-
-          await loadUsers();
-
-        }
-
-      }
-
-    );
-
-  });
-
-
+// ==========================================
 // ==========================================
 // LOGIN
 // ==========================================
 
 if (loginForm) {
 
-  loginForm.addEventListener(
-    "submit",
-    async function (event) {
+loginForm.addEventListener(
+"submit",
+async function(event) {
 
-      event.preventDefault();
+  event.preventDefault();
 
-      if (loginMessage) {
+  console.log("Login form submitted.");
 
-        loginMessage.textContent =
-          "Signing in...";
+  if (loginMessage) {
+    loginMessage.textContent = "Signing in...";
+  }
 
-      }
+  const emailInput =
+    document.getElementById("email");
 
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
+  const passwordInput =
+    document.getElementById("password");
 
-      const password =
-        document
-          .getElementById("password")
-          .value;
+  if (!emailInput || !passwordInput) {
 
-      if (!email || !password) {
+    console.error(
+      "Email or password input was not found."
+    );
 
-        loginMessage.textContent =
-          "Please enter your email and password.";
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Login fields were not found.";
+    }
 
-        return;
+    return;
+  }
 
-      }
+  const email =
+    emailInput.value.trim();
 
-      try {
+  const password =
+    passwordInput.value;
 
-        const {
-          data,
-          error
-        } =
-          await client.auth.signInWithPassword({
+  // --------------------------------------
+  // VALIDATE LOGIN INPUT
+  // --------------------------------------
 
-            email,
-            password
+  if (!email || !password) {
 
-          });
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Please enter your email and password.";
+    }
 
-        if (error) {
+    return;
+  }
 
-          throw error;
+  try {
 
-        }
+    console.log(
+      "Attempting Supabase login:",
+      email
+    );
 
-        const profile =
-          await loadUserProfile(
-            data.user.id
-          );
+    // --------------------------------------
+    // SUPABASE LOGIN
+    // --------------------------------------
 
-        if (!profile) {
+    const {
+      data,
+      error
+    } = await client.auth.signInWithPassword({
 
-          throw new Error(
-            "User profile not found."
-          );
+      email: email,
 
-        }
+      password: password
 
-        if (
-          profile.Status
-            .toLowerCase() !==
-          "active"
-        ) {
+    });
 
-          await client.auth.signOut();
+    // --------------------------------------
+    // CHECK LOGIN ERROR
+    // --------------------------------------
 
-          throw new Error(
-            "Your account has been disabled."
-          );
+    if (error) {
 
-        }
+      console.error(
+        "Supabase login error:",
+        error
+      );
 
-        window.currentUser =
-          profile;
-
-        await showApp(
-          data.user
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        loginMessage.textContent =
-          error.message;
-
-      }
+      throw new Error(
+        error.message
+      );
 
     }
 
+    // --------------------------------------
+    // CHECK USER
+    // --------------------------------------
+
+    if (
+      !data ||
+      !data.user
+    ) {
+
+      throw new Error(
+        "Login failed. No authenticated user was returned."
+      );
+
+    }
+
+    console.log(
+      "Login successful."
+    );
+
+    console.log(
+      "User ID:",
+      data.user.id
+    );
+
+    console.log(
+      "User Email:",
+      data.user.email
+    );
+
+    // --------------------------------------
+// LOAD USER PROFILE
+// --------------------------------------
+
+const profile = await loadUserProfile(data.user.id);
+
+if (!profile) {
+
+  throw new Error(
+    "Your user profile was not found."
   );
 
 }
+
+if (profile.Status.toLowerCase() !== "active") {
+
+  await client.auth.signOut();
+
+  throw new Error(
+    "Your account has been disabled. Please contact the administrator."
+  );
+
+}
+
+// Store the logged-in user profile globally
+window.currentUser = profile;
+
+// Load the application
+await showApp(data.user);
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Login process error:",
+      error
+    );
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "Login failed: " +
+        (
+          error.message ||
+          "Please check your email and password."
+        );
+
+    }
+
+  }
+
+}
+
+);
+
+}
+
 // ==========================================
 // SHOW APPLICATION AFTER LOGIN
 // ==========================================
@@ -1848,6 +2381,7 @@ async function showApp(user) {
       user.id
     );
 
+
     // --------------------------------------
     // LOAD USER PROFILE
     // --------------------------------------
@@ -1856,20 +2390,23 @@ async function showApp(user) {
       await loadUserProfile(
         user.id
       );
+window.currentUser = profile;
+// ==========================================
+// USER ROLE
+// ==========================================
 
-    window.currentUser = profile;
-
-    const userRole =
-      (profile.UserRole || "")
-        .trim()
-        .toLowerCase();
-
+const userRole =
+  (profile.UserRole || "")
+  .trim()
+  .toLowerCase();
     console.log(
-      "User profile loaded:",
+      "User profile successfully loaded:",
       profile
     );
 
+
     // --------------------------------------
+    // HIDE LOGIN
     // SHOW APPLICATION
     // --------------------------------------
 
@@ -1889,8 +2426,9 @@ async function showApp(user) {
 
     }
 
+
     // --------------------------------------
-    // WELCOME MESSAGE
+    // SHOW USER NAME
     // --------------------------------------
 
     if (welcomeText) {
@@ -1906,74 +2444,277 @@ async function showApp(user) {
 
     }
 
+
     // --------------------------------------
-    // MENU PERMISSIONS
+    // LOAD FORM DROPDOWNS
     // --------------------------------------
 
-    document
-      .querySelectorAll(
-        ".menu button"
-      )
-      .forEach(button => {
+    console.log(
+      "Loading application form data..."
+    );
+// ==========================================
+// MENU PERMISSIONS
+// ==========================================
 
-        button.style.display = "";
+document
+  .querySelectorAll(".menu button")
+  .forEach(button => {
 
-      });
+    button.style.display = "";
 
-    if (userRole === "engineer") {
+  });
 
-      const userButton =
-        document.querySelector(
-          '[data-section="usersSection"]'
-        );
+// Hide User Management from engineers
+if (userRole === "engineer") {
 
-      if (userButton) {
+  const userManagementButton =
+    document.querySelector(
+      '[data-section="usersSection"]'
+    );
 
-        userButton.style.display =
-          "none";
+  if (userManagementButton) {
 
-      }
+    userManagementButton.style.display = "none";
+
+  }
+
+}
+    await loadFormData();
+
+
+    // --------------------------------------
+    // LOAD MAINTENANCE REPORTS
+    // --------------------------------------
+
+    console.log(
+      "Loading maintenance reports..."
+    );
+    await loadMaintenanceReports();
+await loadRecentMaintenanceReports();
+// ==========================================
+// LOAD PM DUE TODAY AND OVERDUE COUNTERS
+// ==========================================
+  
+
+async function loadPMCounters() {
+
+  const pmDueTodayCount =
+    document.getElementById(
+      "pmDueTodayCount"
+    );
+
+  const pmOverdueCount =
+    document.getElementById(
+      "pmOverdueCount"
+    );
+
+
+  // ----------------------------------------
+  // CHECK COUNTER ELEMENTS
+  // ----------------------------------------
+
+  if (
+    !pmDueTodayCount ||
+    !pmOverdueCount
+  ) {
+
+    console.warn(
+      "PM counter elements not found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  pmDueTodayCount.textContent =
+    "...";
+
+  pmOverdueCount.textContent =
+    "...";
+
+
+  try {
+
+    // --------------------------------------
+    // GET TODAY'S DATE
+    // --------------------------------------
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    // --------------------------------------
+    // LOAD PM HISTORY
+    // --------------------------------------
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("NextPMDate");
+
+
+    // --------------------------------------
+    // CHECK DATABASE ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      throw error;
 
     }
 
-    // --------------------------------------
-    // LOAD FORM DATA
-    // --------------------------------------
-
-    await loadFormData();
 
     // --------------------------------------
-    // LOAD REPORTS
+    // INITIALIZE COUNTERS
     // --------------------------------------
 
-    await loadMaintenanceReports();
+    let dueToday =
+      0;
 
-    await loadRecentMaintenanceReports();
+    let overdue =
+      0;
+
 
     // --------------------------------------
-    // LOAD PM
+    // CHECK EACH PM RECORD
     // --------------------------------------
 
-    await loadPMHistory();
+    (data || []).forEach(
+      pm => {
 
-    await loadPMCounters();
+        if (!pm.NextPMDate) {
 
-    await loadPMNotifications();
+          return;
+
+        }
+
+
+        const nextPMDate =
+          new Date(
+            pm.NextPMDate
+          );
+
+
+        nextPMDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+
+        // ----------------------------------
+        // PM DUE TODAY
+        // ----------------------------------
+
+        if (
+          nextPMDate.getTime() ===
+          today.getTime()
+        ) {
+
+          dueToday++;
+
+        }
+
+
+        // ----------------------------------
+        // PM OVERDUE
+        // ----------------------------------
+
+        else if (
+          nextPMDate < today
+        ) {
+
+          overdue++;
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------------
+    // DISPLAY COUNTERS
+    // --------------------------------------
+
+    pmDueTodayCount.textContent =
+      dueToday;
+
+    pmOverdueCount.textContent =
+      overdue;
+
+
+    console.log(
+      "PM Due Today:",
+      dueToday
+    );
+
+    console.log(
+      "PM Overdue:",
+      overdue
+    );
+
+  }
+
+
+  catch (error) {
+
+    console.error(
+      "Error loading PM counters:",
+      error
+    );
+
+
+    pmDueTodayCount.textContent =
+      "0";
+
+    pmOverdueCount.textContent =
+      "0";
+
+  }
+
+}
     // --------------------------------------
     // LOAD DASHBOARD
     // --------------------------------------
 
+    console.log(
+      "Loading dashboard..."
+    );
+
     await loadDashboard();
+
 
     console.log(
       "Application loaded successfully."
     );
 
+
+    // --------------------------------------
+    // CLEAR LOGIN MESSAGE
+    // --------------------------------------
+
     if (loginMessage) {
 
-      loginMessage.textContent = "";
+      loginMessage.textContent =
+        "";
 
     }
+
 
   }
 
@@ -1984,6 +2725,11 @@ async function showApp(user) {
       error
     );
 
+
+    // --------------------------------------
+    // DO NOT HIDE THE REAL ERROR
+    // --------------------------------------
+
     if (loginMessage) {
 
       loginMessage.textContent =
@@ -1991,6 +2737,11 @@ async function showApp(user) {
         error.message;
 
     }
+
+
+    // --------------------------------------
+    // SIGN OUT
+    // --------------------------------------
 
     try {
 
@@ -2001,11 +2752,16 @@ async function showApp(user) {
     catch (signOutError) {
 
       console.error(
-        "Sign out error:",
+        "Sign out after failed application load:",
         signOutError
       );
 
     }
+
+
+    // --------------------------------------
+    // SHOW LOGIN
+    // --------------------------------------
 
     if (appView) {
 
@@ -2026,6 +2782,7 @@ async function showApp(user) {
   }
 
 }
+
 // ==========================================
 // LOGOUT
 // ==========================================
@@ -2034,7 +2791,7 @@ if (logoutBtn) {
 
   logoutBtn.addEventListener(
     "click",
-    async function () {
+    async function() {
 
       try {
 
@@ -2054,7 +2811,8 @@ if (logoutBtn) {
       if (appView) {
 
         appView.classList.add(
-          "hidden";
+          "hidden"
+        );
 
       }
 
@@ -2074,19 +2832,1035 @@ if (logoutBtn) {
 
       if (loginMessage) {
 
-        loginMessage.textContent = "";
+        loginMessage.textContent =
+          "";
 
       }
 
     }
-
   );
+
+}
+// ==========================================
+// ATBUTH BIOMEDICAL CMMS
+// SUPABASE MOBILE WEB APPLICATION
+// JAVASCRIPT - PART 3 OF 3
+// ==========================================
+
+
+// ==========================================
+// LOAD PREVENTIVE MAINTENANCE HISTORY
+// ==========================================
+
+async function loadPMHistory() {
+
+  const pmTableBody = document.getElementById("pmHistoryTableBody");
+  const pmLoading = document.getElementById("pmLoading");
+  const pmHistoryMessage = document.getElementById("pmHistoryMessage");
+
+  // Check that the table exists
+  if (!pmTableBody) {
+    console.error("pmTableBody was not found.");
+    return;
+  }
+
+  // Show loading message
+  if (pmLoading) {
+    pmLoading.textContent =
+      "Loading preventive maintenance history...";
+  }
+
+  // Clear previous message
+  if (pmHistoryMessage) {
+    pmHistoryMessage.textContent = "";
+  }
+
+  try {
+
+    // ======================================
+    // FETCH PM HISTORY
+    // ======================================
+
+    const { data, error } = await client
+      .from("vwPMHistory")
+      .select("*")
+      .order("PMDate", { ascending: false });
+
+
+    // ======================================
+    // CHECK FOR DATABASE ERROR
+    // ======================================
+
+    if (error) {
+
+      console.error(
+        "Error loading PM history:",
+        error
+      );
+
+      pmTableBody.innerHTML = `
+        <tr>
+          <td colspan="12">
+            Error loading PM history:
+            ${error.message}
+          </td>
+        </tr>
+      `;
+
+      if (pmHistoryMessage) {
+        pmHistoryMessage.textContent =
+          "Unable to load Preventive Maintenance history.";
+      }
+
+      return;
+    }
+
+
+    // ======================================
+    // NO RECORDS
+    // ======================================
+
+    if (!data || data.length === 0) {
+
+      pmTableBody.innerHTML = `
+        <tr>
+          <td colspan="12">
+            No PM records found.
+          </td>
+        </tr>
+      `;
+
+      if (pmLoading) {
+        pmLoading.textContent =
+          "No preventive maintenance records found.";
+      }
+
+      return;
+    }
+
+
+    // ======================================
+    // DISPLAY PM RECORDS
+    // ======================================
+
+    pmTableBody.innerHTML = "";
+
+
+    data.forEach(pm => {
+
+      // Calculate Due Status
+
+let dueStatus = "";
+
+if (pm.NextPMDate) {
+
+  const today = new Date();
+
+  const nextPMDate =
+    new Date(pm.NextPMDate);
+
+
+  // Remove time portion
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  nextPMDate.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  // Calculate difference in days
+
+  const differenceInMilliseconds =
+    nextPMDate.getTime() -
+    today.getTime();
+
+  const differenceInDays =
+    Math.ceil(
+      differenceInMilliseconds /
+      (1000 * 60 * 60 * 24)
+    );
+
+
+  // ------------------------------------
+  // OVERDUE
+  // ------------------------------------
+
+  if (
+    differenceInDays < 0
+  ) {
+
+    dueStatus =
+      "Overdue";
+
+  }
+
+
+  // ------------------------------------
+  // DUE TODAY
+  // ------------------------------------
+
+  else if (
+    differenceInDays === 0
+  ) {
+
+    dueStatus =
+      "Due Today";
+
+  }
+
+
+  // ------------------------------------
+  // DUE SOON
+  // WITHIN 7 DAYS
+  // ------------------------------------
+
+  else if (
+    differenceInDays <= 7
+  ) {
+
+    dueStatus =
+      "Due Soon";
+
+  }
+
+
+  // ------------------------------------
+  // NOT DUE
+  // MORE THAN 7 DAYS
+  // ------------------------------------
+
+  else {
+
+    dueStatus =
+      "Not Due";
+
+  }
+
+}
+
+
+else {
+
+  dueStatus =
+    "No Date";
+
+}
+      
+      // ====================================
+      // CREATE TABLE ROW
+      // ====================================
+
+      const row = document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>
+          ${pm.BMENumber || ""}
+        </td>
+
+        <td>
+          ${pm.EquipmentName || ""}
+        </td>
+
+        <td>
+          ${pm.DepartmentName || ""}
+        </td>
+
+        <td>
+          ${pm.PMDate || ""}
+        </td>
+
+        <td>
+          ${pm.NextPMDate || ""}
+        </td>
+
+        <td>
+  <span class="pm-due-status ${dueStatus
+    .toLowerCase()
+    .replace(/\s+/g, "-")}">
+    ${dueStatus}
+  </span>
+</td>
+
+        <td>
+          ${pm.EngineerName || ""}
+        </td>
+
+        <td>
+          ${pm.WorkPerformed || ""}
+        </td>
+
+        <td>
+          ${pm.Findings || ""}
+        </td>
+
+        <td>
+          ${pm.Recommendations || ""}
+        </td>
+
+        <td>
+          ${pm.PMStatus || ""}
+        </td>
+
+        <td>
+          ${pm.Remarks || ""}
+        </td>
+
+      `;
+
+
+      pmTableBody.appendChild(row);
+
+    });
+
+
+    // ======================================
+    // HIDE LOADING MESSAGE
+    // ======================================
+
+    if (pmLoading) {
+
+  pmLoading.textContent = "";
+
+}
+
+  } catch (err) {
+
+    // ======================================
+    // UNEXPECTED ERROR
+    // ======================================
+
+    console.error(
+      "Unexpected error loading PM history:",
+      err
+    );
+
+
+    pmTableBody.innerHTML = `
+      <tr>
+        <td colspan="12">
+          An unexpected error occurred while
+          loading PM history.
+        </td>
+      </tr>
+    `;
+
+
+    if (pmHistoryMessage) {
+
+      pmHistoryMessage.textContent =
+        "An unexpected error occurred.";
+
+    }
+
+  }
+
+}
+// ==========================================
+// LOAD PM DUE TODAY AND OVERDUE COUNTERS
+// ==========================================
+
+async function loadPMCounters() {
+
+  const pmDueTodayCount =
+    document.getElementById(
+      "pmDueTodayCount"
+    );
+
+  const pmOverdueCount =
+    document.getElementById(
+      "pmOverdueCount"
+    );
+
+
+  // ----------------------------------------
+  // CHECK COUNTER ELEMENTS
+  // ----------------------------------------
+
+  if (
+    !pmDueTodayCount ||
+    !pmOverdueCount
+  ) {
+
+    console.warn(
+      "PM counter elements not found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  pmDueTodayCount.textContent =
+    "...";
+
+  pmOverdueCount.textContent =
+    "...";
+
+
+  try {
+
+    // --------------------------------------
+    // LOAD PM HISTORY
+    // --------------------------------------
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("NextPMDate");
+
+
+    // --------------------------------------
+    // CHECK DATABASE ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    // --------------------------------------
+    // GET TODAY'S DATE
+    // --------------------------------------
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    // --------------------------------------
+    // INITIALIZE COUNTERS
+    // --------------------------------------
+
+    let dueToday =
+      0;
+
+    let overdue =
+      0;
+
+
+    // --------------------------------------
+    // CHECK EACH PM RECORD
+    // --------------------------------------
+
+    (data || []).forEach(
+      pm => {
+
+        if (!pm.NextPMDate) {
+
+          return;
+
+        }
+
+
+        const nextPMDate =
+          new Date(
+            pm.NextPMDate
+          );
+
+
+        nextPMDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+
+        // ----------------------------------
+        // PM DUE TODAY
+        // ----------------------------------
+
+        if (
+          nextPMDate.getTime() ===
+          today.getTime()
+        ) {
+
+          dueToday++;
+
+        }
+
+
+        // ----------------------------------
+        // PM OVERDUE
+        // ----------------------------------
+
+        else if (
+          nextPMDate < today
+        ) {
+
+          overdue++;
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------------
+    // DISPLAY COUNTERS
+    // --------------------------------------
+
+    pmDueTodayCount.textContent =
+      dueToday;
+
+    pmOverdueCount.textContent =
+      overdue;
+
+
+    console.log(
+      "PM Due Today:",
+      dueToday
+    );
+
+    console.log(
+      "PM Overdue:",
+      overdue
+    );
+
+  }
+
+
+  catch (error) {
+
+    console.error(
+      "Error loading PM counters:",
+      error
+    );
+
+
+    pmDueTodayCount.textContent =
+      "0";
+
+    pmOverdueCount.textContent =
+      "0";
+
+  }
+
+}
+// ==========================================
+// LOAD PM DUE NOTIFICATIONS
+// ==========================================
+
+async function loadPMNotifications() {
+
+  const tableBody =
+    document.getElementById(
+      "pmNotificationTableBody"
+    );
+
+  const message =
+    document.getElementById(
+      "pmNotificationMessage"
+    );
+
+  if (!tableBody || !message) {
+    return;
+  }
+
+  message.textContent =
+    "Loading PM notifications...";
+  try {
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("*")
+      .order(
+        "NextPMDate",
+        {
+          ascending: true
+        }
+      );
+
+    if (error) {
+
+      throw error;
+
+    }
+
+    tableBody.innerHTML = "";
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    let records = 0;
+
+    (data || []).forEach(
+      pm => {
+
+        if (!pm.NextPMDate) {
+
+          return;
+
+        }
+
+        const nextPM =
+          new Date(
+            pm.NextPMDate
+          );
+
+        nextPM.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+        const days =
+          Math.ceil(
+            (nextPM - today) /
+            (1000 * 60 * 60 * 24)
+          );
+
+        let status = "";
+        if (days < 0) {
+
+          status = "🔴 Overdue";
+
+        }
+
+        else if (days === 0) {
+
+          status = "🟠 Due Today";
+
+        }
+
+        else if (days <= 7) {
+
+          status = "🟡 Due Soon";
+
+        }
+
+        else {
+
+          return;
+
+        }
+
+        records++;
+
+        tableBody.innerHTML += `
+
+          <tr>
+
+            <td>${pm.BMENumber || ""}</td>
+
+            <td>${pm.EquipmentName || ""}</td>
+
+            <td>${pm.DepartmentName || ""}</td>
+
+            <td>${pm.NextPMDate || ""}</td>
+
+            <td>${status}</td>
+
+          </tr>
+
+        `;
+
+      }
+    );
+
+    if (records === 0) {
+
+      tableBody.innerHTML = `
+
+        <tr>
+
+          <td colspan="5">
+
+            No PM notifications.
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+
+    message.textContent =
+      `${records} notification(s).`;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "PM notification error:",
+      error
+    );
+
+    message.textContent =
+      "Unable to load PM notifications.";
+
+  }
+
+}
+// ==========================================
+// LOAD RECENT MAINTENANCE REPORTS
+// ==========================================
+
+async function loadRecentMaintenanceReports() {
+
+  const loading =
+    document.getElementById("dashboardReportsLoading");
+
+  const tableBody =
+    document.getElementById("dashboardReportsBody");
+
+  if (!loading || !tableBody) {
+    return;
+  }
+
+  loading.textContent =
+    "Loading recent reports...";
+
+  try {
+
+    const { data, error } = await client
+      .from("vwMaintenanceReport")
+      .select("*")
+      .order("ReportDate", { ascending: false })
+      .limit(5);
+
+    if (error) {
+      throw error;
+    }
+
+    tableBody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            No maintenance reports found.
+          </td>
+        </tr>
+      `;
+
+      loading.textContent = "";
+
+      return;
+    }
+
+    data.forEach(report => {
+
+      tableBody.innerHTML += `
+        <tr>
+
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(report.ReportDate).toLocaleDateString()
+                : ""
+            }
+          </td>
+
+          <td>${report.BMENumber || ""}</td>
+
+          <td>${report.EquipmentName || ""}</td>
+
+          <td>${report.DepartmentName || ""}</td>
+
+          <td>${report.EngineerName || ""}</td>
+
+          <td>${report.StatusName || ""}</td>
+
+        </tr>
+      `;
+
+    });
+
+    loading.textContent = "";
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Recent reports error:",
+      error
+    );
+
+    loading.textContent =
+      "Unable to load recent reports.";
+
+  }
+
+}
+// ==========================================
+// LOAD DASHBOARD
+// ==========================================
+
+async function loadDashboard() {
+
+  // ----------------------------------------
+  // EQUIPMENT COUNTER
+  // ----------------------------------------
+
+  const equipmentCounter =
+    document.getElementById(
+      "totalEquipment"
+    );
+
+
+  if (equipmentCounter) {
+
+    try {
+
+      const {
+        count,
+        error
+      } = await client
+        .from(
+          "tblEquipment"
+        )
+        .select(
+          "*",
+          {
+            count: "exact",
+            head: true
+          }
+        );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      equipmentCounter.textContent =
+        count || 0;
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Equipment counter error:",
+        error
+      );
+
+      equipmentCounter.textContent =
+        "0";
+
+    }
+
+  }
+
+
+  // ----------------------------------------
+  // ENGINEER COUNTER
+  // ----------------------------------------
+
+  const engineerCounter =
+    document.getElementById(
+      "totalEngineers"
+    );
+
+
+  if (engineerCounter) {
+
+    try {
+
+      const {
+        count,
+        error
+      } = await client
+        .from(
+          "tblEngineers"
+        )
+        .select(
+          "*",
+          {
+            count: "exact",
+            head: true
+          }
+        );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      engineerCounter.textContent =
+        count || 0;
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Engineer counter error:",
+        error
+      );
+
+      engineerCounter.textContent =
+        "0";
+
+    }
+
+  }
+
+
+  // ----------------------------------------
+  // MAINTENANCE REPORT COUNTER
+  // ----------------------------------------
+
+  const maintenanceCounter =
+    document.getElementById(
+      "totalMaintenanceReports"
+    );
+
+
+  if (maintenanceCounter) {
+
+    try {
+
+      const {
+        count,
+        error
+      } = await client
+        .from(
+          "tblMaintenanceReport"
+        )
+        .select(
+          "*",
+          {
+            count: "exact",
+            head: true
+          }
+        );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      maintenanceCounter.textContent =
+        count || 0;
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Maintenance counter error:",
+        error
+      );
+
+      maintenanceCounter.textContent =
+        "0";
+
+    }
+
+  }
+
+
+  // ----------------------------------------
+  // PM COUNTER
+  // ----------------------------------------
+
+  const pmCounter =
+    document.getElementById(
+      "totalPreventiveMaintenance"
+    );
+
+
+  if (pmCounter) {
+
+    try {
+
+      const {
+        count,
+        error
+      } = await client
+        .from(
+          "tblPreventiveMaintenance"
+        )
+        .select(
+          "*",
+          {
+            count: "exact",
+            head: true
+          }
+        );
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+
+      pmCounter.textContent =
+        count || 0;
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "PM counter error:",
+        error
+      );
+
+      pmCounter.textContent =
+        "0";
+
+    }
+
+  }
 
 }
 
 
 // ==========================================
-// CHECK EXISTING SESSION
+// AUTH SESSION CHECK
 // ==========================================
 
 async function checkExistingSession() {
@@ -2098,17 +3872,24 @@ async function checkExistingSession() {
       error
     } = await client.auth.getSession();
 
+
     if (error) {
 
       throw error;
 
     }
 
+
     if (
       data &&
       data.session &&
       data.session.user
     ) {
+
+      console.log(
+        "Existing Supabase session found."
+      );
+
 
       await showApp(
         data.session.user
@@ -2117,6 +3898,11 @@ async function checkExistingSession() {
     }
 
     else {
+
+      console.log(
+        "No active session."
+      );
+
 
       if (appView) {
 
@@ -2145,15 +3931,34 @@ async function checkExistingSession() {
       error
     );
 
+
+    if (appView) {
+
+      appView.classList.add(
+        "hidden"
+      );
+
+    }
+
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
   }
 
 }
+
+
 // ==========================================
 // AUTH STATE CHANGE
 // ==========================================
 
 client.auth.onAuthStateChange(
-  async function (
+  async function(
     event,
     session
   ) {
@@ -2163,20 +3968,29 @@ client.auth.onAuthStateChange(
       event
     );
 
+
     if (
-      event === "SIGNED_IN" &&
-      session &&
-      session.user
+      event ===
+      "SIGNED_IN"
     ) {
 
-      await showApp(
+      if (
+        session &&
         session.user
-      );
+      ) {
+
+        await showApp(
+          session.user
+        );
+
+      }
 
     }
 
+
     if (
-      event === "SIGNED_OUT"
+      event ===
+      "SIGNED_OUT"
     ) {
 
       if (appView) {
@@ -2207,11 +4021,16 @@ client.auth.onAuthStateChange(
 
 document.addEventListener(
   "DOMContentLoaded",
-  async function () {
+  async function() {
 
     console.log(
       "ATBUTH Biomedical CMMS starting..."
     );
+
+
+    // --------------------------------------
+    // SET INITIAL VISIBILITY
+    // --------------------------------------
 
     if (appView) {
 
@@ -2229,10 +4048,62 @@ document.addEventListener(
 
     }
 
+
+    // --------------------------------------
+    // CHECK EXISTING LOGIN SESSION
+    // --------------------------------------
+
     await checkExistingSession();
 
   }
 );
+
+
+// ==========================================
+// EXTRA SAFETY:
+// RELOAD PM ENGINEER DROPDOWN WHEN PM
+// SECTION IS OPENED
+// ==========================================
+
+const pmSection =
+  document.getElementById(
+    "pmSection"
+  );
+
+
+if (pmSection) {
+
+  const pmObserver =
+    new MutationObserver(
+      function() {
+
+        if (
+          !pmSection.classList.contains(
+            "hidden"
+          )
+        ) {
+
+  
+          loadPMHistory();
+          loadPMCounters();
+
+        }
+
+      }
+    );
+
+
+  pmObserver.observe(
+    pmSection,
+    {
+      attributes: true,
+      attributeFilter: [
+        "class"
+      ]
+    }
+  );
+
+}
 
 
 // ==========================================
@@ -2240,1656 +4111,7 @@ document.addEventListener(
 // ==========================================
 
 console.log(
-  "ATBUTH Biomedical CMMS JavaScript loaded successfully."
-);
-// ==========================================
-// LOAD PREVENTIVE MAINTENANCE HISTORY
-// ==========================================
-
-async function loadPMHistory() {
-
-  const pmTableBody =
-    document.getElementById(
-      "pmHistoryTableBody"
-    );
-
-  const pmLoading =
-    document.getElementById(
-      "pmLoading"
-    );
-
-  const pmHistoryMessage =
-    document.getElementById(
-      "pmHistoryMessage"
-    );
-
-  if (!pmTableBody) {
-    return;
-  }
-
-  if (pmLoading) {
-
-    pmLoading.textContent =
-      "Loading preventive maintenance history...";
-
-  }
-
-  if (pmHistoryMessage) {
-
-    pmHistoryMessage.textContent = "";
-
-  }
-
-  try {
-
-    const {
-      data,
-      error
-    } = await client
-      .from("vwPMHistory")
-      .select("*")
-      .order(
-        "PMDate",
-        {
-          ascending: false
-        }
-      );
-
-    if (error) {
-
-      throw error;
-
-    }
-
-    pmTableBody.innerHTML = "";
-
-    if (!data || data.length === 0) {
-
-      pmTableBody.innerHTML = `
-        <tr>
-          <td colspan="12">
-            No PM records found.
-          </td>
-        </tr>
-      `;
-
-      if (pmLoading) {
-
-        pmLoading.textContent = "";
-
-      }
-
-      return;
-
-    }
-
-    data.forEach(pm => {
-
-      let dueStatus = "";
-
-      if (pm.NextPMDate) {
-
-        const today = new Date();
-
-        today.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-        const nextPM =
-          new Date(
-            pm.NextPMDate
-          );
-
-        nextPM.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-        const days =
-          Math.ceil(
-            (nextPM - today) /
-            (1000 * 60 * 60 * 24)
-          );
-
-        if (days < 0) {
-
-          dueStatus =
-            "Overdue";
-
-        }
-
-        else if (days === 0) {
-
-          dueStatus =
-            "Due Today";
-
-        }
-
-        else if (days <= 7) {
-
-          dueStatus =
-            "Due Soon";
-
-        }
-
-        else {
-
-          dueStatus =
-            "Not Due";
-
-        }
-
-      }
-
-      else {
-
-        dueStatus =
-          "No Date";
-
-      }
-
-      const row =
-        document.createElement(
-          "tr"
-        );
-
-      row.innerHTML = `
-
-        <td>${pm.BMENumber || ""}</td>
-
-        <td>${pm.EquipmentName || ""}</td>
-
-        <td>${pm.DepartmentName || ""}</td>
-
-        <td>${pm.PMDate || ""}</td>
-
-        <td>${pm.NextPMDate || ""}</td>
-
-        <td>${dueStatus}</td>
-
-        <td>${pm.EngineerName || ""}</td>
-
-        <td>${pm.WorkPerformed || ""}</td>
-
-        <td>${pm.Findings || ""}</td>
-
-        <td>${pm.Recommendations || ""}</td>
-
-        <td>${pm.PMStatus || ""}</td>
-
-        <td>${pm.Remarks || ""}</td>
-
-      `;
-
-      pmTableBody.appendChild(
-        row
-      );
-
-    });
-
-    if (pmLoading) {
-
-      pmLoading.textContent = "";
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "PM History Error:",
-      error
-    );
-
-    pmTableBody.innerHTML = `
-      <tr>
-        <td colspan="12">
-          Unable to load PM history.
-        </td>
-      </tr>
-    `;
-
-  }
-
-}
-// ==========================================
-// LOAD PM DUE TODAY AND OVERDUE COUNTERS
-// ==========================================
-
-async function loadPMCounters() {
-
-  const pmDueTodayCount =
-    document.getElementById(
-      "pmDueTodayCount"
-    );
-
-  const pmOverdueCount =
-    document.getElementById(
-      "pmOverdueCount"
-    );
-
-
-  if (
-    !pmDueTodayCount ||
-    !pmOverdueCount
-  ) {
-
-    return;
-
-  }
-
-
-  pmDueTodayCount.textContent =
-    "...";
-
-  pmOverdueCount.textContent =
-    "...";
-
-
-  try {
-
-    const {
-      data,
-      error
-    } = await client
-      .from("vwPMHistory")
-      .select(
-        "NextPMDate"
-      );
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    const today =
-      new Date();
-
-    today.setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-
-    let dueToday = 0;
-
-    let overdue = 0;
-
-
-    (data || []).forEach(pm => {
-
-
-      if (!pm.NextPMDate) {
-
-        return;
-
-      }
-
-
-      const nextPM =
-        new Date(
-          pm.NextPMDate
-        );
-
-
-      nextPM.setHours(
-        0,
-        0,
-        0,
-        0
-      );
-
-
-      if (
-        nextPM.getTime() ===
-        today.getTime()
-      ) {
-
-        dueToday++;
-
-      }
-
-      else if (
-        nextPM < today
-      ) {
-
-        overdue++;
-
-      }
-
-
-    });
-
-
-    pmDueTodayCount.textContent =
-      dueToday;
-
-
-    pmOverdueCount.textContent =
-      overdue;
-
-
-  }
-
-
-  catch(error) {
-
-    console.error(
-      "PM Counter Error:",
-      error
-    );
-
-
-    pmDueTodayCount.textContent =
-      "0";
-
-
-    pmOverdueCount.textContent =
-      "0";
-
-  }
-
-}
-// ==========================================
-// LOAD PM DUE NOTIFICATIONS
-// ==========================================
-
-async function loadPMNotifications() {
-
-  const tableBody =
-    document.getElementById(
-      "pmNotificationTableBody"
-    );
-
-  const message =
-    document.getElementById(
-      "pmNotificationMessage"
-    );
-
-
-  if (
-    !tableBody ||
-    !message
-  ) {
-
-    return;
-
-  }
-
-
-  message.textContent =
-    "Loading PM notifications...";
-
-
-  try {
-
-    const {
-      data,
-      error
-    } = await client
-      .from("vwPMHistory")
-      .select("*")
-      .order(
-        "NextPMDate",
-        {
-          ascending: true
-        }
-      );
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    tableBody.innerHTML =
-      "";
-
-
-    const today =
-      new Date();
-
-
-    today.setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-
-    let records = 0;
-
-
-    (data || []).forEach(
-      pm => {
-
-
-        if (!pm.NextPMDate) {
-
-          return;
-
-        }
-
-
-        const nextPM =
-          new Date(
-            pm.NextPMDate
-          );
-
-
-        nextPM.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-
-        const days =
-          Math.ceil(
-            (nextPM - today) /
-            (1000 * 60 * 60 * 24)
-          );
-
-
-        let status = "";
-
-
-        if (days < 0) {
-
-          status =
-            "Overdue";
-
-        }
-
-        else if (days === 0) {
-
-          status =
-            "Due Today";
-
-        }
-
-        else if (days <= 7) {
-
-          status =
-            "Due Soon";
-
-        }
-
-        else {
-
-          return;
-
-        }
-
-
-        records++;
-
-
-        tableBody.innerHTML += `
-
-          <tr>
-
-            <td>
-              ${pm.BMENumber || ""}
-            </td>
-
-            <td>
-              ${pm.EquipmentName || ""}
-            </td>
-
-            <td>
-              ${pm.DepartmentName || ""}
-            </td>
-
-            <td>
-              ${pm.NextPMDate || ""}
-            </td>
-
-            <td>
-              ${status}
-            </td>
-
-          </tr>
-
-        `;
-
-
-      }
-    );
-
-
-    if (records === 0) {
-
-      tableBody.innerHTML = `
-
-        <tr>
-
-          <td colspan="5">
-
-            No PM notifications.
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-
-
-    message.textContent =
-      `${records} notification(s).`;
-
-
-  }
-
-
-  catch(error) {
-
-    console.error(
-      "PM Notification Error:",
-      error
-    );
-
-
-    message.textContent =
-      "Unable to load PM notifications.";
-
-  }
-
-}
-// ==========================================
-// LOAD RECENT MAINTENANCE REPORTS
-// ==========================================
-
-async function loadRecentMaintenanceReports() {
-
-  const loading =
-    document.getElementById(
-      "dashboardReportsLoading"
-    );
-
-  const tableBody =
-    document.getElementById(
-      "dashboardReportsBody"
-    );
-
-
-  if (
-    !loading ||
-    !tableBody
-  ) {
-
-    return;
-
-  }
-
-
-  loading.textContent =
-    "Loading recent reports...";
-
-
-  try {
-
-
-    const {
-      data,
-      error
-    } = await client
-      .from("vwMaintenanceReport")
-      .select("*")
-      .order(
-        "ReportDate",
-        {
-          ascending: false
-        }
-      )
-      .limit(5);
-
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-    tableBody.innerHTML =
-      "";
-
-
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-
-      tableBody.innerHTML = `
-
-        <tr>
-
-          <td colspan="6">
-
-            No maintenance reports found.
-
-          </td>
-
-        </tr>
-
-      `;
-
-
-      loading.textContent =
-        "";
-
-
-      return;
-
-    }
-
-
-
-    data.forEach(
-      report => {
-
-
-        tableBody.innerHTML += `
-
-          <tr>
-
-
-            <td>
-
-              ${
-                report.ReportDate
-                ? new Date(
-                    report.ReportDate
-                  ).toLocaleDateString()
-                : ""
-
-              }
-
-            </td>
-
-
-            <td>
-
-              ${report.BMENumber || ""}
-
-            </td>
-
-
-            <td>
-
-              ${report.EquipmentName || ""}
-
-            </td>
-
-
-            <td>
-
-              ${report.DepartmentName || ""}
-
-            </td>
-
-
-            <td>
-
-              ${report.EngineerName || ""}
-
-            </td>
-
-
-            <td>
-
-              ${report.StatusName || ""}
-
-            </td>
-
-
-          </tr>
-
-        `;
-
-
-      }
-    );
-
-
-
-    loading.textContent =
-      "";
-
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      "Recent Maintenance Reports Error:",
-      error
-    );
-
-
-    loading.textContent =
-      "Unable to load recent reports.";
-
-
-  }
-
-}
-// ==========================================
-// LOAD DASHBOARD
-// ==========================================
-
-async function loadDashboard() {
-
-
-  const totalEquipment =
-    document.getElementById(
-      "dashboardTotalEquipment"
-    );
-
-
-  const totalMaintenance =
-    document.getElementById(
-      "dashboardTotalMaintenance"
-    );
-
-
-  const underRepair =
-    document.getElementById(
-      "dashboardUnderRepair"
-    );
-
-
-  const awaitingParts =
-    document.getElementById(
-      "dashboardAwaitingParts"
-    );
-
-
-  const pmDueToday =
-    document.getElementById(
-      "dashboardPMDueToday"
-    );
-
-
-  const pmOverdue =
-    document.getElementById(
-      "dashboardPMOverdue"
-    );
-
-
-
-  if (
-    !totalEquipment ||
-    !totalMaintenance ||
-    !underRepair ||
-    !awaitingParts ||
-    !pmDueToday ||
-    !pmOverdue
-  ) {
-
-    return;
-
-  }
-
-
-
-  try {
-
-
-    // TOTAL EQUIPMENT
-
-    const {
-      count: equipmentCount
-    } = await client
-      .from("tblEquipment")
-      .select(
-        "*",
-        {
-          count: "exact",
-          head: true
-        }
-      );
-
-
-    totalEquipment.textContent =
-      equipmentCount || 0;
-
-
-
-    // TOTAL MAINTENANCE REPORTS
-
-    const {
-      count: maintenanceCount
-    } = await client
-      .from("tblMaintenanceReport")
-      .select(
-        "*",
-        {
-          count: "exact",
-          head: true
-        }
-      );
-
-
-    totalMaintenance.textContent =
-      maintenanceCount || 0;
-
-
-
-    // UNDER REPAIR
-
-    const {
-      count: underRepairCount
-    } = await client
-      .from("tblEquipment")
-      .select(
-        "*",
-        {
-          count: "exact",
-          head: true
-        }
-      )
-      .eq(
-        "StatusID",
-        2
-      );
-
-
-    underRepair.textContent =
-      underRepairCount || 0;
-
-
-
-    // AWAITING PARTS
-
-    const {
-      count: awaitingPartsCount
-    } = await client
-      .from("tblEquipment")
-      .select(
-        "*",
-        {
-          count: "exact",
-          head: true
-        }
-      )
-      .eq(
-        "StatusID",
-        4
-      );
-
-
-    awaitingParts.textContent =
-      awaitingPartsCount || 0;
-
-
-
-    // PM COUNTERS
-
-    const {
-      data: pmRecords
-    } = await client
-      .from("vwPMHistory")
-      .select(
-        "NextPMDate"
-      );
-
-
-
-    const today =
-      new Date();
-
-
-    today.setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-
-
-    let dueToday = 0;
-
-    let overdue = 0;
-
-
-
-    (pmRecords || []).forEach(
-      pm => {
-
-
-        if (!pm.NextPMDate) {
-
-          return;
-
-        }
-
-
-
-        const nextPM =
-          new Date(
-            pm.NextPMDate
-          );
-
-
-
-        nextPM.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-
-
-        if (
-          nextPM.getTime() ===
-          today.getTime()
-        ) {
-
-          dueToday++;
-
-        }
-
-
-        else if (
-          nextPM < today
-        ) {
-
-          overdue++;
-
-        }
-
-
-      }
-    );
-
-
-
-    pmDueToday.textContent =
-      dueToday;
-
-
-    pmOverdue.textContent =
-      overdue;
-
-
-
-    // LOAD DASHBOARD RECENT REPORTS
-
-    await loadRecentMaintenanceReports();
-
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      "Dashboard Error:",
-      error
-    );
-
-
-  }
-
-}
-// ==========================================
-// AUTH SESSION CHECK
-// ==========================================
-
-async function checkExistingSession() {
-
-  try {
-
-
-    const {
-      data,
-      error
-    } = await client.auth.getSession();
-
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-
-    if (
-      data &&
-      data.session &&
-      data.session.user
-    ) {
-
-
-      console.log(
-        "Existing session found."
-      );
-
-
-      await showApp(
-        data.session.user
-      );
-
-
-    }
-
-
-    else {
-
-
-      console.log(
-        "No active session."
-      );
-
-
-
-      if (appView) {
-
-        appView.classList.add(
-          "hidden"
-        );
-
-      }
-
-
-
-      if (loginView) {
-
-        loginView.classList.remove(
-          "hidden"
-        );
-
-      }
-
-
-    }
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      "Session check error:",
-      error
-    );
-
-
-
-    if (appView) {
-
-      appView.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-
-    if (loginView) {
-
-      loginView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-  }
-
-}
-// ==========================================
-// LOGIN
-// ==========================================
-
-if (loginForm) {
-
-  loginForm.addEventListener(
-    "submit",
-    async function(event) {
-
-      event.preventDefault();
-
-
-      if (loginMessage) {
-
-        loginMessage.textContent =
-          "Signing in...";
-
-      }
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
-
-
-      const password =
-        document
-          .getElementById("password")
-          .value;
-
-
-
-      if (
-        !email ||
-        !password
-      ) {
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-            "Please enter email and password.";
-
-        }
-
-        return;
-
-      }
-
-
-
-      try {
-
-
-        const {
-          data,
-          error
-        } =
-        await client.auth.signInWithPassword({
-
-          email:
-            email,
-
-          password:
-            password
-
-        });
-
-
-
-        if (error) {
-
-          throw error;
-
-        }
-
-
-
-        const profile =
-          await loadUserProfile(
-            data.user.id
-          );
-
-
-
-        if (!profile) {
-
-          throw new Error(
-            "User profile not found."
-          );
-
-        }
-
-
-
-        if (
-          profile.Status
-            .toLowerCase() !==
-          "active"
-        ) {
-
-
-          await client.auth.signOut();
-
-
-          throw new Error(
-            "Account is disabled."
-          );
-
-        }
-
-
-
-        window.currentUser =
-          profile;
-
-
-
-        await showApp(
-          data.user
-        );
-
-
-
-      }
-
-
-      catch(error) {
-
-
-        console.error(
-          "Login error:",
-          error
-        );
-
-
-
-        if (loginMessage) {
-
-          loginMessage.textContent =
-            "Login failed: " +
-            error.message;
-
-        }
-
-
-      }
-
-
-    }
-
-  );
-
-}
-// ==========================================
-// SHOW APPLICATION AFTER LOGIN
-// ==========================================
-
-async function showApp(user) {
-
-  try {
-
-
-    const profile =
-      await loadUserProfile(
-        user.id
-      );
-
-
-    if (!profile) {
-
-      throw new Error(
-        "User profile not found."
-      );
-
-    }
-
-
-    window.currentUser =
-      profile;
-
-
-
-    const userRole =
-      (profile.UserRole || "")
-      .trim()
-      .toLowerCase();
-
-
-
-    // HIDE LOGIN
-
-    if (loginView) {
-
-      loginView.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-
-    // SHOW APPLICATION
-
-    if (appView) {
-
-      appView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-
-    // DISPLAY USER NAME
-
-    if (welcomeText) {
-
-
-      welcomeText.textContent =
-        `Welcome, ${
-          profile["Full name"] ||
-          profile.Username ||
-          user.email
-        }`;
-
-
-    }
-
-
-
-    // USER PERMISSION
-
-    document
-      .querySelectorAll(
-        ".menu button"
-      )
-      .forEach(
-        button => {
-
-          button.style.display =
-            "";
-
-        }
-      );
-
-
-
-    if (
-      userRole ===
-      "engineer"
-    ) {
-
-
-      const userManagementButton =
-        document.querySelector(
-          '[data-section="usersSection"]'
-        );
-
-
-      if (userManagementButton) {
-
-        userManagementButton.style.display =
-          "none";
-
-      }
-
-    }
-
-
-
-    // LOAD FORM DATA
-
-    await loadFormData();
-
-
-
-    // LOAD REPORTS
-
-    await loadMaintenanceReports();
-
-
-
-    // LOAD DASHBOARD
-
-    await loadDashboard();
-
-
-
-    // LOAD PM INFORMATION
-
-    await loadPMHistory();
-
-    await loadPMCounters();
-
-    await loadPMNotifications();
-
-
-
-    console.log(
-      "Application loaded successfully."
-    );
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      "Show application error:",
-      error
-    );
-
-
-    if (loginMessage) {
-
-      loginMessage.textContent =
-        "Application loading error: " +
-        error.message;
-
-    }
-
-
-    await client.auth.signOut();
-
-
-  }
-
-}
-// ==========================================
-// LOGOUT
-// ==========================================
-
-if (logoutBtn) {
-
-  logoutBtn.addEventListener(
-    "click",
-    async function() {
-
-
-      try {
-
-        await client.auth.signOut();
-
-      }
-
-
-      catch(error) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
-
-      }
-
-
-
-      if (appView) {
-
-        appView.classList.add(
-          "hidden"
-        );
-
-      }
-
-
-
-      if (loginView) {
-
-        loginView.classList.remove(
-          "hidden"
-        );
-
-      }
-
-
-
-      if (loginForm) {
-
-        loginForm.reset();
-
-      }
-
-
-
-      if (loginMessage) {
-
-        loginMessage.textContent =
-          "";
-
-      }
-
-
-    }
-  );
-
-}
-
-
-
-// ==========================================
-// AUTH STATE CHANGE
-// ==========================================
-
-client.auth.onAuthStateChange(
-  async function(
-    event,
-    session
-  ) {
-
-
-    console.log(
-      "Auth event:",
-      event
-    );
-
-
-
-    if (
-      event ===
-      "SIGNED_IN"
-    ) {
-
-
-      if (
-        session &&
-        session.user
-      ) {
-
-
-        await showApp(
-          session.user
-        );
-
-
-      }
-
-    }
-
-
-
-    if (
-      event ===
-      "SIGNED_OUT"
-    ) {
-
-
-      if (appView) {
-
-        appView.classList.add(
-          "hidden"
-        );
-
-      }
-
-
-
-      if (loginView) {
-
-        loginView.classList.remove(
-          "hidden"
-        );
-
-      }
-
-
-    }
-
-
-  }
-);
-
-
-
-// ==========================================
-// APPLICATION STARTUP
-// ==========================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  async function() {
-
-
-    console.log(
-      "ATBUTH Biomedical CMMS starting..."
-    );
-
-
-
-    if (appView) {
-
-      appView.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-
-    if (loginView) {
-
-      loginView.classList.remove(
-        "hidden"
-      );
-
-    }
-
-
-
-    await checkExistingSession();
-
-
-
-  }
+  "ATBUTH Biomedical CMMS JavaScript loaded successfully - Parts 1, 2 and 3."
 );
 // ==========================================
 // PM HISTORY SEARCH
@@ -3907,461 +4129,457 @@ if (pmHistorySearch) {
     "input",
     function() {
 
-
       const searchText =
         this.value
           .toLowerCase()
           .trim();
 
 
-
-      const rows =
-        document.querySelectorAll(
-          "#pmHistoryTableBody tr"
+      const pmTableBody =
+        document.getElementById(
+          "pmHistoryTableBody"
         );
 
+
+      if (!pmTableBody) {
+        return;
+      }
+
+
+      const rows =
+        pmTableBody.querySelectorAll(
+          "tr"
+        );
 
 
       let visibleRows = 0;
 
 
-
       rows.forEach(
         row => {
 
-
-          const text =
+          const rowText =
             row.textContent
               .toLowerCase();
 
 
-
           if (
             searchText === "" ||
-            text.includes(searchText)
+            rowText.includes(
+              searchText
+            )
           ) {
-
 
             row.style.display =
               "";
 
             visibleRows++;
 
-
           }
 
           else {
 
-
             row.style.display =
               "none";
 
-
           }
-
 
         }
       );
 
 
+      // --------------------------------------
+      // SHOW SEARCH RESULT MESSAGE
+      // --------------------------------------
 
-      const message =
+      const pmHistoryMessage =
         document.getElementById(
           "pmHistoryMessage"
         );
-
 
 
       if (
         searchText !== ""
       ) {
 
-
         if (
           visibleRows === 0
         ) {
 
+          if (pmHistoryMessage) {
 
-          if (message) {
-
-            message.textContent =
+            pmHistoryMessage.textContent =
               "No matching PM records found.";
 
           }
-
 
         }
 
         else {
 
+          if (pmHistoryMessage) {
 
-          if (message) {
-
-            message.textContent =
+            pmHistoryMessage.textContent =
               `${visibleRows} matching PM record(s) found.`;
 
           }
 
-
         }
-
 
       }
 
       else {
 
+        if (pmHistoryMessage) {
 
-        if (message) {
-
-          message.textContent =
+          pmHistoryMessage.textContent =
             "";
 
         }
 
-
       }
-
 
     }
   );
 
 }
 
+// ==========================================
+// DASHBOARD
+// ==========================================
 
+async function loadDashboard() {
+
+  const totalEquipment =
+    document.getElementById(
+      "dashboardTotalEquipment"
+    );
+
+  const totalMaintenance =
+    document.getElementById(
+      "dashboardTotalMaintenance"
+    );
+
+  const underRepair =
+    document.getElementById(
+      "dashboardUnderRepair"
+    );
+
+  const awaitingParts =
+    document.getElementById(
+      "dashboardAwaitingParts"
+    );
+
+  const pmDueToday =
+    document.getElementById(
+      "dashboardPMDueToday"
+    );
+
+  const pmOverdue =
+    document.getElementById(
+      "dashboardPMOverdue"
+    );
+
+  if (
+    !totalEquipment ||
+    !totalMaintenance ||
+    !underRepair ||
+    !awaitingParts ||
+    !pmDueToday ||
+    !pmOverdue
+  ) {
+    return;
+  }
+  try {
+
+    // Total Equipment
+
+    const {
+      count: equipmentCount
+    } = await client
+      .from("tblEquipment")
+      .select("*", {
+        count: "exact",
+        head: true
+      });
+
+    totalEquipment.textContent =
+      equipmentCount || 0;
+    // Total Maintenance Reports
+
+const {
+  count: maintenanceCount
+} = await client
+  .from("tblMaintenanceReport")
+  .select("*", {
+    count: "exact",
+    head: true
+  });
+
+totalMaintenance.textContent =
+  maintenanceCount || 0;
+    // Under Repair Equipment
+
+const {
+  count: underRepairCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 2);
+
+underRepair.textContent =
+  underRepairCount || 0;
+    // PM Due Today
+
+const {
+  data: pmRecords
+} = await client
+  .from("vwPMHistory")
+  .select("NextPMDate");
+
+const today = new Date();
+
+today.setHours(
+  0,
+  0,
+  0,
+  0
+);
+
+let dueToday = 0;
+let overdue = 0;
+
+(pmRecords || []).forEach(pm => {
+
+  if (!pm.NextPMDate) {
+    return;
+  }
+
+  const nextPM = new Date(
+    pm.NextPMDate
+  );
+
+  nextPM.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  if (nextPM.getTime() === today.getTime()) {
+
+    dueToday++;
+
+  }
+
+  else if (nextPM < today) {
+
+    overdue++;
+
+  }
+
+});
+
+pmDueToday.textContent =
+  dueToday;
+
+pmOverdue.textContent =
+  overdue;
+    // Awaiting Parts Equipment
+
+const {
+  count: awaitingPartsCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 4);
+
+awaitingParts.textContent =
+  awaitingPartsCount || 0;
+    
+  }
+
+  catch (error) {
+
+    console.error(
+      "Dashboard error:",
+      error
+    );
+
+  }
+
+}
 
 // ==========================================
 // MAINTENANCE REPORT SEARCH
 // ==========================================
 
 const reportSearch =
-  document.getElementById(
-    "reportSearch"
-  );
-
-
+  document.getElementById("reportSearch");
 
 if (reportSearch) {
 
+  reportSearch.addEventListener("input", function () {
 
-  reportSearch.addEventListener(
-    "input",
-    function() {
+    const search =
+      this.value.toLowerCase().trim();
 
-
-      const search =
-        this.value
-          .toLowerCase()
-          .trim();
-
-
-
-      const rows =
-        document.querySelectorAll(
-          "#reportsTableBody tr"
-        );
-
-
-
-      rows.forEach(
-        row => {
-
-
-          if (
-            row.textContent
-              .toLowerCase()
-              .includes(search)
-          ) {
-
-
-            row.style.display =
-              "";
-
-
-          }
-
-          else {
-
-
-            row.style.display =
-              "none";
-
-
-          }
-
-
-        }
+    const rows =
+      document.querySelectorAll(
+        "#reportsTableBody tr"
       );
 
+    rows.forEach(row => {
 
-    }
-  );
+      if (
+        row.textContent
+          .toLowerCase()
+          .includes(search)
+      ) {
+
+        row.style.display = "";
+
+      } else {
+
+        row.style.display = "none";
+
+      }
+
+    });
+
+  });
 
 }
-// ==========================================
-// PRINT TABLE FUNCTION
-// ==========================================
+function printTable(sectionId, title) {
 
-function printTable(
-  sectionId,
-  title
-) {
-
-
-  const section =
-    document.getElementById(
-      sectionId
-    );
-
-
+  const section = document.getElementById(sectionId);
 
   if (!section) {
-
-    alert(
-      "Section not found."
-    );
-
+    alert("Section not found.");
     return;
-
   }
 
-
-
-  const table =
-    section.querySelector(
-      "table"
-    );
-
-
+  const table = section.querySelector("table");
 
   if (!table) {
-
-    alert(
-      "Table not found."
-    );
-
+    alert("Table not found.");
     return;
-
   }
 
-
-
-  const printWindow =
-    window.open(
-      "",
-      "_blank"
-    );
-
-
+  const printWindow = window.open("", "_blank");
 
   printWindow.document.write(`
-
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
-<title>
-${title}
-</title>
-
+<title>${title}</title>
 
 <style>
 
-body {
-
-  font-family: Arial, sans-serif;
-
-  margin: 20px;
-
+body{
+font-family:Arial,sans-serif;
+margin:20px;
 }
 
-
-h1,
-h2 {
-
-  text-align: center;
-
+h1,h2{
+text-align:center;
 }
 
-
-table {
-
-  width:100%;
-
-  border-collapse:collapse;
-
-  margin-top:20px;
-
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
 }
 
-
-th,
-td {
-
-  border:1px solid black;
-
-  padding:8px;
-
-  font-size:12px;
-
-  text-align:left;
-
+th,td{
+border:1px solid #000;
+padding:8px;
+font-size:12px;
+text-align:left;
 }
-
 
 </style>
 
-
 </head>
-
 
 <body>
 
+<h1>ATBUTH Biomedical CMMS</h1>
 
-<h1>
-ATBUTH Biomedical CMMS
-</h1>
-
-
-<h2>
-${title}
-</h2>
-
+<h2>${title}</h2>
 
 ${table.outerHTML}
 
-
 </body>
 
-
 </html>
-
 `);
-
-
-
 
   printWindow.document.close();
 
+  setTimeout(() => {
 
+    printWindow.focus();
 
-  setTimeout(
-    function() {
-
-
-      printWindow.focus();
-
-
-      printWindow.print();
-
-
-
-    },
-    800
-  );
-
+    printWindow.print();
+  }, 800);
 
 }
-
-
-
-
-// ==========================================
-// PRINT REPORTS
-// ==========================================
-
 const printReportsBtn =
-  document.getElementById(
-    "printReportsBtn"
-  );
-
+document.getElementById(
+"printReportsBtn"
+);
 
 if (printReportsBtn) {
 
-
   printReportsBtn.addEventListener(
     "click",
-    function() {
-
+    function () {
 
       printTable(
-        "reportsSection",
-        "Maintenance Report History"
-      );
-
-
+  "reportsSection",
+  "Maintenance Report History"
+);
     }
   );
 
-
 }
-
-
-
-// ==========================================
-// PRINT EQUIPMENT HISTORY
-// ==========================================
-
 const printEquipmentHistoryBtn =
-  document.getElementById(
-    "printEquipmentHistoryBtn"
-  );
-
-
+document.getElementById(
+"printEquipmentHistoryBtn"
+);
 
 if (printEquipmentHistoryBtn) {
 
-
   printEquipmentHistoryBtn.addEventListener(
     "click",
-    function() {
+    function () {
 
-
-      printTable(
-        "equipmentHistorySection",
-        "Equipment History"
-      );
-
+      printSection("equipmentHistorySection");
 
     }
   );
 
-
 }
-
-
-
-// ==========================================
-// PRINT PM HISTORY
-// ==========================================
-
-const printPMBtn =
-  document.getElementById(
-    "printPMBtn"
-  );
-
-
+const printPMBtn = document.getElementById("printPMBtn");
 
 if (printPMBtn) {
 
+  printPMBtn.addEventListener("click", function () {
 
-  printPMBtn.addEventListener(
-    "click",
-    function() {
+    printTable(
+      "pmPrintArea",
+      "Preventive Maintenance History"
+    );
 
-
-      printTable(
-        "pmPrintArea",
-        "Preventive Maintenance History"
-      );
-
-
-    }
-  );
-
+  });
 
 }
 // ==========================================
@@ -4369,260 +4587,60 @@ if (printPMBtn) {
 // ==========================================
 
 const userForm =
-  document.getElementById(
-    "userForm"
-  );
-
+document.getElementById(
+  "userForm"
+);
 
 if (userForm) {
 
-
   userForm.addEventListener(
     "submit",
-    async function(event) {
-
+    async function (event) {
 
       event.preventDefault();
 
-
-
       const newUser = {
 
+  fullName:
+    document.getElementById(
+      "userFullName"
+    ).value.trim(),
 
-        fullName:
-          document.getElementById(
-            "userFullName"
-          ).value.trim(),
+  username:
+    document.getElementById(
+      "userUsername"
+    ).value.trim(),
 
+  email:
+    document.getElementById(
+      "userEmail"
+    ).value.trim(),
 
-        username:
-          document.getElementById(
-            "userUsername"
-          ).value.trim(),
+  password:
+    document.getElementById(
+      "userPassword"
+    ).value,
 
+  role:
+    document.getElementById(
+      "userRole"
+    ).value,
 
-        email:
-          document.getElementById(
-            "userEmail"
-          ).value.trim(),
+  status:
+    document.getElementById(
+      "userStatus"
+    ).value
 
+};
 
-        password:
-          document.getElementById(
-            "userPassword"
-          ).value,
+console.log(newUser);
 
-
-        role:
-          document.getElementById(
-            "userRole"
-          ).value,
-
-
-        status:
-          document.getElementById(
-            "userStatus"
-          ).value
-
-
-      };
-
-
-
-      console.log(
-        "New user information:",
-        newUser
-      );
-
-
-
-      alert(
-        "User information captured successfully.\n\n" +
-        "Next step: Create Supabase Auth account securely."
-      );
-
-
+alert(
+  "User information captured successfully.\n\n" +
+  "Next step: Create the Supabase Auth account using the secure Edge Function."
+);
     }
   );
 
 }
 
-
-
-
-// ==========================================
-// LOAD USERS
-// ==========================================
-
-async function loadUsers() {
-
-
-  const usersTableBody =
-    document.getElementById(
-      "usersTableBody"
-    );
-
-
-
-  if (!usersTableBody) {
-
-    return;
-
-  }
-
-
-
-  usersTableBody.innerHTML = `
-
-    <tr>
-
-      <td colspan="4">
-        Loading users...
-      </td>
-
-    </tr>
-
-  `;
-
-
-
-  try {
-
-
-    const {
-      data,
-      error
-    } = await client
-      .from(
-        "tblUsers"
-      )
-      .select(
-        `
-        Username,
-        "Full name",
-        UserRole,
-        Status
-        `
-      )
-      .order(
-        "Username"
-      );
-
-
-
-    if (error) {
-
-      throw error;
-
-    }
-
-
-
-    usersTableBody.innerHTML =
-      "";
-
-
-
-    if (
-      !data ||
-      data.length === 0
-    ) {
-
-
-      usersTableBody.innerHTML = `
-
-        <tr>
-
-          <td colspan="4">
-            No users found.
-          </td>
-
-        </tr>
-
-      `;
-
-
-      return;
-
-    }
-
-
-
-
-    data.forEach(
-      user => {
-
-
-        usersTableBody.innerHTML += `
-
-          <tr>
-
-            <td>
-              ${user.Username || ""}
-            </td>
-
-
-            <td>
-              ${user["Full name"] || ""}
-            </td>
-
-
-            <td>
-              ${user.UserRole || ""}
-            </td>
-
-
-            <td>
-              ${user.Status || ""}
-            </td>
-
-
-          </tr>
-
-        `;
-
-
-      }
-    );
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      "Load users error:",
-      error
-    );
-
-
-
-    usersTableBody.innerHTML = `
-
-      <tr>
-
-        <td colspan="4">
-          Unable to load users.
-        </td>
-
-      </tr>
-
-    `;
-
-
-  }
-
-
-}
-
-
-
-// ==========================================
-// FINAL STARTUP MESSAGE
-// ==========================================
-
-console.log(
-  "ATBUTH Biomedical CMMS JavaScript loaded successfully."
-);
