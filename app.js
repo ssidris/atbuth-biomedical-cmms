@@ -4167,5 +4167,10 @@ if (printReportsBtn) {
   });
 
 }
-console.log("Print Reports script loaded");
-alert("END OF APP.JS LOADED");
+console.log("Print Reports button:", printReportsBtn);
+
+if (printReportsBtn) {
+  alert("Button found");
+} else {
+  alert("Button NOT found");
+}
