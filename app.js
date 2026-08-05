@@ -4232,23 +4232,31 @@ if (printReportsBtn) {
 }
 
 // ==========================================
-// EQUIPMENT HISTORY PRINT
+// PRINT EQUIPMENT HISTORY (ANDROID FIX)
 // ==========================================
 
-const equipmentPrintBtn =
-  document.getElementById(
-    "printEquipmentHistoryBtn"
-  );
+document.addEventListener("click", function(e){
 
-if (equipmentPrintBtn) {
+  if(e.target.id === "printEquipmentHistoryBtn") {
 
-  equipmentPrintBtn.onclick = function () {
+
+    const table =
+      document.querySelector(
+        "#equipmentHistorySection table"
+      );
+
+
+    if(!table){
+
+      alert("Equipment history table not found");
+
+      return;
+
+    }
 
 
     const printContents =
-      document.querySelector(
-        "#equipmentHistorySection"
-      ).innerHTML;
+      table.outerHTML;
 
 
     const newWindow =
@@ -4259,11 +4267,9 @@ if (equipmentPrintBtn) {
       );
 
 
-    if (!newWindow) {
+    if(!newWindow){
 
-      alert(
-        "Popup blocked. Allow popup and try again."
-      );
+      alert("Popup blocked");
 
       return;
 
@@ -4297,10 +4303,6 @@ if (equipmentPrintBtn) {
         padding:6px;
       }
 
-      button,input,select{
-        display:none;
-      }
-
       </style>
 
       </head>
@@ -4312,9 +4314,8 @@ if (equipmentPrintBtn) {
       ATBUTH Biomedical CMMS
       </h2>
 
-
       <h3>
-      Equipment History
+      Equipment Maintenance History
       </h3>
 
 
@@ -4328,22 +4329,16 @@ if (equipmentPrintBtn) {
     `);
 
 
-
-    newWindow.onload = function(){
-
-  newWindow.focus();
-
-  newWindow.print();
-
-};
-
-  };
-
-}
+    newWindow.document.close();
 
 
-console.log(
-  "Equipment History Print Ready"
-);
+    setTimeout(()=>{
 
-alert("NEW APP.JS LOADED");
+      newWindow.print();
+
+    },1000);
+
+
+  }
+
+});
