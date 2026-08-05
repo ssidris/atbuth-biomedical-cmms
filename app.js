@@ -2090,6 +2090,690 @@ document
               section => {
 
                 section.classList.add(
+                  "hidden"
+                );
+
+              }
+            );
+
+
+          const selectedSection =
+            document.getElementById(
+              this.dataset.section
+            );
+
+
+          if (selectedSection) {
+
+            selectedSection.classList.remove(
+              "hidden"
+            );
+
+          }
+
+
+          // REPORTS
+
+          if (
+            this.dataset.section ===
+            "reportsSection"
+          ) {
+
+            loadMaintenanceReports();
+
+          }
+
+
+          // EQUIPMENT REGISTRATION
+
+          if (
+            this.dataset.section ===
+            "equipmentRegistrationSection"
+          ) {
+
+            loadEquipmentRegistrationDropdowns();
+
+          }
+
+
+          // EQUIPMENT HISTORY
+
+          if (
+            this.dataset.section ===
+            "equipmentHistorySection"
+          ) {
+
+            loadEquipmentHistoryDropdown();
+
+          }
+
+
+          // PM
+
+if (
+  this.dataset.section ===
+  "pmSection"
+) {
+
+  loadPMEquipmentDropdown();
+
+  loadPMEngineerDropdown();
+
+  loadPMHistory();
+
+  loadPMCounters();
+  loadPMNotifications();
+
+}
+        }
+      );
+
+    }
+  );
+
+// ==========================================
+// ==========================================
+// LOGIN
+// ==========================================
+
+if (loginForm) {
+
+loginForm.addEventListener(
+"submit",
+async function(event) {
+
+  event.preventDefault();
+
+  console.log("Login form submitted.");
+
+  if (loginMessage) {
+    loginMessage.textContent = "Signing in...";
+  }
+
+  const emailInput =
+    document.getElementById("email");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  if (!emailInput || !passwordInput) {
+
+    console.error(
+      "Email or password input was not found."
+    );
+
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Login fields were not found.";
+    }
+
+    return;
+  }
+
+  const email =
+    emailInput.value.trim();
+
+  const password =
+    passwordInput.value;
+
+  // --------------------------------------
+  // VALIDATE LOGIN INPUT
+  // --------------------------------------
+
+  if (!email || !password) {
+
+    if (loginMessage) {
+      loginMessage.textContent =
+        "Please enter your email and password.";
+    }
+
+    return;
+  }
+
+  try {
+
+    console.log(
+      "Attempting Supabase login:",
+      email
+    );
+
+    // --------------------------------------
+    // SUPABASE LOGIN
+    // --------------------------------------
+
+    const {
+      data,
+      error
+    } = await client.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+    // --------------------------------------
+    // CHECK LOGIN ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      console.error(
+        "Supabase login error:",
+        error
+      );
+
+      throw new Error(
+        error.message
+      );
+
+    }
+
+    // --------------------------------------
+    // CHECK USER
+    // --------------------------------------
+
+    if (
+      !data ||
+      !data.user
+    ) {
+
+      throw new Error(
+        "Login failed. No authenticated user was returned."
+      );
+
+    }
+
+    console.log(
+      "Login successful."
+    );
+
+    console.log(
+      "User ID:",
+      data.user.id
+    );
+
+    console.log(
+      "User Email:",
+      data.user.email
+    );
+
+    // --------------------------------------
+    // LOAD APPLICATION
+    // --------------------------------------
+
+    await showApp(
+      data.user
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Login process error:",
+      error
+    );
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "Login failed: " +
+        (
+          error.message ||
+          "Please check your email and password."
+        );
+
+    }
+
+  }
+
+}
+
+);
+
+}
+
+// ==========================================
+// SHOW APPLICATION AFTER LOGIN
+// ==========================================
+
+async function showApp(user) {
+
+  try {
+
+    console.log(
+      "Loading application for user:",
+      user.id
+    );
+
+
+    // --------------------------------------
+    // LOAD USER PROFILE
+    // --------------------------------------
+
+    const profile =
+      await loadUserProfile(
+        user.id
+      );
+
+
+    console.log(
+      "User profile successfully loaded:",
+      profile
+    );
+
+
+    // --------------------------------------
+    // HIDE LOGIN
+    // SHOW APPLICATION
+    // --------------------------------------
+
+    if (loginView) {
+
+      loginView.classList.add(
+        "hidden"
+      );
+
+    }
+
+    if (appView) {
+
+      appView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    // --------------------------------------
+    // SHOW USER NAME
+    // --------------------------------------
+
+    if (welcomeText) {
+
+      const fullName =
+        profile["Full name"] ||
+        profile.Username ||
+        user.email ||
+        "User";
+
+      welcomeText.textContent =
+        `Welcome, ${fullName}`;
+
+    }
+
+
+    // --------------------------------------
+    // LOAD FORM DROPDOWNS
+    // --------------------------------------
+
+    console.log(
+      "Loading application form data..."
+    );
+
+    await loadFormData();
+
+
+    // --------------------------------------
+    // LOAD MAINTENANCE REPORTS
+    // --------------------------------------
+
+    console.log(
+      "Loading maintenance reports..."
+    );
+
+    await loadMaintenanceReports();
+
+// ==========================================
+// LOAD PM DUE TODAY AND OVERDUE COUNTERS
+// ==========================================
+
+async function loadPMCounters() {
+
+  const pmDueTodayCount =
+    document.getElementById(
+      "pmDueTodayCount"
+    );
+
+  const pmOverdueCount =
+    document.getElementById(
+      "pmOverdueCount"
+    );
+
+
+  // ----------------------------------------
+  // CHECK COUNTER ELEMENTS
+  // ----------------------------------------
+
+  if (
+    !pmDueTodayCount ||
+    !pmOverdueCount
+  ) {
+
+    console.warn(
+      "PM counter elements not found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // SHOW LOADING
+  // ----------------------------------------
+
+  pmDueTodayCount.textContent =
+    "...";
+
+  pmOverdueCount.textContent =
+    "...";
+
+
+  try {
+
+    // --------------------------------------
+    // GET TODAY'S DATE
+    // --------------------------------------
+
+    const today =
+      new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    // --------------------------------------
+    // LOAD PM HISTORY
+    // --------------------------------------
+
+    const {
+      data,
+      error
+    } = await client
+      .from("vwPMHistory")
+      .select("NextPMDate");
+
+
+    // --------------------------------------
+    // CHECK DATABASE ERROR
+    // --------------------------------------
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    // --------------------------------------
+    // INITIALIZE COUNTERS
+    // --------------------------------------
+
+    let dueToday =
+      0;
+
+    let overdue =
+      0;
+
+
+    // --------------------------------------
+    // CHECK EACH PM RECORD
+    // --------------------------------------
+
+    (data || []).forEach(
+      pm => {
+
+        if (!pm.NextPMDate) {
+
+          return;
+
+        }
+
+
+        const nextPMDate =
+          new Date(
+            pm.NextPMDate
+          );
+
+
+        nextPMDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
+
+
+        // ----------------------------------
+        // PM DUE TODAY
+        // ----------------------------------
+
+        if (
+          nextPMDate.getTime() ===
+          today.getTime()
+        ) {
+
+          dueToday++;
+
+        }
+
+
+        // ----------------------------------
+        // PM OVERDUE
+        // ----------------------------------
+
+        else if (
+          nextPMDate < today
+        ) {
+
+          overdue++;
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------------
+    // DISPLAY COUNTERS
+    // --------------------------------------
+
+    pmDueTodayCount.textContent =
+      dueToday;
+
+    pmOverdueCount.textContent =
+      overdue;
+
+
+    console.log(
+      "PM Due Today:",
+      dueToday
+    );
+
+    console.log(
+      "PM Overdue:",
+      overdue
+    );
+
+  }
+
+
+  catch (error) {
+
+    console.error(
+      "Error loading PM counters:",
+      error
+    );
+
+
+    pmDueTodayCount.textContent =
+      "0";
+
+    pmOverdueCount.textContent =
+      "0";
+
+  }
+
+}
+    // --------------------------------------
+    // LOAD DASHBOARD
+    // --------------------------------------
+
+    console.log(
+      "Loading dashboard..."
+    );
+
+    await loadDashboard();
+
+
+    console.log(
+      "Application loaded successfully."
+    );
+
+
+    // --------------------------------------
+    // CLEAR LOGIN MESSAGE
+    // --------------------------------------
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "";
+
+    }
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Show application error:",
+      error
+    );
+
+
+    // --------------------------------------
+    // DO NOT HIDE THE REAL ERROR
+    // --------------------------------------
+
+    if (loginMessage) {
+
+      loginMessage.textContent =
+        "Login succeeded, but the application could not load: " +
+        error.message;
+
+    }
+
+
+    // --------------------------------------
+    // SIGN OUT
+    // --------------------------------------
+
+    try {
+
+      await client.auth.signOut();
+
+    }
+
+    catch (signOutError) {
+
+      console.error(
+        "Sign out after failed application load:",
+        signOutError
+      );
+
+    }
+
+
+    // --------------------------------------
+    // SHOW LOGIN
+    // --------------------------------------
+
+    if (appView) {
+
+      appView.classList.add(
+        "hidden"
+      );
+
+    }
+
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+  }
+
+}
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+    "click",
+    async function() {
+
+      try {
+
+        await client.auth.signOut();
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
+
+      if (appView) {
+
+        appView.classList.add(
+          "hidden"
+        );
+
+      }
+
+      if (loginView) {
+
+        loginView.classList.remove(
+          "hidden"
+        );
+
+      }
+
+      if (loginForm) {
+
+        loginForm.reset();
+
+      }
+
+      if (loginMessage) {
+
+        loginMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
 
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
@@ -3197,4 +3881,419 @@ document.addEventListener(
 
     }
 
-<
+    if (loginView) {
+
+      loginView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    // --------------------------------------
+    // CHECK EXISTING LOGIN SESSION
+    // --------------------------------------
+
+    await checkExistingSession();
+
+  }
+);
+
+
+// ==========================================
+// EXTRA SAFETY:
+// RELOAD PM ENGINEER DROPDOWN WHEN PM
+// SECTION IS OPENED
+// ==========================================
+
+const pmSection =
+  document.getElementById(
+    "pmSection"
+  );
+
+
+if (pmSection) {
+
+  const pmObserver =
+    new MutationObserver(
+      function() {
+
+        if (
+          !pmSection.classList.contains(
+            "hidden"
+          )
+        ) {
+
+  
+          loadPMHistory();
+          loadPMCounters();
+
+        }
+
+      }
+    );
+
+
+  pmObserver.observe(
+    pmSection,
+    {
+      attributes: true,
+      attributeFilter: [
+        "class"
+      ]
+    }
+  );
+
+}
+
+
+// ==========================================
+// FINAL STARTUP LOG
+// ==========================================
+
+console.log(
+  "ATBUTH Biomedical CMMS JavaScript loaded successfully - Parts 1, 2 and 3."
+);
+// ==========================================
+// PM HISTORY SEARCH
+// ==========================================
+
+const pmHistorySearch =
+  document.getElementById(
+    "pmHistorySearch"
+  );
+
+
+if (pmHistorySearch) {
+
+  pmHistorySearch.addEventListener(
+    "input",
+    function() {
+
+      const searchText =
+        this.value
+          .toLowerCase()
+          .trim();
+
+
+      const pmTableBody =
+        document.getElementById(
+          "pmHistoryTableBody"
+        );
+
+
+      if (!pmTableBody) {
+        return;
+      }
+
+
+      const rows =
+        pmTableBody.querySelectorAll(
+          "tr"
+        );
+
+
+      let visibleRows = 0;
+
+
+      rows.forEach(
+        row => {
+
+          const rowText =
+            row.textContent
+              .toLowerCase();
+
+
+          if (
+            searchText === "" ||
+            rowText.includes(
+              searchText
+            )
+          ) {
+
+            row.style.display =
+              "";
+
+            visibleRows++;
+
+          }
+
+          else {
+
+            row.style.display =
+              "none";
+
+          }
+
+        }
+      );
+
+
+      // --------------------------------------
+      // SHOW SEARCH RESULT MESSAGE
+      // --------------------------------------
+
+      const pmHistoryMessage =
+        document.getElementById(
+          "pmHistoryMessage"
+        );
+
+
+      if (
+        searchText !== ""
+      ) {
+
+        if (
+          visibleRows === 0
+        ) {
+
+          if (pmHistoryMessage) {
+
+            pmHistoryMessage.textContent =
+              "No matching PM records found.";
+
+          }
+
+        }
+
+        else {
+
+          if (pmHistoryMessage) {
+
+            pmHistoryMessage.textContent =
+              `${visibleRows} matching PM record(s) found.`;
+
+          }
+
+        }
+
+      }
+
+      else {
+
+        if (pmHistoryMessage) {
+
+          pmHistoryMessage.textContent =
+            "";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+// ==========================================
+// DASHBOARD
+// ==========================================
+
+async function loadDashboard() {
+
+  const totalEquipment =
+    document.getElementById(
+      "dashboardTotalEquipment"
+    );
+
+  const totalMaintenance =
+    document.getElementById(
+      "dashboardTotalMaintenance"
+    );
+
+  const underRepair =
+    document.getElementById(
+      "dashboardUnderRepair"
+    );
+
+  const awaitingParts =
+    document.getElementById(
+      "dashboardAwaitingParts"
+    );
+
+  const pmDueToday =
+    document.getElementById(
+      "dashboardPMDueToday"
+    );
+
+  const pmOverdue =
+    document.getElementById(
+      "dashboardPMOverdue"
+    );
+
+  if (
+    !totalEquipment ||
+    !totalMaintenance ||
+    !underRepair ||
+    !awaitingParts ||
+    !pmDueToday ||
+    !pmOverdue
+  ) {
+    return;
+  }
+  try {
+
+    // Total Equipment
+
+    const {
+      count: equipmentCount
+    } = await client
+      .from("tblEquipment")
+      .select("*", {
+        count: "exact",
+        head: true
+      });
+
+    totalEquipment.textContent =
+      equipmentCount || 0;
+    // Total Maintenance Reports
+
+const {
+  count: maintenanceCount
+} = await client
+  .from("tblMaintenanceReport")
+  .select("*", {
+    count: "exact",
+    head: true
+  });
+
+totalMaintenance.textContent =
+  maintenanceCount || 0;
+    // Under Repair Equipment
+
+const {
+  count: underRepairCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 2);
+
+underRepair.textContent =
+  underRepairCount || 0;
+    // PM Due Today
+
+const {
+  data: pmRecords
+} = await client
+  .from("vwPMHistory")
+  .select("NextPMDate");
+
+const today = new Date();
+
+today.setHours(
+  0,
+  0,
+  0,
+  0
+);
+
+let dueToday = 0;
+let overdue = 0;
+
+(pmRecords || []).forEach(pm => {
+
+  if (!pm.NextPMDate) {
+    return;
+  }
+
+  const nextPM = new Date(
+    pm.NextPMDate
+  );
+
+  nextPM.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  if (nextPM.getTime() === today.getTime()) {
+
+    dueToday++;
+
+  }
+
+  else if (nextPM < today) {
+
+    overdue++;
+
+  }
+
+});
+
+pmDueToday.textContent =
+  dueToday;
+
+pmOverdue.textContent =
+  overdue;
+    // Awaiting Parts Equipment
+
+const {
+  count: awaitingPartsCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 4);
+
+awaitingParts.textContent =
+  awaitingPartsCount || 0;
+    
+  }
+
+  catch (error) {
+
+    console.error(
+      "Dashboard error:",
+      error
+    );
+
+  }
+
+}
+
+// ==========================================
+// MAINTENANCE REPORT SEARCH
+// ==========================================
+
+const reportSearch =
+  document.getElementById("reportSearch");
+
+if (reportSearch) {
+
+  reportSearch.addEventListener("input", function () {
+
+    const search =
+      this.value.toLowerCase().trim();
+
+    const rows =
+      document.querySelectorAll(
+        "#reportsTableBody tr"
+      );
+
+    rows.forEach(row => {
+
+      if (
+        row.textContent
+          .toLowerCase()
+          .includes(search)
+      ) {
+
+        row.style.display = "";
+
+      } else {
+
+        row.style.display = "none";
+
+      }
+
+    });
+
+  });
+
+}
