@@ -4167,3 +4167,4 @@ if (printReportsBtn) {
   });
 
 }
+console.log("Print Reports script loaded");
