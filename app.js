@@ -4337,3 +4337,24 @@ if (printReportsBtn) {
   );
 
 }
+
+// TEST EQUIPMENT PRINT BUTTON
+
+const testPrintBtn = document.getElementById(
+  "printEquipmentHistoryBtn"
+);
+
+console.log(
+  "Equipment print button:",
+  testPrintBtn
+);
+
+if (testPrintBtn) {
+
+  testPrintBtn.onclick = function(){
+
+    alert("Equipment Print Button Detected");
+
+  };
+
+}
