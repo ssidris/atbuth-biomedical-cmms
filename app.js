@@ -3892,7 +3892,7 @@ if (pmHistorySearch) {
 // ==========================================
 // DASHBOARD
 // ==========================================
-
+console.log("SECOND loadDashboard is running");
 async function loadDashboard() {
 
   const totalEquipment =
