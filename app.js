@@ -3968,11 +3968,11 @@ const {
 
 totalMaintenance.textContent =
   maintenanceCount || 0;
-
-    // Working Equipment
+// Working Equipment
 
 const {
-  count: workingEquipmentCount
+  count: workingEquipmentCount,
+  error: workingEquipmentError
 } = await client
   .from("tblEquipment")
   .select("*", {
@@ -3980,6 +3980,16 @@ const {
     head: true
   })
   .eq("StatusID", 1);
+
+console.log(
+  "Working Equipment Count:",
+  workingEquipmentCount
+);
+
+console.log(
+  "Working Equipment Error:",
+  workingEquipmentError
+);
 
 workingEquipment.textContent =
   workingEquipmentCount || 0;
