@@ -1758,7 +1758,10 @@ if (maintenanceForm) {
 // ======================================
 // UPDATE EQUIPMENT STATUS
 // ======================================
-
+alert(
+  "EquipmentID: " + equipmentValue +
+  "\nStatusID: " + statusValue
+);
 const { data, error: statusError } = await client
   .from("tblEquipment")
   .update({
