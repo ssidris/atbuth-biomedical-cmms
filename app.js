@@ -1585,6 +1585,7 @@ if (maintenanceForm) {
           document.getElementById(
             "equipmentId"
           ).value;
+        console.log("Equipment value:", equipmentValue);
 
         const engineerValue =
           document.getElementById(
