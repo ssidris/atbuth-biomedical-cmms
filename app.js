@@ -1754,7 +1754,20 @@ if (maintenanceForm) {
         if (error) {
           throw error;
         }
+// ======================================
+// UPDATE EQUIPMENT STATUS
+// ======================================
 
+const { error: statusError } = await client
+  .from("tblEquipment")
+  .update({
+    StatusID: Number(statusId.value)
+  })
+  .eq("EquipmentID", Number(equipmentId.value));
+
+if (statusError) {
+  throw statusError;
+}
 
         // ----------------------------------
         // SUCCESS
