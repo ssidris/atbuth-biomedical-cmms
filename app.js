@@ -9,6 +9,7 @@
 // ==========================================
 // SUPABASE CONFIGURATION
 // ==========================================
+alert("GITHUB APP JS TEST");
 alert("THIS IS THE CORRECT APP.JS");
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
