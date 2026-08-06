@@ -1755,6 +1755,7 @@ if (maintenanceForm) {
           throw error;
         }
 // ======================================
+// ======================================
 // UPDATE EQUIPMENT STATUS
 // ======================================
 
@@ -1763,7 +1764,7 @@ const { error: statusError } = await client
   .update({
     StatusID: Number(statusId.value)
   })
-  .eq("EquipmentID", Number(equipmentId.value));
+  .eq("BMENumber", equipmentId.value);
 
 if (statusError) {
   throw statusError;
