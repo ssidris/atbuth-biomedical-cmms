@@ -77,7 +77,7 @@ async function loadLookup(
 
   const select =
     document.getElementById(selectId);
-
+select.innerHTML = `<option value="">${placeholder}</option>`;
   if (!select) {
     console.warn(
       "Dropdown not found:",
