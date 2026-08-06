@@ -9,9 +9,7 @@
 // ==========================================
 // SUPABASE CONFIGURATION
 // ==========================================
-alert("GITHUB VERSION");
-alert("GITHUB APP JS TEST");
-alert("THIS IS THE CORRECT APP.JS");
+
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
@@ -79,7 +77,7 @@ async function loadLookup(
 
   const select =
     document.getElementById(selectId);
-select.innerHTML = `<option value="">${placeholder}</option>`;
+
   if (!select) {
     console.warn(
       "Dropdown not found:",
@@ -1587,7 +1585,7 @@ if (maintenanceForm) {
           document.getElementById(
             "equipmentId"
           ).value;
-        
+
         const engineerValue =
           document.getElementById(
             "engineerId"
@@ -1756,27 +1754,7 @@ if (maintenanceForm) {
         if (error) {
           throw error;
         }
-// ======================================
-// ======================================
-// UPDATE EQUIPMENT STATUS
-// ======================================
-alert(
-  "EquipmentID: " + equipmentValue +
-  "\nStatusID: " + statusValue
-);
-const { data, error: statusError } = await client
-  .from("tblEquipment")
-  .update({
-    StatusID: Number(statusValue)
-  })
-  .eq("EquipmentID", Number(equipmentValue))
-  .select();
 
-console.log("Updated equipment:", data);
-
-if (statusError) {
-  throw statusError;
-}
 
         // ----------------------------------
         // SUCCESS
@@ -3914,7 +3892,7 @@ if (pmHistorySearch) {
 // ==========================================
 // DASHBOARD
 // ==========================================
-console.log("SECOND loadDashboard is running");
+
 async function loadDashboard() {
 
   const totalEquipment =
@@ -3931,10 +3909,6 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardUnderRepair"
     );
-  const workingEquipment =
-  document.getElementById(
-    "dashboardWorkingEquipment"
-  );
 
   const awaitingParts =
     document.getElementById(
@@ -3952,16 +3926,15 @@ async function loadDashboard() {
     );
 
   if (
-  !totalEquipment ||
-  !totalMaintenance ||
-  !workingEquipment ||
-  !underRepair ||
-  !awaitingParts ||
-  !pmDueToday ||
-  !pmOverdue
-) {
-  return;
-}
+    !totalEquipment ||
+    !totalMaintenance ||
+    !underRepair ||
+    !awaitingParts ||
+    !pmDueToday ||
+    !pmOverdue
+  ) {
+    return;
+  }
   try {
 
     // Total Equipment
@@ -3990,31 +3963,6 @@ const {
 
 totalMaintenance.textContent =
   maintenanceCount || 0;
-// Working Equipment
-
-const {
-  count: workingEquipmentCount,
-  error: workingEquipmentError
-} = await client
-  .from("tblEquipment")
-  .select("*", {
-    count: "exact",
-    head: true
-  })
-  .eq("StatusID", 1);
-
-console.log(
-  "Working Equipment Count:",
-  workingEquipmentCount
-);
-
-console.log(
-  "Working Equipment Error:",
-  workingEquipmentError
-);
-
-workingEquipment.textContent =
-  workingEquipmentCount || 0;
     // Under Repair Equipment
 
 const {
@@ -4029,7 +3977,6 @@ const {
 
 underRepair.textContent =
   underRepairCount || 0;
-  
     // PM Due Today
 
 const {
@@ -4470,4 +4417,3 @@ if (printPMBtn) {
 
 }
 
-alert("NEW APP.JS LOADED");
