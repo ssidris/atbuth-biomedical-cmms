@@ -4437,7 +4437,8 @@ if (printPMBtn) {
 
     setTimeout(function () {
 
-      newWindow.print();
+      alert("PRINT FUNCTION REACHED");
+newWindow.print();
 
     }, 700);
 
