@@ -9,7 +9,7 @@
 // ==========================================
 // SUPABASE CONFIGURATION
 // ==========================================
-
+alert("THIS IS THE CORRECT APP.JS");
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
