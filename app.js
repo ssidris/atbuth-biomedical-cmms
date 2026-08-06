@@ -3930,15 +3930,16 @@ async function loadDashboard() {
     );
 
   if (
-    !totalEquipment ||
-    !totalMaintenance ||
-    !underRepair ||
-    !awaitingParts ||
-    !pmDueToday ||
-    !pmOverdue
-  ) {
-    return;
-  }
+  !totalEquipment ||
+  !totalMaintenance ||
+  !workingEquipment ||
+  !underRepair ||
+  !awaitingParts ||
+  !pmDueToday ||
+  !pmOverdue
+) {
+  return;
+}
   try {
 
     // Total Equipment
