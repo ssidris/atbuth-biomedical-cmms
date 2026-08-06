@@ -3968,6 +3968,21 @@ const {
 
 totalMaintenance.textContent =
   maintenanceCount || 0;
+
+    // Working Equipment
+
+const {
+  count: workingEquipmentCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 1);
+
+workingEquipment.textContent =
+  workingEquipmentCount || 0;
     // Under Repair Equipment
 
 const {
@@ -3982,6 +3997,7 @@ const {
 
 underRepair.textContent =
   underRepairCount || 0;
+  
     // PM Due Today
 
 const {
