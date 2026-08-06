@@ -4343,3 +4343,101 @@ document.addEventListener("click", function(e){
   }
 
 });
+
+// ==========================================
+// PREVENTIVE MAINTENANCE HISTORY PRINT
+// ==========================================
+
+document.addEventListener("click", function(e){
+
+  if(e.target.id === "printPMBtn") {
+
+    const table =
+      document.querySelector(
+        "#pmHistoryTable"
+      );
+
+    if(!table){
+      alert("No PM history found");
+      return;
+    }
+
+    const printWindow =
+      window.open(
+        "",
+        "_blank"
+      );
+
+    if(!printWindow){
+      alert("Popup blocked. Please allow popups.");
+      return;
+    }
+
+    printWindow.document.write(`
+
+    <html>
+
+    <head>
+
+    <title>
+    Preventive Maintenance History
+    </title>
+
+    <style>
+
+    body{
+      font-family:Arial,sans-serif;
+      padding:20px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th,td{
+      border:1px solid #000;
+      padding:6px;
+      text-align:left;
+      font-size:12px;
+    }
+
+    h2,h3{
+      text-align:center;
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    <h2>
+    ATBUTH Biomedical CMMS
+    </h2>
+
+    <h3>
+    Preventive Maintenance History
+    </h3>
+
+    ${table.outerHTML}
+
+    </body>
+
+    </html>
+
+    `);
+
+    printWindow.document.close();
+
+    printWindow.onload = function(){
+
+      printWindow.focus();
+
+      printWindow.print();
+
+    };
+
+  }
+
+});
