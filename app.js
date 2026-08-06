@@ -3909,6 +3909,10 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardUnderRepair"
     );
+  const workingEquipment =
+  document.getElementById(
+    "dashboardWorkingEquipment"
+  );
 
   const awaitingParts =
     document.getElementById(
