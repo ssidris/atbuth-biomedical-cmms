@@ -4344,100 +4344,75 @@ document.addEventListener("click", function(e){
 
 });
 
+
 // ==========================================
-// PREVENTIVE MAINTENANCE HISTORY PRINT
+// PRINT PM HISTORY
 // ==========================================
 
-document.addEventListener("click", function(e){
+const printPMBtn = document.getElementById("printPMBtn");
 
-  if(e.target.id === "printPMBtn") {
+if (printPMBtn) {
 
-    const table =
-      document.querySelector(
-        "#pmHistoryTable"
-      );
+  console.log("PM print button detected");
 
-    if(!table){
-      alert("No PM history found");
+  printPMBtn.addEventListener("click", function () {
+
+    const printArea = document.getElementById("pmPrintArea");
+
+    if (!printArea) {
+      alert("PM history not found.");
       return;
     }
 
-    const printWindow =
-      window.open(
-        "",
-        "_blank"
-      );
+    const newWindow = window.open("", "_blank");
 
-    if(!printWindow){
-      alert("Popup blocked. Please allow popups.");
-      return;
-    }
+    newWindow.document.write(`
+      <html>
+      <head>
+        <title>Preventive Maintenance History</title>
 
-    printWindow.document.write(`
+        <style>
 
-    <html>
+          body{
+            font-family:Arial,sans-serif;
+            padding:20px;
+          }
 
-    <head>
+          h2,h3{
+            text-align:center;
+          }
 
-    <title>
-    Preventive Maintenance History
-    </title>
+          table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:12px;
+          }
 
-    <style>
+          th,td{
+            border:1px solid #000;
+            padding:6px;
+            text-align:left;
+          }
 
-    body{
-      font-family:Arial,sans-serif;
-      padding:20px;
-    }
+        </style>
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
+      </head>
 
-    th,td{
-      border:1px solid #000;
-      padding:6px;
-      text-align:left;
-      font-size:12px;
-    }
+      <body>
 
-    h2,h3{
-      text-align:center;
-    }
+        <h2>ATBUTH Biomedical CMMS</h2>
 
-    </style>
+        <h3>Preventive Maintenance History</h3>
 
-    </head>
+        ${printArea.innerHTML}
 
-    <body>
+      </body>
 
-    <h2>
-    ATBUTH Biomedical CMMS
-    </h2>
-
-    <h3>
-    Preventive Maintenance History
-    </h3>
-
-    ${table.outerHTML}
-
-    </body>
-
-    </html>
-
+      </html>
     `);
 
-    printWindow.document.close();
+    newWindow.document.close();
 
-    printWindow.onload = function(){
+  });
 
-      printWindow.focus();
-
-      printWindow.print();
-
-    };
-
-  }
-
-});
+}
