@@ -1759,13 +1759,15 @@ if (maintenanceForm) {
 // UPDATE EQUIPMENT STATUS
 // ======================================
 
-const { error: statusError } = await client
-const { error: statusError } = await client
+const { data, error: statusError } = await client
   .from("tblEquipment")
   .update({
     StatusID: Number(statusValue)
   })
-  .eq("EquipmentID", Number(equipmentValue));
+  .eq("EquipmentID", Number(equipmentValue))
+  .select();
+
+console.log("Updated equipment:", data);
 
 if (statusError) {
   throw statusError;
