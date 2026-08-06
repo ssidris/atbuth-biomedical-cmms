@@ -4413,6 +4413,9 @@ if (printPMBtn) {
 
     newWindow.document.close();
 
-  });
+newWindow.focus();
 
-}
+setTimeout(() => {
+  newWindow.print();
+  newWindow.close();
+}, 500);
