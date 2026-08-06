@@ -4467,3 +4467,5 @@ if (printPMBtn) {
   });
 
 }
+
+alert("NEW APP.JS LOADED");
