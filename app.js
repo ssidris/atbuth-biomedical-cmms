@@ -3940,6 +3940,10 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardTotalEquipment"
     );
+  const workingEquipment =
+  document.getElementById(
+    "dashboardWorkingEquipment"
+  );
 
   const totalMaintenance =
     document.getElementById(
@@ -3967,15 +3971,16 @@ async function loadDashboard() {
     );
 
   if (
-    !totalEquipment ||
-    !totalMaintenance ||
-    !underRepair ||
-    !awaitingParts ||
-    !pmDueToday ||
-    !pmOverdue
-  ) {
-    return;
-  }
+  !totalEquipment ||
+  !workingEquipment ||
+  !totalMaintenance ||
+  !underRepair ||
+  !awaitingParts ||
+  !pmDueToday ||
+  !pmOverdue
+) {
+  return;
+}
   try {
 
     // Total Equipment
@@ -3991,6 +3996,20 @@ async function loadDashboard() {
 
     totalEquipment.textContent =
       equipmentCount || 0;
+    // Working Equipment
+
+const {
+  count: workingEquipmentCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 1);
+
+workingEquipment.textContent =
+  workingEquipmentCount || 0;
     // Total Maintenance Reports
 
 const {
