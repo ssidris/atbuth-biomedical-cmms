@@ -354,6 +354,7 @@ async function loadFormData() {
   await loadEquipmentRegistrationDropdowns();
 
   await loadEquipmentHistoryDropdown();
+  await loadEquipmentSearchData();
 
 }
 
