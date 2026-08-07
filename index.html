@@ -1034,6 +1034,47 @@ Loading PM notifications...
   <p>
     Select an equipment to view its complete maintenance history.
   </p>
+  <!-- ======================================
+     EQUIPMENT SEARCH
+     ====================================== -->
+
+<div class="equipment-search">
+
+  <label for="equipmentSearch">
+    Search Equipment
+  </label>
+
+  <input
+    type="search"
+    id="equipmentSearch"
+    placeholder="Search equipment name or BME number..."
+  >
+
+  <label for="equipmentDepartmentFilter">
+    Filter by Department
+  </label>
+
+  <select id="equipmentDepartmentFilter">
+
+    <option value="">
+      All Departments
+    </option>
+
+  </select>
+
+  <p id="equipmentSearchCount">
+    Enter a search term to find equipment.
+  </p>
+
+  <div
+    id="equipmentSearchResults"
+    class="table-container"
+    style="overflow-x:auto;"
+  ></div>
+
+</div>
+
+<hr>
 <button
   id="printEquipmentHistoryBtn"
   class="secondary"
