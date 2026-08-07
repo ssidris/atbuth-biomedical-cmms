@@ -3255,9 +3255,16 @@ else {
 
       row.innerHTML = `
 
-        <td>
-          ${pm.BMENumber || ""}
-        </td>
+  <td>
+    <input
+      type="checkbox"
+      class="pm-select-checkbox"
+    >
+  </td>
+
+  <td>
+    ${pm.BMENumber || ""}
+  </td>
 
         <td>
           ${pm.EquipmentName || ""}
