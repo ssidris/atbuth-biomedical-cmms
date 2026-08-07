@@ -1608,21 +1608,68 @@ if (maintenanceForm) {
 
 
         // ----------------------------------
-        // VALIDATE
-        // ----------------------------------
+// VALIDATE
+// ----------------------------------
 
-        if (
-          !equipmentValue ||
-          !engineerValue ||
-          !maintenanceTypeValue ||
-          !statusValue
-        ) {
+if (
+  !equipmentValue ||
+  !engineerValue ||
+  !maintenanceTypeValue ||
+  !statusValue
+) {
 
-          throw new Error(
-            "Please complete all required fields."
-          );
+  throw new Error(
+    "Please complete all required fields."
+  );
 
-        }
+}
+
+
+// ----------------------------------
+// VALIDATE REQUIRED PART DETAILS
+// ----------------------------------
+
+const requiredPart =
+  document.getElementById(
+    "requiredPart"
+  ).value.trim();
+
+const quantityRequired =
+  document.getElementById(
+    "quantityRequired"
+  ).value;
+
+const partStatusValue =
+  partStatusSelect
+    ? partStatusSelect.value
+    : "";
+
+
+// If a part is required,
+// quantity and part status must be provided.
+
+if (requiredPart) {
+
+  if (
+    !quantityRequired ||
+    Number(quantityRequired) <= 0
+  ) {
+
+    throw new Error(
+      "Please enter the quantity required for the part."
+    );
+
+  }
+
+  if (!partStatusValue) {
+
+    throw new Error(
+      "Please select the Part Requested Status."
+    );
+
+  }
+
+}
 
 
         // ----------------------------------
