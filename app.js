@@ -4103,7 +4103,7 @@ const {
     count: "exact",
     head: true
   })
-  .eq("StatusID", 4);
+  .eq("StatusID", 3);
 
 awaitingParts.textContent =
   awaitingPartsCount || 0;
