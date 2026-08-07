@@ -1792,6 +1792,7 @@ if (equipmentStatusError) {
         }
 
         await loadMaintenanceReports();
+await loadDashboard();
 
 
         setTimeout(
