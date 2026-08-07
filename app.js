@@ -680,7 +680,342 @@ async function loadEquipmentHistoryDropdown() {
   }
 
 }
+// ==========================================
+// EQUIPMENT SEARCH
+// ==========================================
 
+async function loadEquipmentSearchData() {
+
+  const searchInput =
+    document.getElementById(
+      "equipmentSearch"
+    );
+
+  const departmentFilter =
+    document.getElementById(
+      "equipmentDepartmentFilter"
+    );
+
+  const results =
+    document.getElementById(
+      "equipmentSearchResults"
+    );
+
+  const count =
+    document.getElementById(
+      "equipmentSearchCount"
+    );
+
+  if (
+    !searchInput ||
+    !departmentFilter ||
+    !results ||
+    !count
+  ) {
+    return;
+  }
+
+  try {
+
+    // Load departments
+
+    const {
+      data: departments,
+      error: departmentError
+    } = await client
+      .from("tblDepartment")
+      .select(
+        "DepartmentID, DepartmentName"
+      )
+      .order(
+        "DepartmentName",
+        {
+          ascending: true
+        }
+      );
+
+    if (departmentError) {
+      throw departmentError;
+    }
+
+    departmentFilter.innerHTML =
+      '<option value="">All Departments</option>';
+
+    (departments || []).forEach(
+      department => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          department.DepartmentID;
+
+        option.textContent =
+          department.DepartmentName;
+
+        departmentFilter.appendChild(
+          option
+        );
+
+      }
+    );
+
+    // Load equipment
+
+    const {
+      data: equipment,
+      error: equipmentError
+    } = await client
+      .from("tblEquipment")
+      .select(
+        `
+        EquipmentID,
+        BMENumber,
+        EquipmentName,
+        DepartmentID,
+        StatusID
+        `
+      )
+      .order(
+        "EquipmentName",
+        {
+          ascending: true
+        }
+      );
+
+    if (equipmentError) {
+      throw equipmentError;
+    }
+
+    // Store equipment locally
+
+    searchInput.dataset.loaded =
+      "true";
+
+    window.equipmentSearchData =
+      equipment || [];
+
+    window.equipmentDepartmentData =
+      departments || [];
+
+    // Search function
+
+    function performEquipmentSearch() {
+
+      const searchText =
+        searchInput.value
+          .trim()
+          .toLowerCase();
+
+      const selectedDepartment =
+        departmentFilter.value;
+
+      let filtered =
+        window.equipmentSearchData
+          .filter(
+            equipment => {
+
+              const name =
+                (
+                  equipment.EquipmentName ||
+                  ""
+                ).toLowerCase();
+
+              const bme =
+                (
+                  equipment.BMENumber ||
+                  ""
+                ).toLowerCase();
+
+              const matchesSearch =
+                !searchText ||
+                name.includes(
+                  searchText
+                ) ||
+                bme.includes(
+                  searchText
+                );
+
+              const matchesDepartment =
+                !selectedDepartment ||
+                String(
+                  equipment.DepartmentID
+                ) ===
+                String(
+                  selectedDepartment
+                );
+
+              return (
+                matchesSearch &&
+                matchesDepartment
+              );
+
+            }
+          );
+
+      count.textContent =
+        `${filtered.length} equipment found`;
+
+      if (!filtered.length) {
+
+        results.innerHTML =
+          "<p>No matching equipment found.</p>";
+
+        return;
+
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>BME Number</th>
+              <th>Equipment</th>
+              <th>Department</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      filtered.forEach(
+        equipment => {
+
+          const department =
+            window.equipmentDepartmentData
+              .find(
+                d =>
+                  String(
+                    d.DepartmentID
+                  ) ===
+                  String(
+                    equipment.DepartmentID
+                  )
+              );
+
+          html += `
+            <tr
+              class="equipment-search-row"
+              data-equipment-id="${equipment.EquipmentID}"
+              style="cursor:pointer;"
+            >
+
+              <td>
+                ${
+                  equipment.BMENumber ||
+                  ""
+                }
+              </td>
+
+              <td>
+                ${
+                  equipment.EquipmentName ||
+                  ""
+                }
+              </td>
+
+              <td>
+                ${
+                  department
+                    ? department.DepartmentName
+                    : "Unknown"
+                }
+              </td>
+
+              <td>
+                ${
+                  equipment.StatusID ||
+                  ""
+                }
+              </td>
+
+            </tr>
+          `;
+
+        }
+      );
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      results.innerHTML =
+        html;
+
+      // Clicking a result opens
+      // the existing Equipment History
+
+      results
+        .querySelectorAll(
+          ".equipment-search-row"
+        )
+        .forEach(
+          row => {
+
+            row.addEventListener(
+              "click",
+              function() {
+
+                const equipmentId =
+                  this.dataset
+                    .equipmentId;
+
+                const historySelect =
+                  document.getElementById(
+                    "historyEquipmentId"
+                  );
+
+                if (
+                  historySelect
+                ) {
+
+                  historySelect.value =
+                    equipmentId;
+
+                  historySelect.dispatchEvent(
+                    new Event(
+                      "change"
+                    )
+                  );
+
+                }
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+    searchInput.addEventListener(
+      "input",
+      performEquipmentSearch
+    );
+
+    departmentFilter.addEventListener(
+      "change",
+      performEquipmentSearch
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Equipment search error:",
+      error
+    );
+
+    count.textContent =
+      "Unable to load equipment.";
+
+  }
+
+}
 
 // ==========================================
 // EQUIPMENT HISTORY
