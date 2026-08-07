@@ -800,6 +800,23 @@ async function loadEquipmentSearchData() {
 
     window.equipmentDepartmentData =
       departments || [];
+    // Load equipment statuses
+
+const {
+  data: statuses,
+  error: statusError
+} = await client
+  .from("tblEquipmentStatus")
+  .select(
+    "StatusID, StatusName"
+  );
+
+if (statusError) {
+  throw statusError;
+}
+
+window.equipmentStatusData =
+  statuses || [];
 
     // Search function
 
@@ -895,6 +912,17 @@ async function loadEquipmentSearchData() {
                     equipment.DepartmentID
                   )
               );
+          const status =
+  window.equipmentStatusData
+    .find(
+      s =>
+        String(
+          s.StatusID
+        ) ===
+        String(
+          equipment.StatusID
+        )
+    );
 
           html += `
             <tr
@@ -926,11 +954,12 @@ async function loadEquipmentSearchData() {
               </td>
 
               <td>
-                ${
-                  equipment.StatusID ||
-                  ""
-                }
-              </td>
+  ${
+    status
+      ? status.StatusName
+      : "Unknown"
+  }
+</td>
 
             </tr>
           `;
