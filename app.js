@@ -1757,7 +1757,12 @@ if (maintenanceForm) {
 // ==========================================
 // UPDATE EQUIPMENT CURRENT STATUS
 // ==========================================
-
+alert(
+  "Equipment value: " + equipmentValue +
+  "\nConverted EquipmentID: " + Number(equipmentValue) +
+  "\nStatus value: " + statusValue +
+  "\nConverted StatusID: " + Number(statusValue)
+);
 const {
   data: updatedEquipment,
   error: equipmentStatusError
