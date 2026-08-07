@@ -1759,6 +1759,7 @@ if (maintenanceForm) {
 // ==========================================
 
 const {
+  data: updatedEquipment,
   error: equipmentStatusError
 } = await client
   .from("tblEquipment")
@@ -1768,11 +1769,27 @@ const {
   .eq(
     "EquipmentID",
     Number(equipmentValue)
-  );
+  )
+  .select("EquipmentID, BMENumber, EquipmentName, StatusID");
 
 if (equipmentStatusError) {
   throw equipmentStatusError;
 }
+
+console.log(
+  "UPDATED EQUIPMENT:",
+  updatedEquipment
+);
+
+if (
+  !updatedEquipment ||
+  updatedEquipment.length === 0
+) {
+  throw new Error(
+    "Equipment status was not updated. No matching equipment row was returned."
+  );
+}
+
 
         // ----------------------------------
         // SUCCESS
