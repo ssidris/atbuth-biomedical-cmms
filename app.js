@@ -696,6 +696,15 @@ async function loadEquipmentSearchData() {
     document.getElementById(
       "equipmentDepartmentFilter"
     );
+  const sourceFilter =
+  document.getElementById(
+    "equipmentSourceFilter"
+  );
+
+const ngoSearch =
+  document.getElementById(
+    "equipmentNGOSearch"
+  );
 
   const results =
     document.getElementById(
@@ -708,13 +717,15 @@ async function loadEquipmentSearchData() {
     );
 
   if (
-    !searchInput ||
-    !departmentFilter ||
-    !results ||
-    !count
-  ) {
-    return;
-  }
+  !searchInput ||
+  !departmentFilter ||
+  !sourceFilter ||
+  !ngoSearch ||
+  !results ||
+  !count
+) {
+  return;
+}
 
   try {
 
