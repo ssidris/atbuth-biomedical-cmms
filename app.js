@@ -1077,7 +1077,15 @@ return (
       "change",
       performEquipmentSearch
     );
+sourceFilter.addEventListener(
+  "change",
+  performEquipmentSearch
+);
 
+ngoSearch.addEventListener(
+  "input",
+  performEquipmentSearch
+);
   }
 
   catch (error) {
