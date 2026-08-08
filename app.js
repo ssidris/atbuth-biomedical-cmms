@@ -942,10 +942,7 @@ return (
     </thead>
     <tbody>
 `;
-            </tr>
-          </thead>
-          <tbody>
-      `;
+            
 
       filtered.forEach(
         equipment => {
