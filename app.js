@@ -772,11 +772,13 @@ async function loadEquipmentSearchData() {
       .from("tblEquipment")
       .select(
         `
-        EquipmentID,
-        BMENumber,
-        EquipmentName,
-        DepartmentID,
-        StatusID
+EquipmentID,
+BMENumber,
+EquipmentName,
+DepartmentID,
+StatusID,
+SourceOfEquipment,
+NGOName
         `
       )
       .order(
