@@ -3815,32 +3815,7 @@ async function loadPMNotifications() {
     message.textContent =
       `${records} notification(s).`;
 
-    // TREAT PM BUTTON
-// ======================================
-
-tableBody.addEventListener(
-  "click",
-  function(event) {
-
-    const button =
-      event.target.closest(
-        ".treat-pm-btn"
-      );
-
-    if (!button) {
-      return;
-    }
-
-    const pmid =
-      button.dataset.pmid;
-
-    alert(
-      "Treat PM selected. PMID: " +
-      pmid
-    );
-
-  }
-);
+    
 }
 
   
