@@ -929,13 +929,19 @@ return (
       }
 
       let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>BME Number</th>
-              <th>Equipment</th>
-              <th>Department</th>
-              <th>Status</th>
+  <table>
+    <thead>
+      <tr>
+        <th>BME Number</th>
+        <th>Equipment</th>
+        <th>Department</th>
+        <th>Source</th>
+        <th>NGO Name</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+`;
             </tr>
           </thead>
           <tbody>
@@ -989,14 +995,28 @@ return (
               </td>
 
               <td>
-                ${
-                  department
-                    ? department.DepartmentName
-                    : "Unknown"
-                }
-              </td>
+  ${
+    department
+      ? department.DepartmentName
+      : "Unknown"
+  }
+</td>
 
-              <td>
+<td>
+  ${
+    equipment.SourceOfEquipment ||
+    "Unknown"
+  }
+</td>
+
+<td>
+  ${
+    equipment.NGOName ||
+    "-"
+  }
+</td>
+
+<td>
   ${
     status
       ? status.StatusName
