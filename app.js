@@ -1707,6 +1707,16 @@ const ngoName =
   document.getElementById(
     "newNGOName"
   ).value.trim();
+        if (
+  sourceOfEquipment === "NGO" &&
+  !ngoName
+) {
+
+  throw new Error(
+    "Please enter the NGO name."
+  );
+
+}
 
 const location =
           document.getElementById(
