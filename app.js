@@ -828,9 +828,21 @@ window.equipmentStatusData =
           .toLowerCase();
 
       const selectedDepartment =
-        departmentFilter.value;
+  departmentFilter.value;
 
-      let filtered =
+const selectedSource =
+  document.getElementById(
+    "equipmentSourceFilter"
+  ).value;
+
+const ngoSearchText =
+  document.getElementById(
+    "equipmentNGOSearch"
+  ).value
+    .trim()
+    .toLowerCase();
+
+let filtered =
         window.equipmentSearchData
           .filter(
             equipment => {
@@ -857,15 +869,39 @@ window.equipmentStatusData =
                 );
 
               const matchesDepartment =
-                !selectedDepartment ||
-                String(
-                  equipment.DepartmentID
-                ) ===
-                String(
-                  selectedDepartment
-                );
+  !selectedDepartment ||
+  String(
+    equipment.DepartmentID
+  ) ===
+  String(
+    selectedDepartment
+  );
 
-              return (
+const matchesSource =
+  !selectedSource ||
+  String(
+    equipment.SourceOfEquipment || ""
+  ).toLowerCase() ===
+  String(
+    selectedSource
+  ).toLowerCase();
+
+const matchesNGO =
+  !ngoSearchText ||
+  String(
+    equipment.NGOName || ""
+  )
+    .toLowerCase()
+    .includes(
+      ngoSearchText
+    );
+
+return (
+  matchesSearch &&
+  matchesDepartment &&
+  matchesSource &&
+  matchesNGO
+);
                 matchesSearch &&
                 matchesDepartment
               );
