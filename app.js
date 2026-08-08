@@ -1694,11 +1694,21 @@ if (equipmentRegistrationForm) {
           ).value;
 
         const statusId =
-          document.getElementById(
-            "newStatusId"
-          ).value;
+  document.getElementById(
+    "newStatusId"
+  ).value;
 
-        const location =
+const sourceOfEquipment =
+  document.getElementById(
+    "newSourceOfEquipment"
+  ).value;
+
+const ngoName =
+  document.getElementById(
+    "newNGOName"
+  ).value.trim();
+
+const location =
           document.getElementById(
             "newLocation"
           ).value.trim();
@@ -1800,10 +1810,16 @@ if (equipmentRegistrationForm) {
             Number(categoryId),
 
           StatusID:
-            Number(statusId),
+  Number(statusId),
 
-          Location:
-            location || null,
+SourceOfEquipment:
+  sourceOfEquipment || null,
+
+NGOName:
+  ngoName || null,
+
+Location:
+  location || null,
 
           Remarks:
             remarks || null
