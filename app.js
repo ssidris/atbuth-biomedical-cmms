@@ -3834,10 +3834,18 @@ tableBody
           pmid
         );
 
-        alert(
-          "Treat PM selected. PMID: " +
-          pmid
-        );
+        const pmSection =
+  document.getElementById(
+    "pmSection"
+  );
+
+if (pmSection) {
+
+  pmSection.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
 
       }
     );
