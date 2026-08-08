@@ -844,14 +844,10 @@ window.equipmentStatusData =
   departmentFilter.value;
 
 const selectedSource =
-  document.getElementById(
-    "equipmentSourceFilter"
-  ).value;
+  sourceFilter.value;
 
 const ngoSearchText =
-  document.getElementById(
-    "equipmentNGOSearch"
-  ).value
+  ngoSearch.value
     .trim()
     .toLowerCase();
 
