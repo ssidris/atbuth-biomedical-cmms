@@ -3767,7 +3767,7 @@ async function loadPMNotifications() {
 
         tableBody.innerHTML += `
 
-          <tr>
+          <tr data-pmid="${pm.PMID}">
 
             <td>${pm.BMENumber || ""}</td>
 
