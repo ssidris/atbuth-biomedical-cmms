@@ -1,4 +1,4 @@
-Mn
+
 // ==========================================
 // ATBUTH BIOMEDICAL CMMS
 // SUPABASE MOBILE WEB APPLICATION
@@ -3818,31 +3818,29 @@ async function loadPMNotifications() {
     // TREAT PM BUTTON
 // ======================================
 
-tableBody
-  .querySelectorAll(".treat-pm-btn")
-  .forEach(button => {
+tableBody.addEventListener(
+  "click",
+  function(event) {
 
-    button.addEventListener(
-      "click",
-      function() {
+    const button =
+      event.target.closest(
+        ".treat-pm-btn"
+      );
 
-        const pmid =
-          this.dataset.pmid;
+    if (!button) {
+      return;
+    }
 
-        console.log(
-          "Treat PM clicked. PMID:",
-          pmid
-        );
+    const pmid =
+      button.dataset.pmid;
 
-        alert(
-          "Treat PM selected. PMID: " +
-          pmid
-        );
-
-      }
+    alert(
+      "Treat PM selected. PMID: " +
+      pmid
     );
 
-  });
+  }
+);
 }
 
   
