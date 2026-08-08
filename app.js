@@ -3845,12 +3845,7 @@ tableBody
   });
 }
 
-      }
-    );
-
-  });
-
-  }
+  
 
   catch (error) {
 
