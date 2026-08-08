@@ -902,9 +902,7 @@ return (
   matchesSource &&
   matchesNGO
 );
-                matchesSearch &&
-                matchesDepartment
-              );
+  
 
             }
           );
