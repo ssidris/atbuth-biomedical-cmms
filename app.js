@@ -3844,9 +3844,7 @@ async function loadPMNotifications() {
       error
     } = await client
       .from("vwPMHistory")
-      .select(
-  "PMID, EquipmentID, BMENumber, EquipmentName, DepartmentName, NextPMDate, PMStatus"
-)
+      .select("*")
       .order(
         "NextPMDate",
         {
@@ -3883,14 +3881,7 @@ async function loadPMNotifications() {
 
         }
         if (
-  pm.PMStatus &&
-  pm.PMStatus.toLowerCase() ===
-    "completed"
-) {
-
-  return;
-
-}
+  pm.PMS
 
         const nextPM =
           new Date(
