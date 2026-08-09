@@ -3778,7 +3778,14 @@ async function loadPMNotifications() {
             <td>${pm.NextPMDate || ""}</td>
 
             <td>${status}</td>
-            <td></td>
+            <td>
+  <button
+    type="button"
+    class="treat-pm-btn"
+    data-pmid="${pm.PMID}">
+    Treat PM
+  </button>
+</td>
 
 
           </tr>
