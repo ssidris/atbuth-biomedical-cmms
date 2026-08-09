@@ -3880,8 +3880,7 @@ async function loadPMNotifications() {
           return;
 
         }
-        if (
-  pm.PMS
+    
 
         const nextPM =
           new Date(
