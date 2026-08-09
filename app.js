@@ -3890,29 +3890,38 @@ async function loadPMNotifications() {
           );
 
         let status = "";
-        if (days < 0) {
+        if (
+  pm["Due Status"] ===
+  "Overdue"
+) {
 
-          status = "🔴 Overdue";
+  status = "🔴 Overdue";
 
-        }
+}
 
-        else if (days === 0) {
+else if (
+  pm["Due Status"] ===
+  "Due Today"
+) {
 
-          status = "🟠 Due Today";
+  status = "🟠 Due Today";
 
-        }
+}
 
-        else if (days <= 7) {
+else if (
+  pm["Due Status"] ===
+  "Due Soon"
+) {
 
-          status = "🟡 Due Soon";
+  status = "🟡 Due Soon";
 
-        }
+}
 
-        else {
+else {
 
-          return;
+  return;
 
-        }
+}
 
         records++;
 
