@@ -3834,6 +3834,119 @@ async function loadPMNotifications() {
   }
 
 }
+
+// ======================================
+// TREAT PM
+// ======================================
+
+document.addEventListener(
+  "click",
+  async function(event) {
+
+    const button =
+      event.target.closest(
+        ".treat-pm-btn"
+      );
+
+    if (!button) {
+      return;
+    }
+
+    const pmid =
+      button.dataset.pmid;
+
+    if (!pmid) {
+      console.error(
+        "PMID not found."
+      );
+      return;
+    }
+
+    try {
+
+      const {
+        data: pm,
+        error
+      } = await client
+        .from(
+          "vwPMHistory"
+        )
+        .select("*")
+        .eq(
+          "PMID",
+          pmid
+        )
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!pm) {
+        throw new Error(
+          "PM record not found."
+        );
+      }
+
+      // Select the PM section
+      const pmSection =
+        document.getElementById(
+          "pmSection"
+        );
+
+      if (pmSection) {
+
+        pmSection.scrollIntoView({
+          behavior: "smooth"
+        });
+
+      }
+
+      // Select equipment
+      const equipmentSelect =
+        document.getElementById(
+          "pmEquipmentId"
+        );
+
+      if (
+        equipmentSelect &&
+        pm.EquipmentID
+      ) {
+
+        equipmentSelect.value =
+          String(
+            pm.EquipmentID
+          );
+
+        equipmentSelect.dispatchEvent(
+          new Event("change")
+        );
+
+      }
+
+      console.log(
+        "Treat PM loaded:",
+        pm
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Treat PM error:",
+        error
+      );
+
+      alert(
+        "Unable to load PM record: " +
+        error.message
+      );
+
+    }
+
+  }
+);
 // ==========================================
 // LOAD DASHBOARD
 // ==========================================
