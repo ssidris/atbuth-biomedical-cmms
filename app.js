@@ -3711,67 +3711,56 @@ async function loadPMCounters() {
     // --------------------------------------
     // CHECK EACH PM RECORD
     // --------------------------------------
+(data || []).forEach(
+  pm => {
 
-    (data || []).forEach(
-      pm => {
+    // Ignore PMs without a next PM date
+    if (!pm.NextPMDate) {
+      return;
+    }
 
-        if (!pm.NextPMDate) {
+    // Ignore completed PMs
+    if (
+      pm.PMStatus &&
+      pm.PMStatus.trim().toLowerCase() ===
+        "completed"
+    ) {
+      return;
+    }
 
-          return;
+    const nextPMDate =
+      new Date(
+        pm.NextPMDate
+      );
 
-        }
-if (
-  pm.PMStatus &&
-  pm.PMStatus.toLowerCase() ===
-    "completed"
-) {
-
-  return;
-
-}
-
-        const nextPMDate =
-          new Date(
-            pm.NextPMDate
-          );
-
-
-        nextPMDate.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-
-        // ----------------------------------
-        // PM DUE TODAY
-        // ----------------------------------
-
-        if (
-          nextPMDate.getTime() ===
-          today.getTime()
-        ) {
-
-          dueToday++;
-
-        }
-
-
-        // ----------------------------------
-        // PM OVERDUE
-        // ----------------------------------
-
-        else if (
-          nextPMDate < today
-        ) {
-
-          overdue++;
-
-        }
-
-      }
+    nextPMDate.setHours(
+      0,
+      0,
+      0,
+      0
     );
+
+    // PM DUE TODAY
+    if (
+      nextPMDate.getTime() ===
+      today.getTime()
+    ) {
+
+      dueToday++;
+
+    }
+
+    // PM OVERDUE
+    else if (
+      nextPMDate < today
+    ) {
+
+      overdue++;
+
+    }
+
+  }
+);
 
 
     // --------------------------------------
