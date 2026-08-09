@@ -1695,6 +1695,157 @@ async function loadMaintenanceReports() {
 
 }
 
+// ==========================================
+// LOAD DASHBOARD RECENT MAINTENANCE REPORTS
+// ==========================================
+
+async function loadDashboardRecentReports() {
+
+  const loading =
+    document.getElementById(
+      "dashboardReportsLoading"
+    );
+
+  const tableBody =
+    document.getElementById(
+      "dashboardReportsBody"
+    );
+
+  if (!tableBody) {
+    return;
+  }
+
+  if (loading) {
+    loading.textContent =
+      "Loading recent reports...";
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } = await client
+      .from(
+        "vwMaintenanceReport"
+      )
+      .select(
+        "ReportDate, BMENumber, EquipmentName, DepartmentName, EngineerName, StatusName"
+      )
+      .order(
+        "ReportDate",
+        {
+          ascending: false
+        }
+      )
+      .limit(5);
+
+    if (error) {
+      throw error;
+    }
+
+    tableBody.innerHTML = "";
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            No maintenance reports found.
+          </td>
+        </tr>
+      `;
+
+      if (loading) {
+        loading.textContent =
+          "No recent reports.";
+      }
+
+      return;
+    }
+
+    data.forEach(
+      report => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+        row.innerHTML = `
+
+          <td>
+            ${
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : ""
+            }
+          </td>
+
+          <td>
+            ${report.BMENumber || ""}
+          </td>
+
+          <td>
+            ${report.EquipmentName || ""}
+          </td>
+
+          <td>
+            ${report.DepartmentName || ""}
+          </td>
+
+          <td>
+            ${report.EngineerName || ""}
+          </td>
+
+          <td>
+            ${report.StatusName || ""}
+          </td>
+
+        `;
+
+        tableBody.appendChild(
+          row
+        );
+
+      }
+    );
+
+    if (loading) {
+      loading.textContent =
+        `${data.length} recent report(s).`;
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Dashboard recent reports error:",
+      error
+    );
+
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="6">
+          Unable to load recent reports.
+        </td>
+      </tr>
+    `;
+
+    if (loading) {
+      loading.textContent =
+        "Unable to load recent reports.";
+    }
+
+  }
+
+}
 
 // ==========================================
 // EQUIPMENT REGISTRATION
