@@ -3666,7 +3666,9 @@ async function loadPMCounters() {
       error
     } = await client
       .from("vwPMHistory")
-      .select("NextPMDate");
+.select(
+  "NextPMDate, PMStatus"
+);
 
 
     // --------------------------------------
@@ -3718,7 +3720,15 @@ async function loadPMCounters() {
           return;
 
         }
+if (
+  pm.PMStatus &&
+  pm.PMStatus.toLowerCase() ===
+    "completed"
+) {
 
+  return;
+
+}
 
         const nextPMDate =
           new Date(
