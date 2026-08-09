@@ -4896,6 +4896,7 @@ const {
 
 awaitingParts.textContent =
   awaitingPartsCount || 0;
+    await loadDashboardRecentReports();
     
   }
 
