@@ -3778,6 +3778,7 @@ async function loadPMNotifications() {
             <td>${pm.NextPMDate || ""}</td>
 
             <td>${status}</td>
+            <td></td>
 
 
           </tr>
@@ -3793,7 +3794,7 @@ async function loadPMNotifications() {
 
         <tr>
 
-          <td colspan="5">
+          <td colspan="6">
 
             No PM notifications.
 
