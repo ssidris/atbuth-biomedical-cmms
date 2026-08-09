@@ -3844,7 +3844,9 @@ async function loadPMNotifications() {
       error
     } = await client
       .from("vwPMHistory")
-      .select("*")
+      .select(
+  "PMID, EquipmentID, BMENumber, EquipmentName, DepartmentName, NextPMDate, PMStatus"
+)
       .order(
         "NextPMDate",
         {
