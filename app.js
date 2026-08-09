@@ -4829,12 +4829,20 @@ underRepair.textContent =
     // PM Due Today
 
 const {
-  data: pmRecords
+  data: pmRecords,
+  error: pmRecordsError
 } = await client
   .from("vwPMHistory")
-  .select("NextPMDate");
+  .select(
+    "NextPMDate, PMStatus"
+  );
 
-const today = new Date();
+if (pmRecordsError) {
+  throw pmRecordsError;
+}
+
+const today =
+  new Date();
 
 today.setHours(
   0,
@@ -4846,36 +4854,56 @@ today.setHours(
 let dueToday = 0;
 let overdue = 0;
 
-(pmRecords || []).forEach(pm => {
+(pmRecords || []).forEach(
+  pm => {
 
-  if (!pm.NextPMDate) {
-    return;
+    // Ignore PMs without a next date
+    if (!pm.NextPMDate) {
+      return;
+    }
+
+    // Ignore completed PMs
+    if (
+      pm.PMStatus &&
+      pm.PMStatus.trim().toLowerCase() ===
+        "completed"
+    ) {
+      return;
+    }
+
+    const nextPM =
+      new Date(
+        pm.NextPMDate
+      );
+
+    nextPM.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    // PM DUE TODAY
+    if (
+      nextPM.getTime() ===
+      today.getTime()
+    ) {
+
+      dueToday++;
+
+    }
+
+    // PM OVERDUE
+    else if (
+      nextPM < today
+    ) {
+
+      overdue++;
+
+    }
+
   }
-
-  const nextPM = new Date(
-    pm.NextPMDate
-  );
-
-  nextPM.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  if (nextPM.getTime() === today.getTime()) {
-
-    dueToday++;
-
-  }
-
-  else if (nextPM < today) {
-
-    overdue++;
-
-  }
-
-});
+);
 
 pmDueToday.textContent =
   dueToday;
