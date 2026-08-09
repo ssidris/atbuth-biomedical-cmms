@@ -4016,18 +4016,18 @@ document.addEventListener(
     try {
 
       const {
-        data: pm,
-        error
-      } = await client
-        .from(
-          "vwPMHistory"
-        )
-        .select("*")
-        .eq(
-          "PMID",
-          pmid
-        )
-        .single();
+  data: pm,
+  error
+} = await client
+  .from(
+    "tblPreventiveMaintenance"
+  )
+  .select("*")
+  .eq(
+    "PMID",
+    pmid
+  )
+  .single();
 
       if (error) {
         throw error;
