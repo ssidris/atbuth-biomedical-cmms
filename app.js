@@ -4005,7 +4005,8 @@ document.addEventListener(
 
     const pmid =
       button.dataset.pmid;
-
+    
+treatedPMID = pmid;
     if (!pmid) {
       console.error(
         "PMID not found."
