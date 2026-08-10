@@ -4114,6 +4114,150 @@ treatedPMID = pmid;
         equipmentSelect.dispatchEvent(
           new Event("change")
         );
+        // ----------------------------------
+// LOAD EXISTING PM DETAILS
+// ----------------------------------
+
+const engineerSelect =
+  document.getElementById(
+    "pmEngineerId"
+  );
+
+if (
+  engineerSelect &&
+  pm.EngineerID
+) {
+
+  engineerSelect.value =
+    String(
+      pm.EngineerID
+    );
+
+}
+
+
+// PM DATE
+
+const pmDateInput =
+  document.getElementById(
+    "pmDate"
+  );
+
+if (
+  pmDateInput &&
+  pm.PMDate
+) {
+
+  pmDateInput.value =
+    String(
+      pm.PMDate
+    ).substring(
+      0,
+      10
+    );
+
+}
+
+
+// NEXT PM DATE
+
+const nextPMDateInput =
+  document.getElementById(
+    "nextPMDate"
+  );
+
+if (
+  nextPMDateInput &&
+  pm.NextPMDate
+) {
+
+  nextPMDateInput.value =
+    String(
+      pm.NextPMDate
+    ).substring(
+      0,
+      10
+    );
+
+}
+
+
+// WORK PERFORMED
+
+const workPerformedInput =
+  document.getElementById(
+    "workPerformed"
+  );
+
+if (workPerformedInput) {
+
+  workPerformedInput.value =
+    pm["Work Performed"] || "";
+
+}
+
+
+// FINDINGS
+
+const findingsInput =
+  document.getElementById(
+    "pmFindings"
+  );
+
+if (findingsInput) {
+
+  findingsInput.value =
+    pm.Findings || "";
+
+}
+
+
+// RECOMMENDATIONS
+
+const recommendationsInput =
+  document.getElementById(
+    "pmRecommendations"
+  );
+
+if (recommendationsInput) {
+
+  recommendationsInput.value =
+    pm.Recommendations || "";
+
+}
+
+
+// PM STATUS
+
+const pmStatusInput =
+  document.getElementById(
+    "pmStatus"
+  );
+
+if (
+  pmStatusInput &&
+  pm.PMStatus
+) {
+
+  pmStatusInput.value =
+    pm.PMStatus;
+
+}
+
+
+// REMARKS
+
+const remarksInput =
+  document.getElementById(
+    "pmRemarks"
+  );
+
+if (remarksInput) {
+
+  remarksInput.value =
+    pm.Remarks || "";
+
+}
 
       }
 
