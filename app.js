@@ -2684,21 +2684,34 @@ if (treatedPMID) {
   // ----------------------------------
 
   const result = await client
-    .from("tblPreventiveMaintenance")
-    .update(pmPayload)
-    .eq(
-      "PMID",
-      treatedPMID
-    )
-    .select();
+  .from("tblPreventiveMaintenance")
+  .update(pmPayload)
+  .eq(
+    "PMID",
+    treatedPMID
+  )
+  .select();
 
-  data = result.data;
-  error = result.error;
+data = result.data;
+error = result.error;
 
-  console.log(
-    "PM record updated:",
-    data
+if (error) {
+  throw error;
+}
+
+if (
+  !data ||
+  data.length === 0
+) {
+  throw new Error(
+    "PM record was not updated. The selected PMID could not be updated."
   );
+}
+
+console.log(
+  "PM record successfully updated:",
+  data
+);
 
 } else {
 
