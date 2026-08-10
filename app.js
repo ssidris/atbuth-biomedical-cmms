@@ -2673,17 +2673,58 @@ let treatedPMID = null;
         // INSERT PM REPORT
         // ----------------------------------
 
-        const {
-          data,
-          error
-        } = await client
-          .from(
-            "tblPreventiveMaintenance"
-          )
-          .insert(
-            pmPayload
-          )
-          .select();
+        let data;
+let error;
+
+if (treatedPMID) {
+
+  // ----------------------------------
+  // UPDATE EXISTING PM
+  // ----------------------------------
+
+  const result = await client
+    .from("tblPreventiveMaintenance")
+    .update(pmPayload)
+    .eq(
+      "PMID",
+      treatedPMID
+    )
+    .select();
+
+  data = result.data;
+  error = result.error;
+
+  console.log(
+    "PM record updated:",
+    data
+  );
+
+} else {
+
+  // ----------------------------------
+  // CREATE NEW PM
+  // ----------------------------------
+
+  const result = await client
+    .from("tblPreventiveMaintenance")
+    .insert(pmPayload)
+    .select();
+
+  data = result.data;
+  error = result.error;
+
+  console.log(
+    "New PM record inserted:",
+    data
+  );
+
+}
+
+if (error) {
+
+  throw error;
+
+}
 
         if (error) {
 
