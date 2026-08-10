@@ -2759,7 +2759,7 @@ if (error) {
             "";
 
         }
-
+treatedPMID = null;
 
         // REFRESH PM HISTORY
 
