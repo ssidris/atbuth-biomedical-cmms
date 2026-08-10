@@ -3910,7 +3910,15 @@ async function loadPMNotifications() {
           return;
 
         }
-    
+    if (
+  pm.PMStatus &&
+  pm.PMStatus.toLowerCase() ===
+    "completed"
+) {
+
+  return;
+
+}
 
         const nextPM =
           new Date(
