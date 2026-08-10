@@ -2529,9 +2529,10 @@ const pmDepartmentInput =
     "pmDepartmentName"
   );
 
+let treatedPMID = null;
 
 if (preventiveMaintenanceForm) {
-let treatedPMID = null;
+
   preventiveMaintenanceForm.addEventListener(
     "submit",
     async function(event) {
