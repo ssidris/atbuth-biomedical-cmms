@@ -5340,48 +5340,20 @@ if (printReportsBtn) {
 
 <style>
 
-@page {
-  size: A4 landscape;
-  margin: 10mm;
-}
-
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 10px;
-}
-
-h2 {
-  text-align: center;
-  margin: 0 0 5px 0;
-  font-size: 18px;
-}
-
-h3 {
-  text-align: center;
-  margin: 0 0 12px 0;
-  font-size: 14px;
+  font-family: Arial;
+  padding: 20px;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+  width:100%;
+  border-collapse:collapse;
 }
 
-th,
-td {
-  border: 1px solid black;
-  padding: 4px;
-  font-size: 8px;
-  vertical-align: top;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-th {
-  font-weight: bold;
-  text-align: center;
+th, td {
+  border:1px solid black;
+  padding:6px;
+  font-size:12px;
 }
 
 </style>
