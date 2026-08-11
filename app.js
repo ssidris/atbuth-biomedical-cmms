@@ -6732,7 +6732,4 @@ if (downloadSelectedEquipmentHistoryPDFBtn) {
 
     }
   );
-
-}
-
 }
