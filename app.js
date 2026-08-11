@@ -6952,7 +6952,8 @@ pdf.text(
     align: "center"
   }
 );
-catch (error) {
+    } 
+      catch (error) {
 
   console.error(
     "Equipment History PDF error:",
