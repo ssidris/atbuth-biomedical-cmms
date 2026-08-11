@@ -6734,3 +6734,59 @@ if (downloadSelectedEquipmentHistoryPDFBtn) {
   );
 
 }
+
+// ==========================================
+// DOWNLOAD FULL EQUIPMENT HISTORY PDF
+// ==========================================
+
+const downloadEquipmentHistoryPDFBtn =
+  document.getElementById(
+    "downloadEquipmentHistoryPDFBtn"
+  );
+
+if (downloadEquipmentHistoryPDFBtn) {
+
+  downloadEquipmentHistoryPDFBtn.addEventListener(
+    "click",
+    async function () {
+
+      // Check that an equipment is currently selected
+      const equipmentSelect =
+        document.getElementById(
+          "equipmentHistorySelect"
+        );
+
+      if (
+        !equipmentSelect ||
+        !equipmentSelect.value
+      ) {
+
+        alert(
+          "Please select an equipment first."
+        );
+
+        return;
+      }
+
+      // Check PDF library
+      if (
+        typeof window.jspdf ===
+        "undefined"
+      ) {
+
+        alert(
+          "PDF library is not loaded. Please refresh the page."
+        );
+
+        return;
+      }
+
+      console.log(
+        "Downloading full equipment history for:",
+        equipmentSelect.value
+      );
+
+    }
+  );
+
+}
