@@ -6781,12 +6781,29 @@ if (downloadEquipmentHistoryPDFBtn) {
         return;
       }
 
-      console.log(
-        "Downloading full equipment history for:",
-        equipmentSelect.value
-      );
+      try {
 
-    }
+  const equipmentId =
+    equipmentSelect.value;
+
+  console.log(
+    "Selected EquipmentID:",
+    equipmentId
   );
+
+}
+catch (error) {
+
+  console.error(
+    "Equipment History PDF error:",
+    error
+  );
+
+  alert(
+    "Unable to generate Equipment History PDF: " +
+    error.message
+  );
+
+}
 
 }
