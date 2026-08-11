@@ -6779,10 +6779,350 @@ if (downloadEquipmentHistoryPDFBtn) {
         return;
       }
 
-      console.log(
-        "Downloading full equipment history for:",
-        equipmentSelect.value
-      );
+      try {
+
+        const equipmentId =
+          equipmentSelect.value;
+
+        // --------------------------------------
+        // GET EQUIPMENT DETAILS
+        // --------------------------------------
+
+        const {
+          data: equipment,
+          error: equipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(`
+            EquipmentID,
+            BMENumber,
+            EquipmentName,
+            Manufacturer,
+            Model,
+            SerialNumber,
+            Location,
+            DepartmentID
+          `)
+          .eq(
+            "EquipmentID",
+            equipmentId
+          )
+          .maybeSingle();
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+        if (!equipment) {
+
+          alert(
+            "Equipment details could not be found."
+          );
+
+          return;
+        }
+
+        // --------------------------------------
+        // GET EQUIPMENT HISTORY
+        // --------------------------------------
+
+        const {
+          data: history,
+          error: historyError
+        } = await client
+          .from("vwMaintenanceReport")
+          .select("*")
+          .eq(
+            "EquipmentID",
+            equipmentId
+          )
+          .order(
+            "ReportDate",
+            {
+              ascending: false
+            }
+          );
+
+        if (historyError) {
+          throw historyError;
+        }
+
+        if (
+          !history ||
+          history.length === 0
+        ) {
+
+          alert(
+            "No maintenance history found for this equipment."
+          );
+
+          return;
+        }
+
+        // --------------------------------------
+        // GET DEPARTMENT NAME
+        // --------------------------------------
+
+        let departmentName =
+          "Not assigned";
+
+        if (
+          equipment.DepartmentID !== null &&
+          equipment.DepartmentID !== undefined
+        ) {
+
+          const {
+            data: department,
+            error: departmentError
+          } = await client
+            .from("tblDepartment")
+            .select("DepartmentName")
+            .eq(
+              "DepartmentID",
+              equipment.DepartmentID
+            )
+            .maybeSingle();
+
+          if (departmentError) {
+            throw departmentError;
+          }
+
+          if (department) {
+
+            departmentName =
+              department.DepartmentName ||
+              "Not assigned";
+
+          }
+
+        }
+
+        // --------------------------------------
+        // CREATE PDF
+        // --------------------------------------
+
+        const {
+          jsPDF
+        } = window.jspdf;
+
+        const pdf =
+          new jsPDF(
+            "l",
+            "mm",
+            "a4"
+          );
+
+        // --------------------------------------
+        // PDF HEADER
+        // --------------------------------------
+
+        pdf.setFontSize(16);
+
+        pdf.text(
+          "ATBUTH",
+          148,
+          15,
+          {
+            align: "center"
+          }
+        );
+
+        pdf.setFontSize(12);
+
+        pdf.text(
+          "Biomedical Engineering Department",
+          148,
+          22,
+          {
+            align: "center"
+          }
+        );
+
+        pdf.setFontSize(11);
+
+        pdf.text(
+          "Equipment Maintenance History",
+          148,
+          29,
+          {
+            align: "center"
+          }
+        );
+
+        // --------------------------------------
+        // EQUIPMENT INFORMATION
+        // --------------------------------------
+
+        pdf.setFontSize(9);
+
+        pdf.text(
+          `BME Number: ${equipment.BMENumber || ""}`,
+          10,
+          36
+        );
+
+        pdf.text(
+          `Equipment: ${equipment.EquipmentName || ""}`,
+          10,
+          42
+        );
+
+        pdf.text(
+          `Department: ${departmentName}`,
+          10,
+          48
+        );
+
+        pdf.text(
+          `Manufacturer: ${equipment.Manufacturer || ""}`,
+          10,
+          54
+        );
+
+        pdf.text(
+          `Model: ${equipment.Model || ""}`,
+          100,
+          36
+        );
+
+        pdf.text(
+          `Serial Number: ${equipment.SerialNumber || ""}`,
+          100,
+          42
+        );
+
+        pdf.text(
+          `Location: ${equipment.Location || ""}`,
+          100,
+          48
+        );
+
+        // --------------------------------------
+        // TABLE HEADERS
+        // --------------------------------------
+
+        const headers = [
+          "Date",
+          "Job Order",
+          "Engineer",
+          "Maintenance Type",
+          "Fault Reported",
+          "Diagnosis",
+          "Action Taken",
+          "Part Used",
+          "Required Part",
+          "Status",
+          "Remarks"
+        ];
+
+        // --------------------------------------
+        // TABLE DATA
+        // --------------------------------------
+
+        const rows =
+          history.map(
+            report => [
+
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : "",
+
+              report.JobOrderNumber || "",
+
+              report.EngineerName || "",
+
+              report.MaintenanceType || "",
+
+              report.FaultReported || "",
+
+              report.Diagnosis || "",
+
+              report.ActionTaken || "",
+
+              report.PartUsed || "",
+
+              report.RequiredPart || "",
+
+              report.StatusName || "",
+
+              report.Remarks || ""
+
+            ]
+          );
+
+        // --------------------------------------
+        // CREATE TABLE
+        // --------------------------------------
+
+        pdf.autoTable({
+
+          head: [
+            headers
+          ],
+
+          body: rows,
+
+          startY: 60,
+
+          theme: "grid",
+
+          styles: {
+            fontSize: 7,
+            cellPadding: 2,
+            overflow: "linebreak"
+          },
+
+          headStyles: {
+            fontSize: 7
+          },
+
+          margin: {
+            left: 8,
+            right: 8
+          }
+
+        });
+
+        // --------------------------------------
+        // FOOTER
+        // --------------------------------------
+
+        pdf.setFontSize(8);
+
+        pdf.text(
+          "Generated by ATBUTH Biomedical CMMS",
+          148,
+          202,
+          {
+            align: "center"
+          }
+        );
+
+        // --------------------------------------
+        // SAVE PDF
+        // --------------------------------------
+
+        pdf.save(
+          `ATBUTH_${equipment.BMENumber || "Equipment"}_Maintenance_History.pdf`
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Equipment History PDF error:",
+          error
+        );
+
+        alert(
+          "Unable to generate Equipment History PDF: " +
+          error.message
+        );
+
+      }
 
     }
   );
