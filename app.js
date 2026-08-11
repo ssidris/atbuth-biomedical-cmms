@@ -4540,7 +4540,71 @@ async function loadDashboard() {
   }
 
 }
+// ==========================================
+// REFRESH DASHBOARD BUTTON
+// ==========================================
 
+const refreshDashboardBtn =
+  document.getElementById(
+    "refreshDashboardBtn"
+  );
+
+if (refreshDashboardBtn) {
+
+  refreshDashboardBtn.addEventListener(
+    "click",
+    async function() {
+
+      refreshDashboardBtn.disabled =
+        true;
+
+      refreshDashboardBtn.textContent =
+        "🔄 Refreshing...";
+
+      try {
+
+        // Refresh PM counters
+        await loadPMCounters();
+
+        // Refresh PM notifications
+        await loadPMNotifications();
+
+        // Refresh recent maintenance reports
+        await loadDashboardRecentReports();
+
+        // Refresh dashboard data
+        await loadDashboard();
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Dashboard refresh error:",
+          error
+        );
+
+        alert(
+          "Unable to refresh dashboard: " +
+          error.message
+        );
+
+      }
+
+      finally {
+
+        refreshDashboardBtn.disabled =
+          false;
+
+        refreshDashboardBtn.textContent =
+          "🔄 Refresh Dashboard";
+
+      }
+
+    }
+  );
+
+}
 
 // ==========================================
 // AUTH SESSION CHECK
