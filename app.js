@@ -1551,7 +1551,7 @@ async function loadMaintenanceReports() {
 
   reportTableBody.innerHTML =
     `<tr>
-      <td colspan="11">
+      <td colspan="12">
         Loading maintenance reports...
       </td>
     </tr>`;
@@ -1580,7 +1580,7 @@ async function loadMaintenanceReports() {
 
       reportTableBody.innerHTML =
         `<tr>
-          <td colspan="11">
+          <td colspan="12">
             Error loading reports:
             ${error.message}
           </td>
@@ -1596,7 +1596,7 @@ async function loadMaintenanceReports() {
 
       reportTableBody.innerHTML =
         `<tr>
-          <td colspan="11">
+          <td colspan="12">
             No maintenance reports found.
           </td>
         </tr>`;
@@ -1615,6 +1615,24 @@ async function loadMaintenanceReports() {
           );
 
         row.innerHTML = `
+
+  <td>
+    <input
+      type="checkbox"
+      class="maintenance-select-checkbox"
+      data-maintenanceid="${report.MaintenanceID}"
+    >
+  </td>
+
+  <td>
+    ${
+      report.ReportDate
+        ? new Date(
+            report.ReportDate
+          ).toLocaleDateString()
+        : ""
+    }
+  </td>
 
           <td>
             ${
@@ -1686,7 +1704,7 @@ async function loadMaintenanceReports() {
 
     reportTableBody.innerHTML =
       `<tr>
-        <td colspan="11">
+        <td colspan="12">
           Unable to load maintenance reports.
         </td>
       </tr>`;
