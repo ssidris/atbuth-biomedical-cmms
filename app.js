@@ -6905,6 +6905,53 @@ console.log(
   "Department:",
   departmentName
 );
+      const {
+  jsPDF
+} = window.jspdf;
+
+const pdf =
+  new jsPDF(
+    "l",
+    "mm",
+    "a4"
+  );
+
+// --------------------------------------
+// PDF HEADER
+// --------------------------------------
+
+pdf.setFontSize(16);
+
+pdf.text(
+  "ATBUTH",
+  148,
+  15,
+  {
+    align: "center"
+  }
+);
+
+pdf.setFontSize(12);
+
+pdf.text(
+  "Biomedical Engineering Department",
+  148,
+  22,
+  {
+    align: "center"
+  }
+);
+
+pdf.setFontSize(11);
+
+pdf.text(
+  "Equipment Maintenance History",
+  148,
+  29,
+  {
+    align: "center"
+  }
+);
 catch (error) {
 
   console.error(
