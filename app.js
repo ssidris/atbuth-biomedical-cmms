@@ -6792,6 +6792,44 @@ if (downloadEquipmentHistoryPDFBtn) {
   );
 
 }
+        const {
+  data: equipment,
+  error: equipmentError
+} = await client
+  .from("tblEquipment")
+  .select(`
+    EquipmentID,
+    BMENumber,
+    EquipmentName,
+    Manufacturer,
+    Model,
+    SerialNumber,
+    Location,
+    DepartmentID
+  `)
+  .eq(
+    "EquipmentID",
+    equipmentId
+  )
+  .maybeSingle();
+
+if (equipmentError) {
+  throw equipmentError;
+}
+
+if (!equipment) {
+
+  alert(
+    "Equipment details could not be found."
+  );
+
+  return;
+}
+
+console.log(
+  "Equipment details:",
+  equipment
+);
 catch (error) {
 
   console.error(
