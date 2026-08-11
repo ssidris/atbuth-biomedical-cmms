@@ -6830,6 +6830,43 @@ console.log(
   "Equipment details:",
   equipment
 );
+      const {
+  data: history,
+  error: historyError
+} = await client
+  .from("vwMaintenanceReport")
+  .select("*")
+  .eq(
+    "EquipmentID",
+    equipmentId
+  )
+  .order(
+    "ReportDate",
+    {
+      ascending: false
+    }
+  );
+
+if (historyError) {
+  throw historyError;
+}
+
+if (
+  !history ||
+  history.length === 0
+) {
+
+  alert(
+    "No maintenance history found for this equipment."
+  );
+
+  return;
+}
+
+console.log(
+  "Equipment maintenance history:",
+  history
+);
 catch (error) {
 
   console.error(
