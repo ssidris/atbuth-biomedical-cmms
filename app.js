@@ -6867,6 +6867,44 @@ console.log(
   "Equipment maintenance history:",
   history
 );
+      let departmentName =
+  "Not assigned";
+
+if (
+  equipment.DepartmentID !== null &&
+  equipment.DepartmentID !== undefined
+) {
+
+  const {
+    data: department,
+    error: departmentError
+  } = await client
+    .from("tblDepartment")
+    .select("DepartmentName")
+    .eq(
+      "DepartmentID",
+      equipment.DepartmentID
+    )
+    .maybeSingle();
+
+  if (departmentError) {
+    throw departmentError;
+  }
+
+  if (department) {
+
+    departmentName =
+      department.DepartmentName ||
+      "Not assigned";
+
+  }
+
+}
+
+console.log(
+  "Department:",
+  departmentName
+);
 catch (error) {
 
   console.error(
