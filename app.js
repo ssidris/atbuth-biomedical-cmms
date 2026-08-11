@@ -1147,7 +1147,7 @@ async function loadEquipmentHistory(
 
   tableBody.innerHTML =
     `<tr>
-      <td colspan="11">
+      <td colspan="12">
         Loading maintenance history...
       </td>
     </tr>`;
@@ -1192,7 +1192,7 @@ async function loadEquipmentHistory(
 
       tableBody.innerHTML =
         `<tr>
-          <td colspan="11">
+          <td colspan="12">
             Equipment not found.
           </td>
         </tr>`;
@@ -1299,7 +1299,7 @@ async function loadEquipmentHistory(
 
       tableBody.innerHTML =
         `<tr>
-          <td colspan="11">
+          <td colspan="12">
             No maintenance history found for this equipment.
           </td>
         </tr>`;
@@ -1318,7 +1318,13 @@ async function loadEquipmentHistory(
           );
 
         row.innerHTML = `
-
+<td>
+  <input
+    type="checkbox"
+    class="equipment-history-select-checkbox"
+    data-maintenanceid="${report.MaintenanceID}"
+  >
+</td>
           <td>
             ${
               report.ReportDate
@@ -1389,7 +1395,7 @@ async function loadEquipmentHistory(
 
     tableBody.innerHTML =
       `<tr>
-        <td colspan="11">
+        <td colspan="12">
           Unable to load equipment history.
         </td>
       </tr>`;
