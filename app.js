@@ -1641,16 +1641,6 @@ async function loadMaintenanceReports() {
   </td>
 
           <td>
-            ${
-              report.ReportDate
-                ? new Date(
-                    report.ReportDate
-                  ).toLocaleDateString()
-                : ""
-            }
-          </td>
-
-          <td>
             ${report.JobOrderNumber || ""}
           </td>
 
