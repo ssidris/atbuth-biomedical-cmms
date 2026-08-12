@@ -5355,6 +5355,67 @@ th, td {
   padding:6px;
   font-size:12px;
 }
+/* PRINT COLUMN WIDTHS */
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 3%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 7%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 7%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 7%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 9%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 8%;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+  width: 8%;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+  width: 8%;
+}
+
+th:nth-child(9),
+td:nth-child(9) {
+  width: 13%;
+}
+
+th:nth-child(10),
+td:nth-child(10) {
+  width: 13%;
+}
+
+th:nth-child(11),
+td:nth-child(11) {
+  width: 7%;
+}
+
+th:nth-child(12),
+td:nth-child(12) {
+  width: 10%;
+}
 
 </style>
 
