@@ -796,11 +796,11 @@ NGOName
         `
       )
       .order(
-        "EquipmentName",
-        {
-          ascending: true
-        }
-      );
+  "BMENumber",
+  {
+    ascending: true
+  }
+);
 
     if (equipmentError) {
       throw equipmentError;
