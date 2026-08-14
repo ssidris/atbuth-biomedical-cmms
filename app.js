@@ -292,7 +292,8 @@ async function loadPMEquipmentDropdown() {
         ? `${bme} — ${name}`
         : name;
 
-    }
+    },
+    "BMENumber"
   );
 
 }
