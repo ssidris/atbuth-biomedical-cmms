@@ -72,7 +72,8 @@ async function loadLookup(
   labelField,
   selectId,
   placeholder,
-  formatter
+  formatter,
+  sortField = labelField
 ) {
 
   const select =
@@ -98,7 +99,7 @@ async function loadLookup(
       .from(table)
       .select("*")
       .order(
-        labelField,
+        sortField,
         {
           ascending: true
         }
@@ -180,11 +181,12 @@ async function loadMaintenanceFormData() {
         row.EquipmentName || "";
 
       return bme
-        ? `${bme} — ${name}`
-        : name;
+  ? `${bme} — ${name}`
+  : name;
 
-    }
-  );
+},
+"BMENumber"
+);
 
 
   // ENGINEERS
