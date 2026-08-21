@@ -7260,3 +7260,245 @@ if (backToDashboardBtn) {
   );
 
 }
+
+// ==========================================
+// TOTAL EQUIPMENT CARD
+// ==========================================
+
+if (totalEquipmentCard) {
+
+  totalEquipmentCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Total Equipment";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading equipment...";
+      }
+
+      if (tableHead) {
+        tableHead.innerHTML = `
+          <tr>
+            <th>BME Number</th>
+            <th>Equipment</th>
+            <th>Department</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Status</th>
+          </tr>
+        `;
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        // Get all equipment
+        const {
+          data: equipment,
+          error: equipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(
+            "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model, SerialNumber, DepartmentID, StatusID"
+          )
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+        // Get departments
+        const {
+          data: departments,
+          error: departmentError
+        } = await client
+          .from("tblDepartment")
+          .select(
+            "DepartmentID, DepartmentName"
+          );
+
+        if (departmentError) {
+          throw departmentError;
+        }
+
+        // Get equipment statuses
+        const {
+          data: statuses,
+          error: statusError
+        } = await client
+          .from("tblEquipmentStatus")
+          .select(
+            "StatusID, StatusName"
+          );
+
+        if (statusError) {
+          throw statusError;
+        }
+
+        // Create lookup maps
+        const departmentMap =
+          {};
+
+        (departments || []).forEach(
+          department => {
+
+            departmentMap[
+              department.DepartmentID
+            ] =
+              department.DepartmentName;
+
+          }
+        );
+
+        const statusMap =
+          {};
+
+        (statuses || []).forEach(
+          status => {
+
+            statusMap[
+              status.StatusID
+            ] =
+              status.StatusName;
+
+          }
+        );
+
+        if (
+          !equipment ||
+          equipment.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7">
+                No equipment found.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No equipment found.";
+
+          return;
+        }
+
+        // Display equipment
+        equipment.forEach(
+          item => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${item.BMENumber || ""}
+              </td>
+
+              <td>
+                ${item.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${
+                  departmentMap[
+                    item.DepartmentID
+                  ] || ""
+                }
+              </td>
+
+              <td>
+                ${item.Manufacturer || ""}
+              </td>
+
+              <td>
+                ${item.Model || ""}
+              </td>
+
+              <td>
+                ${item.SerialNumber || ""}
+              </td>
+
+              <td>
+                ${
+                  statusMap[
+                    item.StatusID
+                  ] || ""
+                }
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${equipment.length} equipment record(s) found.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Total equipment error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              Unable to load equipment.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Unable to load equipment.";
+
+      }
+
+    }
+  );
+
+}
