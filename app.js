@@ -7540,6 +7540,10 @@ if (printDashboardDetailsBtn) {
         title
           ? title.textContent
           : "CMMS Report";
+      const reportCount =
+  countText
+    ? countText.textContent
+    : "";
 
       const printWindow =
         window.open(
