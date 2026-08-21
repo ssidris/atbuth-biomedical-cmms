@@ -7502,3 +7502,151 @@ if (totalEquipmentCard) {
   );
 
 }
+
+// ==========================================
+// PRINT DASHBOARD DETAILS
+// ==========================================
+
+const printDashboardDetailsBtn =
+  document.getElementById(
+    "printDashboardDetailsBtn"
+  );
+
+if (printDashboardDetailsBtn) {
+
+  printDashboardDetailsBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "dashboardDetailsTable"
+        );
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      if (!table) {
+        return;
+      }
+
+      const printWindow =
+        window.open(
+          "",
+          "_blank"
+        );
+
+      if (!printWindow) {
+
+        alert(
+          "Please allow pop-ups in your browser to print the report."
+        );
+
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+          <title>
+            ${title ? title.textContent : "CMMS Report"}
+          </title>
+
+          <style>
+
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+            }
+
+            h1 {
+              text-align: center;
+              margin-bottom: 5px;
+            }
+
+            h2 {
+              text-align: center;
+              margin-top: 0;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+
+            th,
+            td {
+              border: 1px solid #000;
+              padding: 6px;
+              text-align: left;
+              font-size: 12px;
+            }
+
+            th {
+              font-weight: bold;
+            }
+
+            .print-date {
+              text-align: right;
+              margin-top: 10px;
+              font-size: 12px;
+            }
+
+            @media print {
+
+              body {
+                margin: 10mm;
+              }
+
+            }
+
+          </style>
+
+        </head>
+
+        <body>
+
+          <h1>
+            ATBUTH Biomedical CMMS
+          </h1>
+
+          <h2>
+            ${title ? title.textContent : "CMMS Report"}
+          </h2>
+
+          <div class="print-date">
+            Printed:
+            ${new Date().toLocaleString()}
+          </div>
+
+          ${table.outerHTML}
+
+        </body>
+
+        </html>
+      `);
+
+      printWindow.document.close();
+
+      printWindow.focus();
+
+      setTimeout(
+        function() {
+
+          printWindow.print();
+
+        },
+        500
+      );
+
+    }
+  );
+
+}
