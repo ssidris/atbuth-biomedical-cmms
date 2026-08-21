@@ -7612,6 +7612,12 @@ if (printDashboardDetailsBtn) {
               font-size: 18px;
               font-weight: bold;
             }
+            .report-count {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
             .report-info {
               display: flex;
