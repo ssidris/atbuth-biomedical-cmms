@@ -7979,10 +7979,6 @@ if (workingEquipmentCard) {
 // MAINTENANCE REPORTS CARD
 // ==========================================
 
-// ==========================================
-// MAINTENANCE REPORTS CARD
-// ==========================================
-
 if (maintenanceReportsCard) {
 
   maintenanceReportsCard.addEventListener(
