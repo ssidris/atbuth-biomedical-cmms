@@ -7979,6 +7979,10 @@ if (workingEquipmentCard) {
 // MAINTENANCE REPORTS CARD
 // ==========================================
 
+// ==========================================
+// MAINTENANCE REPORTS CARD
+// ==========================================
+
 if (maintenanceReportsCard) {
 
   maintenanceReportsCard.addEventListener(
@@ -7995,6 +7999,11 @@ if (maintenanceReportsCard) {
       const loading =
         document.getElementById(
           "dashboardDetailsLoading"
+        );
+
+      const countText =
+        document.getElementById(
+          "dashboardDetailsCount"
         );
 
       const tableHead =
@@ -8017,21 +8026,50 @@ if (maintenanceReportsCard) {
           "Loading maintenance reports...";
       }
 
+      if (countText) {
+        countText.textContent = "";
+      }
+
       if (tableHead) {
+
         tableHead.innerHTML = `
+
           <tr>
+
             <th>Date</th>
+
             <th>Job Order</th>
+
             <th>BME Number</th>
+
             <th>Equipment</th>
+
             <th>Department</th>
+
             <th>Engineer</th>
+
             <th>Maintenance Type</th>
+
             <th>Fault Reported</th>
+
+            <th>Diagnosis</th>
+
             <th>Action Taken</th>
+
+            <th>Part Used</th>
+
+            <th>Required Part</th>
+
+            <th>Quantity</th>
+
+            <th>Part Status</th>
+
             <th>Status</th>
+
             <th>Remarks</th>
+
           </tr>
+
         `;
       }
 
@@ -8045,20 +8083,31 @@ if (maintenanceReportsCard) {
           data,
           error
         } = await client
-          .from("vwMaintenanceReport")
+
+          .from(
+            "vwMaintenanceReport"
+          )
+
           .select(`
-            ReportDate,
+            MaintenanceID,
             JobOrderNumber,
+            ReportDate,
             BMENumber,
             EquipmentName,
             DepartmentName,
             EngineerName,
-            MaintenanceTypeName,
+            MaintenanceType,
             FaultReported,
+            Diagnosis,
             ActionTaken,
+            PartUsed,
+            RequiredPart,
+            QuantityRequired,
+            PartRequestedStatus,
             StatusName,
             Remarks
           `)
+
           .order(
             "ReportDate",
             {
@@ -8076,15 +8125,21 @@ if (maintenanceReportsCard) {
         ) {
 
           tableBody.innerHTML = `
+
             <tr>
-              <td colspan="11">
+
+              <td colspan="16">
                 No maintenance reports found.
               </td>
+
             </tr>
+
           `;
 
-          loading.textContent =
-            "No maintenance reports found.";
+          if (loading) {
+            loading.textContent =
+              "No maintenance reports found.";
+          }
 
           return;
         }
@@ -8098,6 +8153,7 @@ if (maintenanceReportsCard) {
               );
 
             row.innerHTML = `
+
               <td>
                 ${
                   report.ReportDate
@@ -8129,7 +8185,7 @@ if (maintenanceReportsCard) {
               </td>
 
               <td>
-                ${report.MaintenanceTypeName || ""}
+                ${report.MaintenanceType || ""}
               </td>
 
               <td>
@@ -8137,7 +8193,27 @@ if (maintenanceReportsCard) {
               </td>
 
               <td>
+                ${report.Diagnosis || ""}
+              </td>
+
+              <td>
                 ${report.ActionTaken || ""}
+              </td>
+
+              <td>
+                ${report.PartUsed || ""}
+              </td>
+
+              <td>
+                ${report.RequiredPart || ""}
+              </td>
+
+              <td>
+                ${report.QuantityRequired || ""}
+              </td>
+
+              <td>
+                ${report.PartRequestedStatus || ""}
               </td>
 
               <td>
@@ -8147,6 +8223,7 @@ if (maintenanceReportsCard) {
               <td>
                 ${report.Remarks || ""}
               </td>
+
             `;
 
             tableBody.appendChild(
@@ -8156,8 +8233,19 @@ if (maintenanceReportsCard) {
           }
         );
 
-        loading.textContent =
-          `${data.length} maintenance report(s) found.`;
+        if (loading) {
+
+          loading.textContent =
+            `${data.length} maintenance report(s) found.`;
+
+        }
+
+        if (countText) {
+
+          countText.textContent =
+            `Total: ${data.length} maintenance report(s)`;
+
+        }
 
       }
 
@@ -8168,16 +8256,35 @@ if (maintenanceReportsCard) {
           error
         );
 
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="11">
-              Unable to load maintenance reports.
-            </td>
-          </tr>
-        `;
+        if (tableBody) {
 
-        loading.textContent =
-          "Unable to load maintenance reports.";
+          tableBody.innerHTML = `
+
+            <tr>
+
+              <td colspan="16">
+                Unable to load maintenance reports.
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+
+        if (loading) {
+
+          loading.textContent =
+            "Unable to load maintenance reports.";
+
+        }
+
+        if (countText) {
+
+          countText.textContent =
+            "";
+
+        }
 
       }
 
