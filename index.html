@@ -165,28 +165,59 @@ content="width=device-width, initial-scale=1.0"
 
 <div class="dashboard-grid">
 
-    <div class="dashboard-card">
-      <h3>Total Equipment</h3>
-      <p id="dashboardTotalEquipment">0</p>
-    </div>
-<div class="dashboard-card">
+    <div
+  class="dashboard-card dashboard-clickable"
+  id="totalEquipmentCard"
+  role="button"
+  tabindex="0"
+>
+  <h3>Total Equipment</h3>
+  <p id="dashboardTotalEquipment">0</p>
+</div>
+
+
+<div
+  class="dashboard-card dashboard-clickable"
+  id="workingEquipmentCard"
+  role="button"
+  tabindex="0"
+>
   <h3>Working Equipment</h3>
   <p id="dashboardWorkingEquipment">0</p>
 </div>
-    <div class="dashboard-card">
-      <h3>Maintenance Reports</h3>
-      <p id="dashboardTotalMaintenance">0</p>
-    </div>
 
-    <div class="dashboard-card">
-      <h3>Under Repair</h3>
-      <p id="dashboardUnderRepair">0</p>
-    </div>
 
-    <div class="dashboard-card">
-      <h3>Awaiting Parts</h3>
-      <p id="dashboardAwaitingParts">0</p>
-    </div>
+<div
+  class="dashboard-card dashboard-clickable"
+  id="maintenanceReportsCard"
+  role="button"
+  tabindex="0"
+>
+  <h3>Maintenance Reports</h3>
+  <p id="dashboardTotalMaintenance">0</p>
+</div>
+
+
+<div
+  class="dashboard-card dashboard-clickable"
+  id="underRepairCard"
+  role="button"
+  tabindex="0"
+>
+  <h3>Under Repair</h3>
+  <p id="dashboardUnderRepair">0</p>
+</div>
+
+
+<div
+  class="dashboard-card dashboard-clickable"
+  id="awaitingPartsCard"
+  role="button"
+  tabindex="0"
+>
+  <h3>Awaiting Parts</h3>
+  <p id="dashboardAwaitingParts">0</p>
+</div>
 
     <div class="dashboard-card">
       <h3>PM Due Today</h3>
@@ -243,7 +274,78 @@ content="width=device-width, initial-scale=1.0"
 </div>
 
 </section>
+<!-- ==================================== -->
+<!-- DASHBOARD DETAILS -->
+<!-- ==================================== -->
 
+<section
+  id="dashboardDetailsSection"
+  class="card app-section hidden"
+>
+
+  <div
+    style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    "
+  >
+
+    <h2 id="dashboardDetailsTitle">
+      Dashboard Details
+    </h2>
+
+    <button
+      id="backToDashboardBtn"
+      type="button"
+      class="secondary"
+    >
+      ← Back to Dashboard
+    </button>
+
+  </div>
+
+  <hr>
+
+  <button
+    id="printDashboardDetailsBtn"
+    type="button"
+    class="secondary"
+  >
+    🖨️ Print
+  </button>
+
+  <p id="dashboardDetailsLoading">
+    Loading...
+  </p>
+
+  <div
+    id="dashboardDetailsTableContainer"
+    class="table-container"
+    style="overflow-x:auto;"
+  >
+
+    <table id="dashboardDetailsTable">
+
+      <thead id="dashboardDetailsTableHead">
+      </thead>
+
+      <tbody id="dashboardDetailsTableBody">
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <p
+    id="dashboardDetailsMessage"
+    class="message"
+  ></p>
+
+</section>
+    
 <!-- ==================================== -->
 <!-- MAINTENANCE REPORT -->
 <!-- ==================================== -->
