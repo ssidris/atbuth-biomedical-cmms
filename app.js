@@ -7527,6 +7527,10 @@ if (printDashboardDetailsBtn) {
         document.getElementById(
           "dashboardDetailsTitle"
         );
+      const countText =
+  document.getElementById(
+    "dashboardDetailsCount"
+  );
 
       if (!table) {
         return;
