@@ -7688,6 +7688,11 @@ if (printDashboardDetailsBtn) {
           <div class="report-title">
             ${reportTitle}
           </div>
+          <div
+  class="report-count"
+>
+  ${reportCount}
+</div>
 
           <div class="report-info">
 
