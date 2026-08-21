@@ -7898,3 +7898,214 @@ if (workingEquipmentCard) {
   );
 
 }
+
+// ==========================================
+// MAINTENANCE REPORTS CARD
+// ==========================================
+
+if (maintenanceReportsCard) {
+
+  maintenanceReportsCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Maintenance Reports";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading maintenance reports...";
+      }
+
+      if (tableHead) {
+        tableHead.innerHTML = `
+          <tr>
+            <th>Date</th>
+            <th>Job Order</th>
+            <th>BME Number</th>
+            <th>Equipment</th>
+            <th>Department</th>
+            <th>Engineer</th>
+            <th>Maintenance Type</th>
+            <th>Fault Reported</th>
+            <th>Action Taken</th>
+            <th>Status</th>
+            <th>Remarks</th>
+          </tr>
+        `;
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        const {
+          data,
+          error
+        } = await client
+          .from("vwMaintenanceReport")
+          .select(`
+            ReportDate,
+            JobOrderNumber,
+            BMENumber,
+            EquipmentName,
+            DepartmentName,
+            EngineerName,
+            MaintenanceTypeName,
+            FaultReported,
+            ActionTaken,
+            StatusName,
+            Remarks
+          `)
+          .order(
+            "ReportDate",
+            {
+              ascending: false
+            }
+          );
+
+        if (error) {
+          throw error;
+        }
+
+        if (
+          !data ||
+          data.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="11">
+                No maintenance reports found.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No maintenance reports found.";
+
+          return;
+        }
+
+        data.forEach(
+          report => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${
+                  report.ReportDate
+                    ? new Date(
+                        report.ReportDate
+                      ).toLocaleDateString()
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${report.JobOrderNumber || ""}
+              </td>
+
+              <td>
+                ${report.BMENumber || ""}
+              </td>
+
+              <td>
+                ${report.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${report.DepartmentName || ""}
+              </td>
+
+              <td>
+                ${report.EngineerName || ""}
+              </td>
+
+              <td>
+                ${report.MaintenanceTypeName || ""}
+              </td>
+
+              <td>
+                ${report.FaultReported || ""}
+              </td>
+
+              <td>
+                ${report.ActionTaken || ""}
+              </td>
+
+              <td>
+                ${report.StatusName || ""}
+              </td>
+
+              <td>
+                ${report.Remarks || ""}
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${data.length} maintenance report(s) found.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Maintenance reports error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="11">
+              Unable to load maintenance reports.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Unable to load maintenance reports.";
+
+      }
+
+    }
+  );
+
+}
