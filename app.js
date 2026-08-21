@@ -7650,3 +7650,251 @@ if (printDashboardDetailsBtn) {
   );
 
 }
+
+// ==========================================
+// WORKING EQUIPMENT CARD
+// ==========================================
+
+if (workingEquipmentCard) {
+
+  workingEquipmentCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Working Equipment";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading working equipment...";
+      }
+
+      if (tableHead) {
+        tableHead.innerHTML = `
+          <tr>
+            <th>BME Number</th>
+            <th>Equipment</th>
+            <th>Department</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Status</th>
+          </tr>
+        `;
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        // Get working equipment
+        // StatusID = 1 means Working
+        const {
+          data: equipment,
+          error: equipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(
+            "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model, SerialNumber, DepartmentID, StatusID"
+          )
+          .eq(
+            "StatusID",
+            1
+          )
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+        // Get departments
+        const {
+          data: departments,
+          error: departmentError
+        } = await client
+          .from("tblDepartment")
+          .select(
+            "DepartmentID, DepartmentName"
+          );
+
+        if (departmentError) {
+          throw departmentError;
+        }
+
+        // Get equipment statuses
+        const {
+          data: statuses,
+          error: statusError
+        } = await client
+          .from("tblEquipmentStatus")
+          .select(
+            "StatusID, StatusName"
+          );
+
+        if (statusError) {
+          throw statusError;
+        }
+
+        // Create department lookup
+        const departmentMap =
+          {};
+
+        (departments || []).forEach(
+          department => {
+
+            departmentMap[
+              department.DepartmentID
+            ] =
+              department.DepartmentName;
+
+          }
+        );
+
+        // Create status lookup
+        const statusMap =
+          {};
+
+        (statuses || []).forEach(
+          status => {
+
+            statusMap[
+              status.StatusID
+            ] =
+              status.StatusName;
+
+          }
+        );
+
+        if (
+          !equipment ||
+          equipment.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7">
+                No working equipment found.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No working equipment found.";
+
+          return;
+        }
+
+        // Display working equipment
+        equipment.forEach(
+          item => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${item.BMENumber || ""}
+              </td>
+
+              <td>
+                ${item.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${
+                  departmentMap[
+                    item.DepartmentID
+                  ] || ""
+                }
+              </td>
+
+              <td>
+                ${item.Manufacturer || ""}
+              </td>
+
+              <td>
+                ${item.Model || ""}
+              </td>
+
+              <td>
+                ${item.SerialNumber || ""}
+              </td>
+
+              <td>
+                ${
+                  statusMap[
+                    item.StatusID
+                  ] || "Working"
+                }
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${equipment.length} working equipment record(s) found.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Working equipment error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              Unable to load working equipment.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Unable to load working equipment.";
+
+      }
+
+    }
+  );
+
+}
