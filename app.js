@@ -7179,3 +7179,84 @@ if (downloadEquipmentHistoryPDFBtn) {
   );
 
 }
+
+// ==========================================
+// DASHBOARD CLICKABLE COUNTERS
+// ==========================================
+
+const totalEquipmentCard =
+  document.getElementById("totalEquipmentCard");
+
+const workingEquipmentCard =
+  document.getElementById("workingEquipmentCard");
+
+const maintenanceReportsCard =
+  document.getElementById("maintenanceReportsCard");
+
+const underRepairCard =
+  document.getElementById("underRepairCard");
+
+const awaitingPartsCard =
+  document.getElementById("awaitingPartsCard");
+
+const dashboardDetailsSection =
+  document.getElementById(
+    "dashboardDetailsSection"
+  );
+
+const dashboardSection =
+  document.getElementById(
+    "dashboardSection"
+  );
+
+const backToDashboardBtn =
+  document.getElementById(
+    "backToDashboardBtn"
+  );
+
+
+// ==========================================
+// OPEN DASHBOARD DETAILS
+// ==========================================
+
+function openDashboardDetails() {
+
+  if (dashboardSection) {
+    dashboardSection.classList.add("hidden");
+  }
+
+  if (dashboardDetailsSection) {
+    dashboardDetailsSection.classList.remove(
+      "hidden"
+    );
+  }
+
+}
+
+
+// ==========================================
+// BACK TO DASHBOARD
+// ==========================================
+
+if (backToDashboardBtn) {
+
+  backToDashboardBtn.addEventListener(
+    "click",
+    function() {
+
+      if (dashboardDetailsSection) {
+        dashboardDetailsSection.classList.add(
+          "hidden"
+        );
+      }
+
+      if (dashboardSection) {
+        dashboardSection.classList.remove(
+          "hidden"
+        );
+      }
+
+    }
+  );
+
+}
