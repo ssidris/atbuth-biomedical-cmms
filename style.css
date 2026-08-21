@@ -214,3 +214,27 @@ button.secondary {
   margin: 0;
 
 }
+
+/* ==========================================
+   CLICKABLE DASHBOARD CARDS
+   ========================================== */
+
+.dashboard-clickable {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.dashboard-clickable:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-clickable:active {
+  transform: scale(0.98);
+}
+
+.dashboard-clickable:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
