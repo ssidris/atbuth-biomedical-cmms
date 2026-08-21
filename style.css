@@ -238,3 +238,30 @@ button.secondary {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+/* ==========================================
+   DASHBOARD DETAILS TABLE
+   ========================================== */
+
+#dashboardDetailsTableContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#dashboardDetailsTable {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+#dashboardDetailsTable th,
+#dashboardDetailsTable td {
+  padding: 8px;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+#dashboardDetailsTable th {
+  font-weight: bold;
+}
