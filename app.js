@@ -7532,6 +7532,11 @@ if (printDashboardDetailsBtn) {
         return;
       }
 
+      const reportTitle =
+        title
+          ? title.textContent
+          : "CMMS Report";
+
       const printWindow =
         window.open(
           "",
@@ -7547,6 +7552,9 @@ if (printDashboardDetailsBtn) {
         return;
       }
 
+      const printedDate =
+        new Date().toLocaleString();
+
       printWindow.document.write(`
         <!DOCTYPE html>
 
@@ -7554,8 +7562,17 @@ if (printDashboardDetailsBtn) {
 
         <head>
 
+          <meta
+            charset="UTF-8"
+          >
+
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          >
+
           <title>
-            ${title ? title.textContent : "CMMS Report"}
+            ${reportTitle}
           </title>
 
           <style>
@@ -7563,46 +7580,80 @@ if (printDashboardDetailsBtn) {
             body {
               font-family: Arial, sans-serif;
               margin: 20px;
+              color: #000;
             }
 
-            h1 {
+            .hospital-header {
               text-align: center;
-              margin-bottom: 5px;
+              margin-bottom: 15px;
             }
 
-            h2 {
+            .hospital-header h1 {
+              margin: 0;
+              font-size: 22px;
+            }
+
+            .hospital-header h2 {
+              margin: 5px 0;
+              font-size: 18px;
+            }
+
+            .report-title {
               text-align: center;
-              margin-top: 0;
+              margin: 15px 0;
+              font-size: 18px;
+              font-weight: bold;
+            }
+
+            .report-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 10px;
+              font-size: 12px;
             }
 
             table {
               width: 100%;
               border-collapse: collapse;
-              margin-top: 20px;
+              margin-top: 10px;
             }
 
             th,
             td {
               border: 1px solid #000;
               padding: 6px;
+              font-size: 10px;
               text-align: left;
-              font-size: 12px;
+              vertical-align: top;
             }
 
             th {
               font-weight: bold;
             }
 
-            .print-date {
-              text-align: right;
-              margin-top: 10px;
-              font-size: 12px;
+            .footer {
+              margin-top: 20px;
+              text-align: center;
+              font-size: 10px;
             }
 
             @media print {
 
               body {
                 margin: 10mm;
+              }
+
+              table {
+                page-break-inside: auto;
+              }
+
+              tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+              }
+
+              thead {
+                display: table-header-group;
               }
 
             }
@@ -7613,20 +7664,45 @@ if (printDashboardDetailsBtn) {
 
         <body>
 
-          <h1>
-            ATBUTH Biomedical CMMS
-          </h1>
+          <div class="hospital-header">
 
-          <h2>
-            ${title ? title.textContent : "CMMS Report"}
-          </h2>
+            <h1>
+              ABUBAKAR TAFAWA BALEWA UNIVERSITY
+              TEACHING HOSPITAL
+            </h1>
 
-          <div class="print-date">
-            Printed:
-            ${new Date().toLocaleString()}
+            <h2>
+              Biomedical Engineering Department
+            </h2>
+
+          </div>
+
+          <div class="report-title">
+            ${reportTitle}
+          </div>
+
+          <div class="report-info">
+
+            <span>
+              ATBUTH Biomedical CMMS
+            </span>
+
+            <span>
+              Printed:
+              ${printedDate}
+            </span>
+
           </div>
 
           ${table.outerHTML}
+
+          <div class="footer">
+
+            ATBUTH Biomedical CMMS
+            -
+            Biomedical Engineering Department
+
+          </div>
 
         </body>
 
