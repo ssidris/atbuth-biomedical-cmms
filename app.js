@@ -8623,6 +8623,16 @@ if (maintenanceReportsCard) {
         if (error) {
           throw error;
         }
+        // Display maintenance report count in title
+
+if (title) {
+
+  title.textContent =
+    `Maintenance Reports — ${
+      (data || []).length
+    } Records`;
+
+}
 
         if (
           !data ||
