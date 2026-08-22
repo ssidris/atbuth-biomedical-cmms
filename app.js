@@ -8338,6 +8338,16 @@ if (workingEquipmentCard) {
         if (equipmentError) {
           throw equipmentError;
         }
+        // Display working equipment count in title
+
+if (title) {
+
+  title.textContent =
+    `Working Equipment — ${
+      (equipment || []).length
+    } Records`;
+
+}
 
         // Get departments
         const {
