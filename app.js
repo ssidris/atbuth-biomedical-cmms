@@ -9128,6 +9128,16 @@ if (awaitingPartsCard) {
         if (equipmentError) {
           throw equipmentError;
         }
+        // Display awaiting parts count in title
+
+if (title) {
+
+  title.textContent =
+    `Equipment Awaiting Parts — ${
+      (equipment || []).length
+    } Records`;
+
+}
 
         // Get departments
         const {
