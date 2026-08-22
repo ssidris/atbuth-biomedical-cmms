@@ -9048,3 +9048,244 @@ async function setupMaintenanceEquipmentSearch() {
 // ==========================================
 
 setupMaintenanceEquipmentSearch();
+
+// ==========================================
+// PREVENTIVE MAINTENANCE EQUIPMENT SEARCH
+// ==========================================
+
+async function setupPMEquipmentSearch() {
+
+  const pmSearchBox =
+    document.getElementById(
+      "pmEquipmentSearchInput"
+    );
+
+  const pmEquipmentDropdown =
+    document.getElementById(
+      "pmEquipmentId"
+    );
+
+  if (
+    !pmSearchBox ||
+    !pmEquipmentDropdown
+  ) {
+    return;
+  }
+
+  pmSearchBox.addEventListener(
+    "input",
+    async function() {
+
+      const searchValue =
+        pmSearchBox.value
+          .trim()
+          .toLowerCase();
+
+      // ====================================
+      // EMPTY SEARCH
+      // ====================================
+
+      if (!searchValue) {
+
+        await loadPMEquipmentDropdown();
+
+        return;
+      }
+
+      try {
+
+        // ==================================
+        // LOAD EQUIPMENT
+        // ==================================
+
+        const {
+          data: pmEquipmentData,
+          error: pmEquipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(`
+            EquipmentID,
+            BMENumber,
+            EquipmentName,
+            SerialNumber,
+            DepartmentID
+          `)
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (pmEquipmentError) {
+          throw pmEquipmentError;
+        }
+
+
+        // ==================================
+        // LOAD DEPARTMENTS
+        // ==================================
+
+        const {
+          data: pmDepartmentData,
+          error: pmDepartmentError
+        } = await client
+          .from("tblDepartment")
+          .select(`
+            DepartmentID,
+            DepartmentName
+          `);
+
+        if (pmDepartmentError) {
+          throw pmDepartmentError;
+        }
+
+
+        // ==================================
+        // FILTER EQUIPMENT
+        // ==================================
+
+        const pmMatchingEquipment =
+          (pmEquipmentData || []).filter(
+            equipment => {
+
+              const bmeNumber =
+                (
+                  equipment.BMENumber || ""
+                ).toLowerCase();
+
+              const equipmentName =
+                (
+                  equipment.EquipmentName || ""
+                ).toLowerCase();
+
+              const serialNumber =
+                (
+                  equipment.SerialNumber || ""
+                ).toLowerCase();
+
+              const departmentName =
+                (
+                  pmDepartmentData || []
+                )
+                .find(
+                  department =>
+                    department.DepartmentID ===
+                    equipment.DepartmentID
+                )
+                ?.DepartmentName
+                ?.toLowerCase() || "";
+
+              return (
+                bmeNumber.includes(
+                  searchValue
+                ) ||
+
+                equipmentName.includes(
+                  searchValue
+                ) ||
+
+                serialNumber.includes(
+                  searchValue
+                ) ||
+
+                departmentName.includes(
+                  searchValue
+                )
+              );
+
+            }
+          );
+
+
+        // ==================================
+        // CLEAR PM DROPDOWN
+        // ==================================
+
+        pmEquipmentDropdown.innerHTML =
+          "";
+
+
+        // ==================================
+        // DEFAULT OPTION
+        // ==================================
+
+        const pmDefaultOption =
+          document.createElement(
+            "option"
+          );
+
+        pmDefaultOption.value =
+          "";
+
+        pmDefaultOption.textContent =
+          pmMatchingEquipment.length
+            ? "Select equipment"
+            : "No matching equipment found";
+
+        pmEquipmentDropdown.appendChild(
+          pmDefaultOption
+        );
+
+
+        // ==================================
+        // ADD MATCHING EQUIPMENT
+        // ==================================
+
+        pmMatchingEquipment.forEach(
+          equipment => {
+
+            const pmOption =
+              document.createElement(
+                "option"
+              );
+
+            pmOption.value =
+              equipment.EquipmentID;
+
+            const bme =
+              equipment.BMENumber || "";
+
+            const name =
+              equipment.EquipmentName || "";
+
+            pmOption.textContent =
+              bme
+                ? `${bme} — ${name}`
+                : name;
+
+            pmEquipmentDropdown.appendChild(
+              pmOption
+            );
+
+          }
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "PM equipment search error:",
+          error
+        );
+
+        pmEquipmentDropdown.innerHTML = `
+          <option value="">
+            Unable to search equipment
+          </option>
+        `;
+
+      }
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// START PM EQUIPMENT SEARCH
+// ==========================================
+
+setupPMEquipmentSearch();
