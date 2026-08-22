@@ -6989,9 +6989,9 @@ if (downloadEquipmentHistoryPDFBtn) {
 
       // Check that an equipment is currently selected
       const equipmentSelect =
-        document.getElementById(
-          "equipmentHistorySelect"
-        );
+  document.getElementById(
+    "historyEquipmentId"
+  );
 
       if (
         !equipmentSelect ||
