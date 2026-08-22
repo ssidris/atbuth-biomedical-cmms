@@ -8871,6 +8871,16 @@ if (underRepairCard) {
         if (equipmentError) {
           throw equipmentError;
         }
+        // Display under repair count in title
+
+if (title) {
+
+  title.textContent =
+    `Equipment Under Repair — ${
+      (equipment || []).length
+    } Records`;
+
+}
 
         // Get departments
         const {
