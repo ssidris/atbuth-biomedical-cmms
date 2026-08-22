@@ -1117,7 +1117,195 @@ ngoSearch.addEventListener(
   }
 
 }
+// ==========================================
+// REFRESH EQUIPMENT HISTORY
+// ==========================================
 
+const refreshEquipmentHistoryBtn =
+  document.getElementById(
+    "refreshEquipmentHistoryBtn"
+  );
+
+if (refreshEquipmentHistoryBtn) {
+
+  refreshEquipmentHistoryBtn.addEventListener(
+    "click",
+    async function() {
+
+      refreshEquipmentHistoryBtn.disabled =
+        true;
+
+      refreshEquipmentHistoryBtn.textContent =
+        "🔄 Refreshing...";
+
+      try {
+
+        // ====================================
+        // CLEAR SEARCH
+        // ====================================
+
+        const equipmentSearch =
+          document.getElementById(
+            "equipmentSearch"
+          );
+
+        const equipmentDepartmentFilter =
+          document.getElementById(
+            "equipmentDepartmentFilter"
+          );
+
+        const equipmentSourceFilter =
+          document.getElementById(
+            "equipmentSourceFilter"
+          );
+
+        const equipmentNGOSearch =
+          document.getElementById(
+            "equipmentNGOSearch"
+          );
+
+        if (equipmentSearch) {
+          equipmentSearch.value = "";
+        }
+
+        if (equipmentDepartmentFilter) {
+          equipmentDepartmentFilter.value = "";
+        }
+
+        if (equipmentSourceFilter) {
+          equipmentSourceFilter.value = "";
+        }
+
+        if (equipmentNGOSearch) {
+          equipmentNGOSearch.value = "";
+        }
+
+
+        // ====================================
+        // RELOAD EQUIPMENT SEARCH DATA
+        // ====================================
+
+        await loadEquipmentSearchData();
+
+
+        // ====================================
+        // CLEAR SEARCH RESULTS
+        // ====================================
+
+        const equipmentSearchResults =
+          document.getElementById(
+            "equipmentSearchResults"
+          );
+
+        if (equipmentSearchResults) {
+          equipmentSearchResults.innerHTML = "";
+        }
+
+
+        // ====================================
+        // RESET SEARCH MESSAGE
+        // ====================================
+
+        const equipmentSearchCount =
+          document.getElementById(
+            "equipmentSearchCount"
+          );
+
+        if (equipmentSearchCount) {
+
+          equipmentSearchCount.textContent =
+            "Equipment list refreshed.";
+
+        }
+
+
+        // ====================================
+        // RESET SELECTED EQUIPMENT
+        // ====================================
+
+        const historyEquipmentId =
+          document.getElementById(
+            "historyEquipmentId"
+          );
+
+        if (historyEquipmentId) {
+
+          historyEquipmentId.value = "";
+
+        }
+
+
+        // ====================================
+        // CLEAR EQUIPMENT DETAILS
+        // ====================================
+
+        const equipmentHistoryDetails =
+          document.getElementById(
+            "equipmentHistoryDetails"
+          );
+
+        if (equipmentHistoryDetails) {
+
+          equipmentHistoryDetails.innerHTML = `
+            <p>
+              Select an equipment to view its details.
+            </p>
+          `;
+
+        }
+
+
+        // ====================================
+        // CLEAR MAINTENANCE HISTORY TABLE
+        // ====================================
+
+        const equipmentHistoryTableBody =
+          document.getElementById(
+            "equipmentHistoryTableBody"
+          );
+
+        if (equipmentHistoryTableBody) {
+
+          equipmentHistoryTableBody.innerHTML = `
+            <tr>
+              <td colspan="12">
+                Select an equipment to view history.
+              </td>
+            </tr>
+          `;
+
+        }
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Equipment History refresh error:",
+          error
+        );
+
+        alert(
+          "Unable to refresh Equipment History: " +
+          error.message
+        );
+
+      }
+
+      finally {
+
+        refreshEquipmentHistoryBtn.disabled =
+          false;
+
+        refreshEquipmentHistoryBtn.textContent =
+          "🔄 Refresh Equipment History";
+
+      }
+
+    }
+  );
+
+}
 // ==========================================
 // EQUIPMENT HISTORY
 // ==========================================
