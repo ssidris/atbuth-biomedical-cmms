@@ -7933,7 +7933,315 @@ if (printDashboardDetailsBtn) {
   );
 
 }
+// ==========================================
+// DOWNLOAD DASHBOARD DETAILS PDF
+// ==========================================
 
+const downloadDashboardDetailsPDFBtn =
+  document.getElementById(
+    "downloadDashboardDetailsPDFBtn"
+  );
+
+if (downloadDashboardDetailsPDFBtn) {
+
+  downloadDashboardDetailsPDFBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "dashboardDetailsTable"
+        );
+
+      const titleElement =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      if (!table) {
+
+        alert(
+          "Dashboard details table not found."
+        );
+
+        return;
+      }
+
+      const reportTitle =
+        titleElement
+          ? titleElement.textContent.trim()
+          : "CMMS Report";
+
+      // ====================================
+      // CHECK jsPDF
+      // ====================================
+
+      if (
+        !window.jspdf ||
+        !window.jspdf.jsPDF
+      ) {
+
+        alert(
+          "PDF library is not available. Please refresh the page and try again."
+        );
+
+        return;
+      }
+
+      const {
+        jsPDF
+      } = window.jspdf;
+
+      const doc =
+        new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4"
+        });
+
+
+      // ====================================
+      // HOSPITAL HEADER
+      // ====================================
+
+      doc.setFontSize(14);
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.text(
+        "ABUBAKAR TAFAWA BALEWA UNIVERSITY",
+        148.5,
+        12,
+        {
+          align: "center"
+        }
+      );
+
+      doc.text(
+        "TEACHING HOSPITAL",
+        148.5,
+        19,
+        {
+          align: "center"
+        }
+      );
+
+      doc.setFontSize(11);
+
+      doc.text(
+        "Biomedical Engineering Department",
+        148.5,
+        26,
+        {
+          align: "center"
+        }
+      );
+
+
+      // ====================================
+      // REPORT TITLE
+      // ====================================
+
+      doc.setFontSize(13);
+
+      doc.text(
+        reportTitle,
+        148.5,
+        36,
+        {
+          align: "center"
+        }
+      );
+
+
+      // ====================================
+      // PRINTED DATE
+      // ====================================
+
+      doc.setFontSize(9);
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.text(
+        "ATBUTH Biomedical CMMS",
+        14,
+        43
+      );
+
+      doc.text(
+        "Printed: " +
+        new Date().toLocaleString(),
+        283,
+        43,
+        {
+          align: "right"
+        }
+      );
+
+
+      // ====================================
+      // GET TABLE DATA
+      // ====================================
+
+      const headers = [];
+
+      const headerCells =
+        table.querySelectorAll(
+          "thead th"
+        );
+
+      headerCells.forEach(
+        th => {
+
+          headers.push(
+            th.textContent.trim()
+          );
+
+        }
+      );
+
+
+      const rows = [];
+
+      const bodyRows =
+        table.querySelectorAll(
+          "tbody tr"
+        );
+
+      bodyRows.forEach(
+        tr => {
+
+          const row = [];
+
+          tr.querySelectorAll(
+            "td"
+          ).forEach(
+            td => {
+
+              row.push(
+                td.textContent
+                  .trim()
+              );
+
+            }
+          );
+
+          if (row.length > 0) {
+            rows.push(row);
+          }
+
+        }
+      );
+
+
+      if (
+        !headers.length ||
+        !rows.length
+      ) {
+
+        alert(
+          "There are no records available to download."
+        );
+
+        return;
+      }
+
+
+      // ====================================
+      // CREATE PDF TABLE
+      // ====================================
+
+      doc.autoTable({
+
+        head: [headers],
+
+        body: rows,
+
+        startY: 48,
+
+        theme: "grid",
+
+        styles: {
+          fontSize: 7,
+          cellPadding: 2,
+          valign: "top"
+        },
+
+        headStyles: {
+          fontStyle: "bold"
+        },
+
+        margin: {
+          left: 10,
+          right: 10
+        },
+
+        didDrawPage:
+          function() {
+
+            const pageNumber =
+              doc.internal.getNumberOfPages();
+
+            doc.setFontSize(8);
+
+            doc.text(
+              "ATBUTH Biomedical CMMS - Biomedical Engineering Department",
+              148.5,
+              202,
+              {
+                align: "center"
+              }
+            );
+
+            doc.text(
+              "Page " +
+              pageNumber,
+              283,
+              202,
+              {
+                align: "right"
+              }
+            );
+
+          }
+
+      });
+
+
+      // ====================================
+      // DOWNLOAD
+      // ====================================
+
+      const safeTitle =
+        reportTitle
+          .replace(
+            /[^a-z0-9]/gi,
+            "_"
+          )
+          .replace(
+            /_+/g,
+            "_"
+          );
+
+      doc.save(
+        safeTitle +
+        "_" +
+        new Date()
+          .toISOString()
+          .slice(0, 10) +
+        ".pdf"
+      );
+
+    }
+  );
+
+}
 // ==========================================
 // WORKING EQUIPMENT CARD
 // ==========================================
