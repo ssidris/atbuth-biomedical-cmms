@@ -7530,6 +7530,16 @@ if (totalEquipmentCard) {
         if (equipmentError) {
           throw equipmentError;
         }
+        // Display total number in the report heading
+
+if (title) {
+
+  title.textContent =
+    `Total Equipment — ${
+      (equipment || []).length
+    } Records`;
+
+}
 
         // Get departments
         const {
