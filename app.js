@@ -8763,7 +8763,7 @@ const equipmentSearchInput =
     "equipmentSearchInput"
   );
 
-const equipmentSelect =
+const maintenanceEquipmentSelect =
   document.getElementById(
     "equipmentId"
   );
