@@ -8755,3 +8755,296 @@ if (awaitingPartsCard) {
 }
 
           
+// ==========================================
+// MAINTENANCE REPORT EQUIPMENT SEARCH
+// ==========================================
+
+async function setupMaintenanceEquipmentSearch() {
+
+  const searchBox =
+    document.getElementById(
+      "equipmentSearchInput"
+    );
+
+  const maintenanceEquipmentDropdown =
+    document.getElementById(
+      "equipmentId"
+    );
+
+  if (
+    !searchBox ||
+    !maintenanceEquipmentDropdown
+  ) {
+    return;
+  }
+
+  searchBox.addEventListener(
+    "input",
+    async function() {
+
+      const searchValue =
+        searchBox.value
+          .trim()
+          .toLowerCase();
+
+      // ======================================
+      // EMPTY SEARCH
+      // LOAD ALL EQUIPMENT AGAIN
+      // ======================================
+
+      if (!searchValue) {
+
+        await loadLookup(
+          "tblEquipment",
+          "EquipmentID",
+          "EquipmentName",
+          "equipmentId",
+          "Select equipment",
+          row => {
+
+            const bme =
+              row.BMENumber || "";
+
+            const name =
+              row.EquipmentName || "";
+
+            return bme
+              ? `${bme} — ${name}`
+              : name;
+
+          },
+          "BMENumber"
+        );
+
+        return;
+      }
+
+      try {
+
+        // ====================================
+        // LOAD EQUIPMENT
+        // ====================================
+
+        const {
+          data: equipmentData,
+          error: equipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(`
+            EquipmentID,
+            BMENumber,
+            EquipmentName,
+            SerialNumber,
+            DepartmentID
+          `)
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+
+        // ====================================
+        // LOAD DEPARTMENTS
+        // ====================================
+
+        const {
+          data: departmentData,
+          error: departmentError
+        } = await client
+          .from("tblDepartment")
+          .select(`
+            DepartmentID,
+            DepartmentName
+          `);
+
+        if (departmentError) {
+          throw departmentError;
+        }
+
+
+        // ====================================
+        // FILTER EQUIPMENT
+        // ====================================
+
+        const matchingEquipment =
+          (equipmentData || []).filter(
+            equipment => {
+
+              const bmeNumber =
+                (
+                  equipment.BMENumber || ""
+                ).toLowerCase();
+
+              const equipmentName =
+                (
+                  equipment.EquipmentName || ""
+                ).toLowerCase();
+
+              const serialNumber =
+                (
+                  equipment.SerialNumber || ""
+                ).toLowerCase();
+
+              const departmentName =
+                (
+                  departmentData || []
+                )
+                .find(
+                  department =>
+                    department.DepartmentID ===
+                    equipment.DepartmentID
+                )
+                ?.DepartmentName
+                ?.toLowerCase() || "";
+
+              return (
+                bmeNumber.includes(
+                  searchValue
+                ) ||
+
+                equipmentName.includes(
+                  searchValue
+                ) ||
+
+                serialNumber.includes(
+                  searchValue
+                ) ||
+
+                departmentName.includes(
+                  searchValue
+                )
+              );
+
+            }
+          );
+
+
+        // ====================================
+        // CLEAR EXISTING DROPDOWN
+        // ====================================
+
+        maintenanceEquipmentDropdown.innerHTML =
+          "";
+
+
+        // ====================================
+        // DEFAULT OPTION
+        // ====================================
+
+        const defaultEquipmentOption =
+          document.createElement(
+            "option"
+          );
+
+        defaultEquipmentOption.value =
+          "";
+
+        if (
+          matchingEquipment.length > 0
+        ) {
+
+          defaultEquipmentOption.textContent =
+            "Select equipment";
+
+        } else {
+
+          defaultEquipmentOption.textContent =
+            "No matching equipment found";
+
+        }
+
+        maintenanceEquipmentDropdown.appendChild(
+          defaultEquipmentOption
+        );
+
+
+        // ====================================
+        // ADD MATCHING EQUIPMENT
+        // ====================================
+
+        matchingEquipment.forEach(
+          equipment => {
+
+            const equipmentOption =
+              document.createElement(
+                "option"
+              );
+
+            equipmentOption.value =
+              equipment.EquipmentID;
+
+            const bme =
+              equipment.BMENumber || "";
+
+            const name =
+              equipment.EquipmentName || "";
+
+            const serial =
+              equipment.SerialNumber || "";
+
+            const department =
+              (
+                departmentData || []
+              )
+              .find(
+                item =>
+                  item.DepartmentID ===
+                  equipment.DepartmentID
+              )
+              ?.DepartmentName || "";
+
+            equipmentOption.textContent =
+              bme
+                ? `${bme} — ${name}`
+                : name;
+
+            // Store extra information
+            // for the selected equipment
+
+            equipmentOption.dataset.serial =
+              serial;
+
+            equipmentOption.dataset.department =
+              department;
+
+            maintenanceEquipmentDropdown.appendChild(
+              equipmentOption
+            );
+
+          }
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Maintenance equipment search error:",
+          error
+        );
+
+        maintenanceEquipmentDropdown.innerHTML = `
+          <option value="">
+            Unable to search equipment
+          </option>
+        `;
+
+      }
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// START MAINTENANCE EQUIPMENT SEARCH
+// ==========================================
+
+setupMaintenanceEquipmentSearch();
