@@ -8753,3 +8753,207 @@ if (awaitingPartsCard) {
   );
 
 }
+
+// ==========================================
+// MAINTENANCE REPORT EQUIPMENT SEARCH
+// ==========================================
+
+const equipmentSearchInput =
+  document.getElementById(
+    "equipmentSearchInput"
+  );
+
+const equipmentSelect =
+  document.getElementById(
+    "equipmentId"
+  );
+
+if (
+  equipmentSearchInput &&
+  equipmentSelect
+) {
+
+  equipmentSearchInput.addEventListener(
+    "input",
+    async function() {
+
+      const searchText =
+        equipmentSearchInput.value
+          .trim()
+          .toLowerCase();
+
+      // If search box is empty,
+      // reload all equipment
+      if (!searchText) {
+
+        await loadLookup(
+          "tblEquipment",
+          "EquipmentID",
+          "EquipmentName",
+          "equipmentId",
+          "Select equipment",
+          row => {
+
+            const bme =
+              row.BMENumber || "";
+
+            const name =
+              row.EquipmentName || "";
+
+            return bme
+              ? `${bme} — ${name}`
+              : name;
+
+          },
+          "BMENumber"
+        );
+
+        return;
+      }
+
+      try {
+
+        // Get equipment
+        const {
+          data: equipment,
+          error
+        } = await client
+          .from("tblEquipment")
+          .select(`
+            EquipmentID,
+            BMENumber,
+            EquipmentName,
+            SerialNumber,
+            DepartmentID
+          `)
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (error) {
+          throw error;
+        }
+
+        // Get departments
+        const {
+          data: departments,
+          error: departmentError
+        } = await client
+          .from("tblDepartment")
+          .select(
+            "DepartmentID, DepartmentName"
+          );
+
+        if (departmentError) {
+          throw departmentError;
+        }
+
+        // Filter equipment
+        const filtered =
+          (equipment || []).filter(
+            item => {
+
+              const bme =
+                (
+                  item.BMENumber || ""
+                ).toLowerCase();
+
+              const name =
+                (
+                  item.EquipmentName || ""
+                ).toLowerCase();
+
+              const serial =
+                (
+                  item.SerialNumber || ""
+                ).toLowerCase();
+
+              const department =
+                (
+                  departments?.find(
+                    d =>
+                      d.DepartmentID ===
+                      item.DepartmentID
+                  )?.DepartmentName || ""
+                ).toLowerCase();
+
+              return (
+                bme.includes(
+                  searchText
+                ) ||
+                name.includes(
+                  searchText
+                ) ||
+                serial.includes(
+                  searchText
+                ) ||
+                department.includes(
+                  searchText
+                )
+              );
+
+            }
+          );
+
+        // Clear dropdown
+        equipmentSelect.innerHTML = "";
+
+        // Default option
+        const defaultOption =
+          document.createElement(
+            "option"
+          );
+
+        defaultOption.value = "";
+
+        defaultOption.textContent =
+          filtered.length
+            ? "Select equipment"
+            : "No matching equipment";
+
+        equipmentSelect.appendChild(
+          defaultOption
+        );
+
+        // Add matching equipment
+        filtered.forEach(
+          item => {
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+            option.value =
+              item.EquipmentID;
+
+            option.textContent =
+              item.BMENumber
+                ? `${item.BMENumber} — ${item.EquipmentName}`
+                : item.EquipmentName;
+
+            equipmentSelect.appendChild(
+              option
+            );
+
+          }
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Equipment search error:",
+          error
+        );
+
+      }
+
+    }
+  );
+
+}
