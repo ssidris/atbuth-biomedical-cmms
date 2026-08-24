@@ -8838,6 +8838,7 @@ if (underRepairCard) {
             <th>Model</th>
             <th>Serial Number</th>
             <th>Status</th>
+<th>Action</th>
           </tr>
         `;
       }
@@ -8947,7 +8948,7 @@ if (title) {
 
           tableBody.innerHTML = `
             <tr>
-              <td colspan="7">
+              <td colspan="8">
                 No equipment is currently under repair.
               </td>
             </tr>
@@ -8969,46 +8970,121 @@ if (title) {
               );
 
             row.innerHTML = `
-              <td>
-                ${item.BMENumber || ""}
-              </td>
+  <td>
+    ${item.BMENumber || ""}
+  </td>
 
-              <td>
-                ${item.EquipmentName || ""}
-              </td>
+  <td>
+    ${item.EquipmentName || ""}
+  </td>
 
-              <td>
-                ${
-                  departmentMap[
-                    item.DepartmentID
-                  ] || ""
-                }
-              </td>
+  <td>
+    ${
+      departmentMap[
+        item.DepartmentID
+      ] || ""
+    }
+  </td>
 
-              <td>
-                ${item.Manufacturer || ""}
-              </td>
+  <td>
+    ${item.Manufacturer || ""}
+  </td>
 
-              <td>
-                ${item.Model || ""}
-              </td>
+  <td>
+    ${item.Model || ""}
+  </td>
 
-              <td>
-                ${item.SerialNumber || ""}
-              </td>
+  <td>
+    ${item.SerialNumber || ""}
+  </td>
 
-              <td>
-                ${
-                  statusMap[
-                    item.StatusID
-                  ] || "Under Repair"
-                }
-              </td>
-            `;
+  <td>
+    ${
+      statusMap[
+        item.StatusID
+      ] || "Under Repair"
+    }
+  </td>
+
+  <td>
+    <button
+      type="button"
+      class="secondary under-repair-treatment-btn"
+      data-equipment-id="${item.EquipmentID}"
+    >
+      🔧 Continue Treatment
+    </button>
+  </td>
+`;
 
             tableBody.appendChild(
               row
             );
+            const treatmentButton =
+  row.querySelector(
+    ".under-repair-treatment-btn"
+  );
+
+if (treatmentButton) {
+
+  treatmentButton.addEventListener(
+    "click",
+    function() {
+
+      const equipmentId =
+        this.dataset.equipmentId;
+
+      const maintenanceSection =
+        document.getElementById(
+          "maintenanceSection"
+        );
+
+      const equipmentSelect =
+        document.getElementById(
+          "equipmentId"
+        );
+
+      if (!equipmentSelect) {
+
+        alert(
+          "Maintenance equipment selector was not found."
+        );
+
+        return;
+      }
+
+      // Select the equipment
+      equipmentSelect.value =
+        equipmentId;
+
+      // Trigger existing equipment change event
+      equipmentSelect.dispatchEvent(
+        new Event(
+          "change",
+          {
+            bubbles: true
+          }
+        )
+      );
+
+      // Show Maintenance Report section
+      if (maintenanceSection) {
+
+        maintenanceSection.classList.remove(
+          "hidden"
+        );
+
+        maintenanceSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    }
+  );
+
+}
 
           }
         );
@@ -9027,7 +9103,7 @@ if (title) {
 
         tableBody.innerHTML = `
           <tr>
-            <td colspan="7">
+            <td colspan="8">
               Unable to load equipment under repair.
             </td>
           </tr>
