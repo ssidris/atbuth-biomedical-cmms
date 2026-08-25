@@ -9994,7 +9994,7 @@ if (storeEquipmentCard) {
         `;
 
         loading.textContent =
-          "Unable to load store inventory.";
+          "Store error: " + error.message
 
       }
 
