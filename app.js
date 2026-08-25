@@ -9093,6 +9093,121 @@ if (previousMaintenanceLoading) {
   previousMaintenanceLoading.textContent =
     "Loading previous maintenance record...";
 }
+      try {
+
+  const {
+    data: previousMaintenance,
+    error: previousMaintenanceError
+  } = await client
+    .from("vwMaintenanceReport")
+    .select(`
+      JobOrderNumber,
+      ReportDate,
+      EngineerName,
+      FaultReported,
+      Diagnosis,
+      ActionTaken,
+      PartUsed,
+      RequiredPart,
+      StatusName,
+      Remarks
+    `)
+    .eq(
+      "EquipmentID",
+      Number(equipmentId)
+    )
+    .order(
+      "ReportDate",
+      {
+        ascending: false
+      }
+    )
+    .limit(1)
+    .maybeSingle();
+
+  if (previousMaintenanceError) {
+    throw previousMaintenanceError;
+  }
+
+  if (!previousMaintenance) {
+
+    if (previousMaintenanceLoading) {
+      previousMaintenanceLoading.textContent =
+        "No previous maintenance record found.";
+    }
+
+    return;
+  }
+
+  document.getElementById(
+    "previousJobOrderNumber"
+  ).textContent =
+    previousMaintenance.JobOrderNumber || "-";
+
+  document.getElementById(
+    "previousReportDate"
+  ).textContent =
+    previousMaintenance.ReportDate || "-";
+
+  document.getElementById(
+    "previousEngineer"
+  ).textContent =
+    previousMaintenance.EngineerName || "-";
+
+  document.getElementById(
+    "previousFaultReported"
+  ).textContent =
+    previousMaintenance.FaultReported || "-";
+
+  document.getElementById(
+    "previousDiagnosis"
+  ).textContent =
+    previousMaintenance.Diagnosis || "-";
+
+  document.getElementById(
+    "previousActionTaken"
+  ).textContent =
+    previousMaintenance.ActionTaken || "-";
+
+  document.getElementById(
+    "previousPartUsed"
+  ).textContent =
+    previousMaintenance.PartUsed || "-";
+
+  document.getElementById(
+    "previousRequiredPart"
+  ).textContent =
+    previousMaintenance.RequiredPart || "-";
+
+  document.getElementById(
+    "previousStatus"
+  ).textContent =
+    previousMaintenance.StatusName || "-";
+
+  document.getElementById(
+    "previousRemarks"
+  ).textContent =
+    previousMaintenance.Remarks || "-";
+
+  if (previousMaintenanceLoading) {
+    previousMaintenanceLoading.textContent =
+      "Previous maintenance record loaded.";
+  }
+
+}
+catch (error) {
+
+  console.error(
+    "Previous maintenance error:",
+    error
+  );
+
+  if (previousMaintenanceLoading) {
+    previousMaintenanceLoading.textContent =
+      "Unable to load previous maintenance record.";
+  }
+
+}
 
       // Trigger existing equipment change event
       equipmentSelect.dispatchEvent(
