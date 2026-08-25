@@ -2670,6 +2670,15 @@ if (
         }
 
         maintenanceForm.reset();
+        const continueTreatmentMessage =
+  document.getElementById(
+    "continueTreatmentMessage"
+  );
+
+if (continueTreatmentMessage) {
+  continueTreatmentMessage.style.display =
+    "none";
+}
 
         if (departmentInput) {
           departmentInput.value = "";
