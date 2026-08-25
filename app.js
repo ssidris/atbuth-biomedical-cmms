@@ -9504,6 +9504,103 @@ if (title) {
             tableBody.appendChild(
               row
             );
+            const treatmentButton =
+  row.querySelector(
+    ".awaiting-parts-treatment-btn"
+  );
+
+if (treatmentButton) {
+
+  treatmentButton.addEventListener(
+    "click",
+    function() {
+
+      const equipmentId =
+        this.dataset.equipmentId;
+
+      const maintenanceSection =
+        document.getElementById(
+          "maintenanceSection"
+        );
+
+      const equipmentSelect =
+        document.getElementById(
+          "equipmentId"
+        );
+
+      if (!equipmentSelect) {
+
+        alert(
+          "Maintenance equipment selector was not found."
+        );
+
+        return;
+      }
+
+      // Select the equipment
+      equipmentSelect.value =
+        equipmentId;
+
+      // Show continuation message
+      const continueTreatmentMessage =
+        document.getElementById(
+          "continueTreatmentMessage"
+        );
+
+      if (continueTreatmentMessage) {
+        continueTreatmentMessage.style.display =
+          "block";
+      }
+
+      // Show previous maintenance panel
+      const previousMaintenancePanel =
+        document.getElementById(
+          "previousMaintenancePanel"
+        );
+
+      const previousMaintenanceLoading =
+        document.getElementById(
+          "previousMaintenanceLoading"
+        );
+
+      if (previousMaintenancePanel) {
+        previousMaintenancePanel.style.display =
+          "block";
+      }
+
+      if (previousMaintenanceLoading) {
+        previousMaintenanceLoading.textContent =
+          "Loading previous maintenance record...";
+      }
+
+      // Trigger existing equipment change event
+      equipmentSelect.dispatchEvent(
+        new Event(
+          "change",
+          {
+            bubbles: true
+          }
+        )
+      );
+
+      // Open Maintenance Report
+      if (maintenanceSection) {
+
+        maintenanceSection.classList.remove(
+          "hidden"
+        );
+
+        maintenanceSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    }
+  );
+
+}
 
           }
         );
