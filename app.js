@@ -9056,6 +9056,15 @@ if (treatmentButton) {
       // Select the equipment
       equipmentSelect.value =
         equipmentId;
+      const continueTreatmentMessage =
+  document.getElementById(
+    "continueTreatmentMessage"
+  );
+
+if (continueTreatmentMessage) {
+  continueTreatmentMessage.style.display =
+    "block";
+}
 
       // Trigger existing equipment change event
       equipmentSelect.dispatchEvent(
