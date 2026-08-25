@@ -5344,6 +5344,21 @@ underRepair.textContent =
       dashboardStoreUnits.textContent =
         storeUnits;
     }
+    // Equipment Types in Store
+
+const {
+  count: storeTypesCount
+} = await client
+  .from("tblEquipmentStore")
+  .select("*", {
+    count: "exact",
+    head: true
+  });
+
+if (dashboardStoreTypes) {
+  dashboardStoreTypes.textContent =
+    storeTypesCount || 0;
+}
     // PM Due Today
 
 const {
