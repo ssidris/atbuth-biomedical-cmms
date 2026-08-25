@@ -5244,6 +5244,10 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardPMOverdue"
     );
+  const dashboardStoreUnits =
+    document.getElementById(
+      "dashboardStoreUnits"
+    );
 
   if (
   !totalEquipment ||
