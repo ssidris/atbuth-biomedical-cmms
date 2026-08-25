@@ -9806,6 +9806,203 @@ catch (error) {
 
 }
 
+if (storeEquipmentCard) {
+
+  storeEquipmentCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Biomedical Equipment Store";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading store inventory...";
+      }
+
+      if (tableHead) {
+
+        tableHead.innerHTML = `
+          <tr>
+            <th>Equipment Name</th>
+            <th>Quantity</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Date Received</th>
+            <th>Source</th>
+            <th>Store Location</th>
+            <th>Action</th>
+          </tr>
+        `;
+
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        const {
+          data: inventory,
+          error: inventoryError
+        } = await client
+          .from("tblEquipmentStore")
+          .select(
+            "StoreID, EquipmentName, Quantity, Manufacturer, Model, DateReceived, Source, StoreLocation"
+          )
+          .gt(
+            "Quantity",
+            0
+          )
+          .order(
+            "EquipmentName",
+            {
+              ascending: true
+            }
+          );
+
+        if (inventoryError) {
+          throw inventoryError;
+        }
+
+        if (title) {
+
+          title.textContent =
+            `Biomedical Equipment Store — ${
+              (inventory || []).length
+            } Records`;
+
+        }
+
+        if (
+          !inventory ||
+          inventory.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="8">
+                No equipment is currently available in the store.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No equipment is currently available in the store.";
+
+          return;
+        }
+
+        inventory.forEach(
+          item => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${item.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${item.Quantity || 0}
+              </td>
+
+              <td>
+                ${item.Manufacturer || "-"}
+              </td>
+
+              <td>
+                ${item.Model || "-"}
+              </td>
+
+              <td>
+                ${item.DateReceived || "-"}
+              </td>
+
+              <td>
+                ${item.Source || "-"}
+              </td>
+
+              <td>
+                ${item.StoreLocation || "-"}
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="secondary store-deploy-btn"
+                  data-store-id="${item.StoreID}"
+                >
+                  🚚 Deploy
+                </button>
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${inventory.length} store inventory records loaded.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Store inventory error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              Unable to load store inventory.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Unable to load store inventory.";
+
+      }
+
+    }
+  );
+
+}
+
           
 // ==========================================
 // MAINTENANCE REPORT EQUIPMENT SEARCH
