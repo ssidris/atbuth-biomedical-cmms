@@ -5248,6 +5248,10 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardStoreUnits"
     );
+  const dashboardStoreTypes =
+  document.getElementById(
+    "dashboardStoreTypes"
+  );
 
   if (
   !totalEquipment ||
