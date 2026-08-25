@@ -9038,7 +9038,7 @@ if (treatmentButton) {
 
   treatmentButton.addEventListener(
     "click",
-    function() {
+    async function() {
 
       const equipmentId =
         this.dataset.equipmentId;
