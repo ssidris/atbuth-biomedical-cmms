@@ -9074,6 +9074,25 @@ if (continueTreatmentMessage) {
   continueTreatmentMessage.style.display =
     "block";
 }
+      const previousMaintenancePanel =
+  document.getElementById(
+    "previousMaintenancePanel"
+  );
+
+const previousMaintenanceLoading =
+  document.getElementById(
+    "previousMaintenanceLoading"
+  );
+
+if (previousMaintenancePanel) {
+  previousMaintenancePanel.style.display =
+    "block";
+}
+
+if (previousMaintenanceLoading) {
+  previousMaintenanceLoading.textContent =
+    "Loading previous maintenance record...";
+}
 
       // Trigger existing equipment change event
       equipmentSelect.dispatchEvent(
