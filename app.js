@@ -7442,6 +7442,15 @@ const underRepairCard =
 
 const awaitingPartsCard =
   document.getElementById("awaitingPartsCard");
+const storeEquipmentCard =
+  document.getElementById(
+    "storeEquipmentCard"
+  );
+
+const storeEquipmentTypesCard =
+  document.getElementById(
+    "storeEquipmentTypesCard"
+  );
 
 const dashboardDetailsSection =
   document.getElementById(
