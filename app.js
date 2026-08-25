@@ -5316,6 +5316,30 @@ const {
 
 underRepair.textContent =
   underRepairCount || 0;
+    // Equipment Units in Store
+
+    const {
+      data: storeInventory,
+      error: storeInventoryError
+    } = await client
+      .from("tblEquipmentStore")
+      .select("Quantity");
+
+    if (storeInventoryError) {
+      throw storeInventoryError;
+    }
+
+    const storeUnits =
+      (storeInventory || []).reduce(
+        (total, item) =>
+          total + (Number(item.Quantity) || 0),
+        0
+      );
+
+    if (dashboardStoreUnits) {
+      dashboardStoreUnits.textContent =
+        storeUnits;
+    }
     // PM Due Today
 
 const {
