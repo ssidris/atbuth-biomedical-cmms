@@ -9323,6 +9323,7 @@ if (awaitingPartsCard) {
             <th>Model</th>
             <th>Serial Number</th>
             <th>Status</th>
+<th>Action</th>
           </tr>
         `;
       }
@@ -9489,6 +9490,15 @@ if (title) {
                   ] || "Awaiting Parts"
                 }
               </td>
+              <td>
+  <button
+    type="button"
+    class="secondary awaiting-parts-treatment-btn"
+    data-equipment-id="${item.EquipmentID}"
+  >
+    🔧 Continue Treatment
+  </button>
+</td>
             `;
 
             tableBody.appendChild(
