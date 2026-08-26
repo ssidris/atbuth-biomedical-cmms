@@ -59,6 +59,40 @@ const storeQuantity =
   document.getElementById(
     "storeQuantity"
   );
+const storeManufacturer =
+  document.getElementById(
+    "storeManufacturer"
+  );
+
+const storeModel =
+  document.getElementById(
+    "storeModel"
+  );
+
+const storeDateReceived =
+  document.getElementById(
+    "storeDateReceived"
+  );
+
+const storeSource =
+  document.getElementById(
+    "storeSource"
+  );
+
+const storeLocation =
+  document.getElementById(
+    "storeLocation"
+  );
+
+const storeRemarks =
+  document.getElementById(
+    "storeRemarks"
+  );
+
+const storeInventoryMessage =
+  document.getElementById(
+    "storeInventoryMessage"
+  );
 const maintenanceMessage =
   document.getElementById("maintenanceMessage");
 
