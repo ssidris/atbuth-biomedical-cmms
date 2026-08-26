@@ -743,6 +743,67 @@ async function loadStoreInventoryTable() {
           document.createElement(
             "tr"
           );
+        row.innerHTML = `
+          <td>
+            ${item.EquipmentName || ""}
+          </td>
+
+          <td>
+            ${item.Quantity ?? 0}
+          </td>
+
+          <td>
+            ${item.Manufacturer || ""}
+          </td>
+
+          <td>
+            ${item.Model || ""}
+          </td>
+
+          <td>
+            ${item.DateReceived || ""}
+          </td>
+
+          <td>
+            ${item.Source || ""}
+          </td>
+
+          <td>
+            ${item.StoreLocation || ""}
+          </td>
+
+          <td>
+            ${item.Remarks || ""}
+          </td>
+        `;
+
+        storeInventoryTableBody.appendChild(
+          row
+        );
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Store inventory table error:",
+      error
+    );
+
+    storeInventoryTableBody.innerHTML = `
+      <tr>
+        <td colspan="8">
+          Unable to load store inventory.
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
 // ==========================================
 // LOAD DEPARTMENTS FOR STORE DEPLOYMENT
 // ==========================================
