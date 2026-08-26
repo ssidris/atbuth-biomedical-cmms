@@ -3377,39 +3377,7 @@ if (storeDeploymentForm) {
 
     
         storeDeploymentForm.reset();
-
-        if (
-          typeof loadDashboard ===
-          "function"
-        ) {
-
-          await loadDashboard();
-
-        }
-
-      }
-
-      catch (error) {
-
-        console.error(
-          "Store deployment error:",
-          error
-        );
-
-        if (storeDeploymentMessage) {
-
-          storeDeploymentMessage.textContent =
-            "Error deploying equipment: " +
-            error.message;
-
-        }
-
-      }
-
-    }
-  );
-
-}
+        await loadStoreDeploymentDropdown();
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
