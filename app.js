@@ -2768,7 +2768,193 @@ await loadDashboard();
   );
 
 }
+if (storeInventoryForm) {
 
+  storeInventoryForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      if (storeInventoryMessage) {
+
+        storeInventoryMessage.textContent =
+          "Saving equipment to store...";
+
+      }
+
+      try {
+
+        // ----------------------------------
+        // CHECK LOGIN
+        // ----------------------------------
+
+        const {
+          data: authData,
+          error: authError
+        } = await client.auth.getUser();
+
+        if (
+          authError ||
+          !authData.user
+        ) {
+
+          throw new Error(
+            "Your session has expired. Please log in again."
+          );
+
+        }
+
+
+        // ----------------------------------
+        // GET VALUES
+        // ----------------------------------
+
+        const equipmentName =
+          storeEquipmentName.value.trim();
+
+        const quantity =
+          Number(
+            storeQuantity.value
+          );
+
+        const manufacturer =
+          storeManufacturer.value.trim();
+
+        const model =
+          storeModel.value.trim();
+
+        const dateReceived =
+          storeDateReceived.value || null;
+
+        const source =
+          storeSource.value.trim();
+
+        const storeLocationValue =
+          storeLocation.value.trim();
+
+        const remarks =
+          storeRemarks.value.trim();
+
+
+        // ----------------------------------
+        // VALIDATE
+        // ----------------------------------
+
+        if (!equipmentName) {
+
+          throw new Error(
+            "Equipment Name is required."
+          );
+
+        }
+
+        if (
+          !quantity ||
+          quantity < 1
+        ) {
+
+          throw new Error(
+            "Quantity must be at least 1."
+          );
+
+        }
+
+
+        // ----------------------------------
+        // INSERT INTO STORE
+        // ----------------------------------
+
+        const {
+          data: newInventory,
+          error: insertError
+        } = await client
+          .from("tblEquipmentStore")
+          .insert([
+            {
+              EquipmentName:
+                equipmentName,
+
+              Quantity:
+                quantity,
+
+              Manufacturer:
+                manufacturer || null,
+
+              Model:
+                model || null,
+
+              DateReceived:
+                dateReceived,
+
+              Source:
+                source || null,
+
+              StoreLocation:
+                storeLocationValue ||
+                null,
+
+              Remarks:
+                remarks || null
+            }
+          ])
+          .select();
+
+
+        if (insertError) {
+
+          throw insertError;
+
+        }
+
+
+        // ----------------------------------
+        // SUCCESS
+        // ----------------------------------
+
+        if (storeInventoryMessage) {
+
+          storeInventoryMessage.textContent =
+            "Equipment successfully added to store.";
+
+        }
+
+        storeInventoryForm.reset();
+
+
+        // Refresh dashboard counters
+        if (
+          typeof loadDashboard ===
+          "function"
+        ) {
+
+          await loadDashboard();
+
+        }
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Store inventory error:",
+          error
+        );
+
+        if (storeInventoryMessage) {
+
+          storeInventoryMessage.textContent =
+            "Error saving store inventory: " +
+            error.message;
+
+        }
+
+      }
+
+    }
+  );
+
+}
 
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
