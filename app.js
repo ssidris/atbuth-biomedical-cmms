@@ -59,6 +59,10 @@ const downloadStoreInventoryPDFBtn =
   document.getElementById(
     "downloadStoreInventoryPDFBtn"
   );
+const storeInventoryTableBody =
+  document.getElementById(
+    "storeInventoryTableBody"
+  );
 if (printStoreInventoryBtn) {
 
   printStoreInventoryBtn.addEventListener(
