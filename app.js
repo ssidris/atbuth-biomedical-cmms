@@ -734,6 +734,15 @@ async function loadStoreInventoryTable() {
 
       return;
     }
+    storeInventoryTableBody.innerHTML = "";
+
+    inventory.forEach(
+      item => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
 // ==========================================
 // LOAD DEPARTMENTS FOR STORE DEPLOYMENT
 // ==========================================
