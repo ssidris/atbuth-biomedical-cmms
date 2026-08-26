@@ -3378,6 +3378,14 @@ if (storeDeploymentForm) {
     
         storeDeploymentForm.reset();
         await loadStoreDeploymentDropdown();
+        if (
+          typeof loadDashboard ===
+          "function"
+        ) {
+
+          await loadDashboard();
+
+        }
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
