@@ -719,6 +719,21 @@ async function loadStoreInventoryTable() {
     if (inventoryError) {
       throw inventoryError;
     }
+    if (
+      !inventory ||
+      inventory.length === 0
+    ) {
+
+      storeInventoryTableBody.innerHTML = `
+        <tr>
+          <td colspan="8">
+            No equipment is currently available in the store.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
 // ==========================================
 // LOAD DEPARTMENTS FOR STORE DEPLOYMENT
 // ==========================================
