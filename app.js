@@ -54,6 +54,40 @@ const storeDeploymentForm =
   document.getElementById(
     "storeDeploymentForm"
   );
+const deploymentStoreId =
+  document.getElementById(
+    "deploymentStoreId"
+  );
+
+const deploymentQuantity =
+  document.getElementById(
+    "deploymentQuantity"
+  );
+
+const deploymentDepartmentId =
+  document.getElementById(
+    "deploymentDepartmentId"
+  );
+
+const deploymentMovementDate =
+  document.getElementById(
+    "deploymentMovementDate"
+  );
+
+const deploymentMovedBy =
+  document.getElementById(
+    "deploymentMovedBy"
+  );
+
+const deploymentRemarks =
+  document.getElementById(
+    "deploymentRemarks"
+  );
+
+const storeDeploymentMessage =
+  document.getElementById(
+    "storeDeploymentMessage"
+  );
 const storeEquipmentName =
   document.getElementById(
     "storeEquipmentName"
