@@ -3364,6 +3364,18 @@ if (storeDeploymentForm) {
         if (deploymentError) {
           throw deploymentError;
         }
+        // ----------------------------------
+        // DEPLOYMENT SUCCESS
+        // ----------------------------------
+
+        if (storeDeploymentMessage) {
+
+          storeDeploymentMessage.textContent =
+            "Equipment successfully deployed.";
+
+        }
+
+        storeDeploymentForm.reset();
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
