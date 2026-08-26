@@ -50,7 +50,15 @@ const storeInventoryForm =
   document.getElementById(
     "storeInventoryForm"
   );
+const storeEquipmentName =
+  document.getElementById(
+    "storeEquipmentName"
+  );
 
+const storeQuantity =
+  document.getElementById(
+    "storeQuantity"
+  );
 const maintenanceMessage =
   document.getElementById("maintenanceMessage");
 
