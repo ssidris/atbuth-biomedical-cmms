@@ -445,6 +445,124 @@ async function loadFormData() {
   await loadStoreDeploymentDropdown();
 
 }
+async function loadStoreDeploymentDropdown() {
+  // ==========================================
+// LOAD STORE EQUIPMENT FOR DEPLOYMENT
+// ==========================================
+
+async function loadStoreDeploymentDropdown() {
+
+  if (!deploymentStoreId) {
+    return;
+  }
+
+  deploymentStoreId.innerHTML = `
+    <option value="">
+      Loading store inventory...
+    </option>
+  `;
+
+  try {
+
+    const {
+      data: inventory,
+      error: inventoryError
+    } = await client
+      .from("tblEquipmentStore")
+      .select(
+        "StoreID, EquipmentName, Quantity, Manufacturer, Model"
+      )
+      .gt(
+        "Quantity",
+        0
+      )
+      .order(
+        "EquipmentName",
+        {
+          ascending: true
+        }
+      );
+
+    if (inventoryError) {
+      throw inventoryError;
+    }
+
+    deploymentStoreId.innerHTML = `
+      <option value="">
+        Select equipment
+      </option>
+    `;
+
+    if (
+      !inventory ||
+      inventory.length === 0
+    ) {
+
+      deploymentStoreId.innerHTML = `
+        <option value="">
+          No equipment available in store
+        </option>
+      `;
+
+      return;
+    }
+
+    inventory.forEach(
+      item => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          item.StoreID;
+
+        let label =
+          `${item.EquipmentName} — ${item.Quantity} available`;
+
+        if (item.Manufacturer) {
+
+          label +=
+            ` — ${item.Manufacturer}`;
+
+        }
+
+        if (item.Model) {
+
+          label +=
+            ` ${item.Model}`;
+
+        }
+
+        option.textContent =
+          label;
+
+        deploymentStoreId.appendChild(
+          option
+        );
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Store deployment dropdown error:",
+      error
+    );
+
+    deploymentStoreId.innerHTML = `
+      <option value="">
+        Unable to load store inventory
+      </option>
+    `;
+
+  }
+
+}
 
 
 // ==========================================
