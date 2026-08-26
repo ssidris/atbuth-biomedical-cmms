@@ -560,7 +560,102 @@ async function loadStoreDeploymentDropdown() {
   }
 
 }
+// ==========================================
+// LOAD DEPARTMENTS FOR STORE DEPLOYMENT
+// ==========================================
 
+async function loadStoreDeploymentDepartments() {
+
+  if (!deploymentDepartmentId) {
+    return;
+  }
+
+  deploymentDepartmentId.innerHTML = `
+    <option value="">
+      Loading departments...
+    </option>
+  `;
+
+  try {
+
+    const {
+      data: departments,
+      error: departmentError
+    } = await client
+      .from("tblDepartment")
+      .select(
+        "DepartmentID, DepartmentName"
+      )
+      .order(
+        "DepartmentName",
+        {
+          ascending: true
+        }
+      );
+
+    if (departmentError) {
+      throw departmentError;
+    }
+
+    deploymentDepartmentId.innerHTML = `
+      <option value="">
+        Select department
+      </option>
+    `;
+
+    if (
+      !departments ||
+      departments.length === 0
+    ) {
+
+      deploymentDepartmentId.innerHTML = `
+        <option value="">
+          No departments available
+        </option>
+      `;
+
+      return;
+    }
+
+    departments.forEach(
+      department => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          department.DepartmentID;
+
+        option.textContent =
+          department.DepartmentName;
+
+        deploymentDepartmentId.appendChild(
+          option
+        );
+
+      }
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Store deployment department error:",
+      error
+    );
+
+    deploymentDepartmentId.innerHTML = `
+      <option value="">
+        Unable to load departments
+      </option>
+    `;
+
+  }
+
+}
 
 // ==========================================
 // LOAD DEPARTMENT FOR EQUIPMENT
