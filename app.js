@@ -73,6 +73,14 @@ const deploymentMovementDate =
   document.getElementById(
     "deploymentMovementDate"
   );
+if (deploymentMovementDate) {
+
+  deploymentMovementDate.value =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+}
 
 const deploymentMovedBy =
   document.getElementById(
