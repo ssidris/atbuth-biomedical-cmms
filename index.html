@@ -822,7 +822,119 @@ content="width=device-width, initial-scale=1.0"
   </form>
 
 </section>
+<section
+  id="storeDeploymentSection"
+  class="card app-section hidden"
+>
 
+  <h2>
+    Deploy Equipment from Store
+  </h2>
+
+
+  <form id="storeDeploymentForm">
+
+
+    <label>
+      Equipment *
+
+      <select
+        id="deploymentStoreId"
+        required
+      >
+
+        <option value="">
+          Select equipment
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+      Quantity to Deploy *
+
+      <input
+        id="deploymentQuantity"
+        type="number"
+        min="1"
+        required
+        placeholder="Enter quantity"
+      >
+
+    </label>
+
+
+    <label>
+      Destination Department *
+
+      <select
+        id="deploymentDepartmentId"
+        required
+      >
+
+        <option value="">
+          Select department
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+      Movement Date *
+
+      <input
+        id="deploymentMovementDate"
+        type="date"
+        required
+      >
+
+    </label>
+
+
+    <label>
+      Moved By *
+
+      <input
+        id="deploymentMovedBy"
+        type="text"
+        required
+        placeholder="Enter name"
+      >
+
+    </label>
+
+
+    <label>
+      Remarks
+
+      <textarea
+        id="deploymentRemarks"
+        placeholder="Additional information"
+      ></textarea>
+
+    </label>
+
+
+    <button
+      type="submit"
+    >
+      🚚 Deploy Equipment
+    </button>
+
+
+    <p
+      id="storeDeploymentMessage"
+      class="message"
+    ></p>
+
+
+  </form>
+
+</section>
 <!-- ==================================== -->
 <!-- PREVENTIVE MAINTENANCE -->
 <!-- ==================================== -->
