@@ -3318,6 +3318,20 @@ if (storeDeploymentForm) {
           );
 
         }
+        // ----------------------------------
+        // CHECK AVAILABLE QUANTITY
+        // ----------------------------------
+
+        if (
+          quantity >
+          Number(storeItem.Quantity)
+        ) {
+
+          throw new Error(
+            `Only ${storeItem.Quantity} unit(s) of ${storeItem.EquipmentName} are available in the store.`
+          );
+
+        }
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
