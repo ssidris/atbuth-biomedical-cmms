@@ -443,6 +443,7 @@ async function loadFormData() {
   await loadEquipmentHistoryDropdown();
   await loadEquipmentSearchData();
   await loadStoreDeploymentDropdown();
+  await loadStoreDeploymentDepartments();
 
 }
 
