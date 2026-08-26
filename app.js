@@ -7683,6 +7683,10 @@ const storeEquipmentTypesCard =
   document.getElementById(
     "storeEquipmentTypesCard"
   );
+const openStoreInventoryBtn =
+  document.getElementById(
+    "openStoreInventoryBtn"
+  );
 
 const dashboardDetailsSection =
   document.getElementById(
