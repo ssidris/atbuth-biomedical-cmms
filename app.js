@@ -59,6 +59,107 @@ const downloadStoreInventoryPDFBtn =
   document.getElementById(
     "downloadStoreInventoryPDFBtn"
   );
+if (printStoreInventoryBtn) {
+
+  printStoreInventoryBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "storeInventoryTable"
+        );
+
+      if (!table) {
+
+        alert(
+          "Store inventory table was not found."
+        );
+
+        return;
+      }
+
+      const printWindow =
+        window.open(
+          "",
+          "_blank"
+        );
+
+      if (!printWindow) {
+
+        alert(
+          "Please allow pop-ups to print the store inventory."
+        );
+
+        return;
+      }
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Store Inventory</title>
+
+            <style>
+
+              body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+              }
+
+              h1 {
+                text-align: center;
+              }
+
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+              }
+
+              th,
+              td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: left;
+              }
+
+              th {
+                font-weight: bold;
+              }
+
+              @media print {
+
+                body {
+                  padding: 0;
+                }
+
+              }
+
+            </style>
+          </head>
+
+          <body>
+
+            <h1>
+              Biomedical Equipment Store Inventory
+            </h1>
+
+            ${table.outerHTML}
+
+          </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+
+      printWindow.focus();
+
+      printWindow.print();
+
+    }
+  );
+
+}
 const storeDeploymentForm =
   document.getElementById(
     "storeDeploymentForm"
