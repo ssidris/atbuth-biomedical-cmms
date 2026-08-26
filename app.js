@@ -684,6 +684,42 @@ async function loadStoreDeploymentDropdown() {
 
 }
 // ==========================================
+// LOAD STORE INVENTORY TABLE
+// ==========================================
+
+async function loadStoreInventoryTable() {
+  if (!storeInventoryTableBody) {
+    return;
+  }
+
+  storeInventoryTableBody.innerHTML = `
+    <tr>
+      <td colspan="8">
+        Loading store inventory...
+      </td>
+    </tr>
+  `;
+  try {
+
+    const {
+      data: inventory,
+      error: inventoryError
+    } = await client
+      .from("tblEquipmentStore")
+      .select(
+        "StoreID, EquipmentName, Quantity, Manufacturer, Model, DateReceived, Source, StoreLocation, Remarks"
+      )
+      .order(
+        "EquipmentName",
+        {
+          ascending: true
+        }
+      );
+
+    if (inventoryError) {
+      throw inventoryError;
+    }
+// ==========================================
 // LOAD DEPARTMENTS FOR STORE DEPLOYMENT
 // ==========================================
 
