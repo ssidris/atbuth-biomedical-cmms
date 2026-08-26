@@ -50,6 +50,15 @@ const storeInventoryForm =
   document.getElementById(
     "storeInventoryForm"
   );
+const printStoreInventoryBtn =
+  document.getElementById(
+    "printStoreInventoryBtn"
+  );
+
+const downloadStoreInventoryPDFBtn =
+  document.getElementById(
+    "downloadStoreInventoryPDFBtn"
+  );
 const storeDeploymentForm =
   document.getElementById(
     "storeDeploymentForm"
