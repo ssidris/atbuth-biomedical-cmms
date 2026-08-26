@@ -565,6 +565,7 @@ async function loadFormData() {
   await loadEquipmentHistoryDropdown();
   await loadEquipmentSearchData();
   await loadStoreDeploymentDropdown();
+  await loadStoreInventoryTable();
   await loadStoreDeploymentDepartments();
 
 }
