@@ -63,6 +63,25 @@ const storeInventoryTableBody =
   document.getElementById(
     "storeInventoryTableBody"
   );
+if (downloadStoreInventoryPDFBtn) {
+
+  downloadStoreInventoryPDFBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "storeInventoryTable"
+        );
+
+      if (!table) {
+
+        alert(
+          "Store inventory table not found."
+        );
+
+        return;
+      }
 if (printStoreInventoryBtn) {
 
   printStoreInventoryBtn.addEventListener(
