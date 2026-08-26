@@ -7725,6 +7725,10 @@ const openStoreInventoryBtn =
   document.getElementById(
     "openStoreInventoryBtn"
   );
+const openStoreDeploymentBtn =
+  document.getElementById(
+    "openStoreDeploymentBtn"
+  );
 
 const dashboardDetailsSection =
   document.getElementById(
