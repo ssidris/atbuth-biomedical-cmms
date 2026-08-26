@@ -445,10 +445,7 @@ async function loadFormData() {
   await loadStoreDeploymentDropdown();
 
 }
-async function loadStoreDeploymentDropdown() {
-  // ==========================================
-// LOAD STORE EQUIPMENT FOR DEPLOYMENT
-// ==========================================
+
 
 async function loadStoreDeploymentDropdown() {
 
