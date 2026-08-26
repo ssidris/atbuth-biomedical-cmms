@@ -3214,6 +3214,110 @@ if (storeInventoryForm) {
 
 }
 
+if (storeDeploymentForm) {
+
+  storeDeploymentForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      if (storeDeploymentMessage) {
+
+        storeDeploymentMessage.textContent =
+          "Processing deployment...";
+
+      }
+
+      try {
+
+        // Check login
+
+        const {
+          data: authData,
+          error: authError
+        } = await client.auth.getUser();
+
+        if (
+          authError ||
+          !authData.user
+        ) {
+
+          throw new Error(
+            "Your session has expired. Please log in again."
+          );
+
+        }
+        // ----------------------------------
+        // GET DEPLOYMENT VALUES
+        // ----------------------------------
+
+        const storeId =
+          deploymentStoreId.value;
+
+        const quantity =
+          Number(
+            deploymentQuantity.value
+          );
+
+        const departmentId =
+          deploymentDepartmentId.value;
+
+        const movementDate =
+          deploymentMovementDate.value;
+
+        const movedBy =
+          deploymentMovedBy.value.trim();
+
+        const remarks =
+          deploymentRemarks.value.trim();
+        // ----------------------------------
+        // VALIDATE DEPLOYMENT
+        // ----------------------------------
+
+        if (
+          !storeId ||
+          !quantity ||
+          quantity < 1 ||
+          !departmentId ||
+          !movementDate ||
+          !movedBy
+        ) {
+
+          throw new Error(
+            "Please complete all required deployment fields."
+          );
+
+        }
+        // ----------------------------------
+        // GET STORE ITEM
+        // ----------------------------------
+
+        const {
+          data: storeItem,
+          error: storeItemError
+        } = await client
+          .from("tblEquipmentStore")
+          .select(
+            "StoreID, EquipmentName, Quantity"
+          )
+          .eq(
+            "StoreID",
+            storeId
+          )
+          .maybeSingle();
+
+        if (storeItemError) {
+          throw storeItemError;
+        }
+
+        if (!storeItem) {
+
+          throw new Error(
+            "The selected equipment was not found in the store."
+          );
+
+        }
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
