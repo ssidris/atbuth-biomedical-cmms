@@ -46,6 +46,10 @@ const welcomeText =
 
 const maintenanceForm =
   document.getElementById("maintenanceForm");
+const storeInventoryForm =
+  document.getElementById(
+    "storeInventoryForm"
+  );
 
 const maintenanceMessage =
   document.getElementById("maintenanceMessage");
