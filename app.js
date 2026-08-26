@@ -10409,7 +10409,40 @@ if (storeEquipmentCard) {
     }
   );
 
-}        
+}
+if (openStoreInventoryBtn) {
+
+  openStoreInventoryBtn.addEventListener(
+    "click",
+    function() {
+
+      const storeInventorySection =
+        document.getElementById(
+          "storeInventorySection"
+        );
+
+      const dashboardSection =
+        document.getElementById(
+          "dashboardSection"
+        );
+
+      if (storeInventorySection) {
+
+        storeInventorySection.classList.remove(
+          "hidden"
+        );
+
+        storeInventorySection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    }
+  );
+
+}
 // ==========================================
 // MAINTENANCE REPORT EQUIPMENT SEARCH
 // ==========================================
