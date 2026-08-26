@@ -3333,27 +3333,36 @@ if (storeDeploymentForm) {
 
         }
         // ----------------------------------
-        // RECORD STORE MOVEMENT
+        // DEPLOY EQUIPMENT SAFELY
         // ----------------------------------
 
         const {
-          error: movementError
-        } = await client
-          .from("tblEquipmentStoreMovement")
-          .insert([
-            {
-              StoreID: storeId,
-              MovementType: "DEPLOYMENT",
-              Quantity: quantity,
-              DepartmentID: departmentId,
-              MovementDate: movementDate,
-              MovedBy: movedBy,
-              Remarks: remarks || null
-            }
-          ]);
+          error: deploymentError
+        } = await client.rpc(
+          "deploy_store_equipment",
+          {
+            p_store_id:
+              Number(storeId),
 
-        if (movementError) {
-          throw movementError;
+            p_quantity:
+              quantity,
+
+            p_department_id:
+              Number(departmentId),
+
+            p_movement_date:
+              movementDate,
+
+            p_moved_by:
+              movedBy,
+
+            p_remarks:
+              remarks || null
+          }
+        );
+
+        if (deploymentError) {
+          throw deploymentError;
         }
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
