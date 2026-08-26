@@ -3332,6 +3332,29 @@ if (storeDeploymentForm) {
           );
 
         }
+        // ----------------------------------
+        // RECORD STORE MOVEMENT
+        // ----------------------------------
+
+        const {
+          error: movementError
+        } = await client
+          .from("tblEquipmentStoreMovement")
+          .insert([
+            {
+              StoreID: storeId,
+              MovementType: "DEPLOYMENT",
+              Quantity: quantity,
+              DepartmentID: departmentId,
+              MovementDate: movementDate,
+              MovedBy: movedBy,
+              Remarks: remarks || null
+            }
+          ]);
+
+        if (movementError) {
+          throw movementError;
+        }
 // ==========================================
 // PREVENTIVE MAINTENANCE FORM
 // ==========================================
