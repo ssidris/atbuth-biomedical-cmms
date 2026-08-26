@@ -63,6 +63,15 @@ const storeInventoryTableBody =
   document.getElementById(
     "storeInventoryTableBody"
   );
+const storeMovementHistoryTableBody =
+  document.getElementById(
+    "storeMovementHistoryTableBody"
+  );
+
+const storeMovementHistoryMessage =
+  document.getElementById(
+    "storeMovementHistoryMessage"
+  );
 if (downloadStoreInventoryPDFBtn) {
 
   downloadStoreInventoryPDFBtn.addEventListener(
