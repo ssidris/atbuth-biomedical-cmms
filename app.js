@@ -50,6 +50,10 @@ const storeInventoryForm =
   document.getElementById(
     "storeInventoryForm"
   );
+const storeDeploymentForm =
+  document.getElementById(
+    "storeDeploymentForm"
+  );
 const storeEquipmentName =
   document.getElementById(
     "storeEquipmentName"
