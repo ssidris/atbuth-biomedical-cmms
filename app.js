@@ -10003,7 +10003,177 @@ if (storeEquipmentCard) {
 
 }
 
-          
+  if (storeEquipmentTypesCard) {
+
+  storeEquipmentTypesCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Equipment Types in Store";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading store equipment types...";
+      }
+
+      if (tableHead) {
+
+        tableHead.innerHTML = `
+          <tr>
+            <th>Equipment Name</th>
+            <th>Total Quantity</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+          </tr>
+        `;
+
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        const {
+          data: inventory,
+          error: inventoryError
+        } = await client
+          .from("tblEquipmentStore")
+          .select(
+            "EquipmentName, Quantity, Manufacturer, Model"
+          )
+          .gt(
+            "Quantity",
+            0
+          )
+          .order(
+            "EquipmentName",
+            {
+              ascending: true
+            }
+          );
+
+        if (inventoryError) {
+          throw inventoryError;
+        }
+
+        if (title) {
+
+          title.textContent =
+            `Equipment Types in Store — ${
+              (inventory || []).length
+            } Records`;
+
+        }
+
+        if (
+          !inventory ||
+          inventory.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="4">
+                No equipment types are currently in the store.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No equipment types are currently in the store.";
+
+          return;
+        }
+
+        inventory.forEach(
+          item => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${item.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${item.Quantity || 0}
+              </td>
+
+              <td>
+                ${item.Manufacturer || "-"}
+              </td>
+
+              <td>
+                ${item.Model || "-"}
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${inventory.length} equipment types found in store.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Store equipment types error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              Unable to load equipment types in store.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Store types error: " +
+          error.message;
+
+      }
+
+    }
+  );
+
+}        
 // ==========================================
 // MAINTENANCE REPORT EQUIPMENT SEARCH
 // ==========================================
