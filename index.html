@@ -692,7 +692,130 @@ content="width=device-width, initial-scale=1.0"
 
 </section>
 
+<section
+  id="storeInventorySection"
+  class="card app-section hidden"
+>
 
+  <h2>
+    Biomedical Equipment Store Inventory
+  </h2>
+
+
+  <form id="storeInventoryForm">
+
+
+    <label>
+      Equipment Name *
+
+      <input
+        id="storeEquipmentName"
+        type="text"
+        required
+        placeholder="Enter equipment name"
+      >
+
+    </label>
+
+
+    <label>
+      Quantity *
+
+      <input
+        id="storeQuantity"
+        type="number"
+        min="1"
+        required
+        placeholder="Enter quantity"
+      >
+
+    </label>
+
+
+    <label>
+      Manufacturer
+
+      <input
+        id="storeManufacturer"
+        type="text"
+        placeholder="Optional"
+      >
+
+    </label>
+
+
+    <label>
+      Model
+
+      <input
+        id="storeModel"
+        type="text"
+        placeholder="Optional"
+      >
+
+    </label>
+
+
+    <label>
+      Date Received
+
+      <input
+        id="storeDateReceived"
+        type="date"
+      >
+
+    </label>
+
+
+    <label>
+      Source
+
+      <input
+        id="storeSource"
+        type="text"
+        placeholder="e.g. Procurement, Donation, NGO"
+      >
+
+    </label>
+
+
+    <label>
+      Store Location
+
+      <input
+        id="storeLocation"
+        type="text"
+        placeholder="Enter store location"
+      >
+
+    </label>
+
+
+    <label>
+      Remarks
+
+      <textarea
+        id="storeRemarks"
+        placeholder="Additional information"
+      ></textarea>
+
+    </label>
+
+
+    <button type="submit">
+      Add Equipment to Store
+    </button>
+
+
+    <p
+      id="storeInventoryMessage"
+      class="message"
+    ></p>
+
+
+  </form>
+
+</section>
 
 <!-- ==================================== -->
 <!-- PREVENTIVE MAINTENANCE -->
