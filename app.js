@@ -10485,6 +10485,34 @@ if (openStoreInventoryBtn) {
   );
 
 }
+if (openStoreDeploymentBtn) {
+
+  openStoreDeploymentBtn.addEventListener(
+    "click",
+    function() {
+
+      const storeDeploymentSection =
+        document.getElementById(
+          "storeDeploymentSection"
+        );
+
+      if (storeDeploymentSection) {
+
+        storeDeploymentSection.classList.remove(
+          "hidden"
+        );
+
+        storeDeploymentSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+    }
+  );
+
+}
 // ==========================================
 // MAINTENANCE REPORT EQUIPMENT SEARCH
 // ==========================================
