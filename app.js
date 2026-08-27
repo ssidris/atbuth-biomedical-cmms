@@ -4077,10 +4077,6 @@ if (storeDeploymentForm) {
   Number(
     deploymentStoreId.value
   );
-        alert(
-  "Selected StoreID: " +
-  storeId
-);
 
         const quantity =
           Number(
@@ -4133,10 +4129,6 @@ if (storeDeploymentForm) {
             storeId
           )
           .maybeSingle();
-        alert(
-  "Store query result: " +
-  JSON.stringify(storeItem)
-);
 
         if (storeItemError) {
           throw storeItemError;
