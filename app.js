@@ -11500,7 +11500,65 @@ if (storeEquipmentCard) {
         loading.textContent =
           `${inventory.length} store inventory records loaded.`;
 
-      }
+        document
+          .querySelectorAll(
+            ".store-deploy-btn"
+          )
+          .forEach(
+            button => {
+
+              button.addEventListener(
+                "click",
+                function() {
+                  const storeId =
+                    this.getAttribute(
+                      "data-store-id"
+                    );
+
+                  const storeDeploymentSection =
+                    document.getElementById(
+                      "storeDeploymentSection"
+                    );
+
+                  if (
+                    storeDeploymentSection
+                  ) {
+
+                    storeDeploymentSection.classList.remove(
+                      "hidden"
+                    );
+
+                    storeDeploymentSection.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start"
+                    });
+
+                  }
+
+                  if (
+                    deploymentStoreId
+                  ) {
+
+                    deploymentStoreId.value =
+                      storeId;
+
+                    deploymentStoreId.dispatchEvent(
+                      new Event(
+                        "change",
+                        {
+                          bubbles: true
+                        }
+                      )
+                    );
+
+                  }
+
+                }
+              );
+
+            }
+          );
+        }
 
       catch (error) {
 
