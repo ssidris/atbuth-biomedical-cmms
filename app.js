@@ -8966,6 +8966,10 @@ const openStoreDeploymentBtn =
   document.getElementById(
     "openStoreDeploymentBtn"
   );
+const openStoreMovementHistoryBtn =
+  document.getElementById(
+    "openStoreMovementHistoryBtn"
+  );
 
 const dashboardDetailsSection =
   document.getElementById(
