@@ -4074,7 +4074,9 @@ if (storeDeploymentForm) {
         // ----------------------------------
 
         const storeId =
-          deploymentStoreId.value;
+  Number(
+    deploymentStoreId.value
+  );
 
         const quantity =
           Number(
