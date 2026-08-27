@@ -4134,7 +4134,6 @@ const {
   .single();
 
 if (storeItemError) {
-if (storeItemError) {
 
   console.error(
     "Store item retrieval error:",
