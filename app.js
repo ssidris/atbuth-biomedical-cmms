@@ -4134,15 +4134,23 @@ const {
   .single();
 
 if (storeItemError) {
+if (storeItemError) {
 
   console.error(
     "Store item retrieval error:",
     storeItemError
   );
 
-  throw new Error(
-    "Unable to retrieve the selected equipment from the store."
+  alert(
+    "Store retrieval error:\n\n" +
+    JSON.stringify(
+      storeItemError,
+      null,
+      2
+    )
   );
+
+  throw storeItemError;
 
 }
 
