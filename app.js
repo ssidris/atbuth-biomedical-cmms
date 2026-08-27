@@ -4084,7 +4084,9 @@ if (storeDeploymentForm) {
           );
 
         const departmentId =
-          deploymentDepartmentId.value;
+  Number(
+    deploymentDepartmentId.value
+  );
 
         const movementDate =
           deploymentMovementDate.value;
