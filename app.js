@@ -4115,34 +4115,44 @@ if (storeDeploymentForm) {
 
         }
         // ----------------------------------
-        // GET STORE ITEM
-        // ----------------------------------
+// GET STORE ITEM
+// ----------------------------------
 
-        const {
-          data: storeItem,
-          error: storeItemError
-        } = await client
-          .from("tblEquipmentStore")
-          .select(
-            "StoreID, EquipmentName, Quantity"
-          )
-          .eq(
-            "StoreID",
-            storeId
-          )
-          .maybeSingle();
+const {
+  data: storeItem,
+  error: storeItemError
+} = await client
+  .from("tblEquipmentStore")
+  .select(
+    "StoreID, EquipmentName, Quantity"
+  )
+  .eq(
+    "StoreID",
+    storeId
+  )
+  .limit(1)
+  .single();
 
-        if (storeItemError) {
-          throw storeItemError;
-        }
+if (storeItemError) {
 
-        if (!storeItem) {
+  console.error(
+    "Store item retrieval error:",
+    storeItemError
+  );
 
-          throw new Error(
-            "The selected equipment was not found in the store."
-          );
+  throw new Error(
+    "Unable to retrieve the selected equipment from the store."
+  );
 
-        }
+}
+
+if (!storeItem) {
+
+  throw new Error(
+    "The selected equipment could not be retrieved from the store."
+  );
+
+}
         // ----------------------------------
         // CHECK AVAILABLE QUANTITY
         // ----------------------------------
