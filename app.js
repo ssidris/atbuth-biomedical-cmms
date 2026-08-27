@@ -1091,6 +1091,305 @@ async function loadStoreInventoryTable() {
 
 }
 // ==========================================
+// LOAD STORE MOVEMENT HISTORY
+// ==========================================
+
+async function loadStoreMovementHistory() {
+  if (!storeMovementHistoryTableBody) {
+    return;
+  }
+
+  if (storeMovementHistoryMessage) {
+    storeMovementHistoryMessage.textContent =
+      "Loading movement history...";
+  }
+
+  storeMovementHistoryTableBody.innerHTML = `
+    <tr>
+      <td colspan="7">
+        Loading movement history...
+      </td>
+    </tr>
+  `;
+
+  try {
+
+    const {
+      data: movements,
+      error: movementError
+    } = await client
+      .from("tblEquipmentStoreMovement")
+      .select(`
+        MovementID,
+        StoreID,
+        MovementType,
+        Quantity,
+        DepartmentID,
+        MovementDate,
+        MovedBy,
+        Remarks,
+        CreatedAt
+      `)
+      .order(
+        "MovementDate",
+        {
+          ascending: false
+        }
+      )
+      .order(
+        "CreatedAt",
+        {
+          ascending: false
+        }
+      );
+
+    if (movementError) {
+      throw movementError;
+    }
+
+    if (
+      !movements ||
+      movements.length === 0
+    ) {
+
+      storeMovementHistoryTableBody.innerHTML = `
+        <tr>
+          <td colspan="7">
+            No store movement records available.
+          </td>
+        </tr>
+      `;
+
+      if (storeMovementHistoryMessage) {
+        storeMovementHistoryMessage.textContent = "";
+      }
+
+      return;
+    }
+
+
+    // ====================================
+    // GET STORE EQUIPMENT NAMES
+    // ====================================
+
+    const storeIds = [
+      ...new Set(
+        movements
+          .map(
+            movement =>
+              movement.StoreID
+          )
+          .filter(
+            id =>
+              id !== null &&
+              id !== undefined
+          )
+      )
+    ];
+
+    let storeMap = {};
+
+    if (storeIds.length > 0) {
+
+      const {
+        data: stores,
+        error: storeError
+      } = await client
+        .from("tblEquipmentStore")
+        .select(
+          "StoreID, EquipmentName"
+        )
+        .in(
+          "StoreID",
+          storeIds
+        );
+
+      if (storeError) {
+        throw storeError;
+      }
+
+      (stores || []).forEach(
+        store => {
+
+          storeMap[
+            store.StoreID
+          ] =
+            store.EquipmentName ||
+            "Unknown equipment";
+
+        }
+      );
+
+    }
+
+
+    // ====================================
+    // GET DEPARTMENT NAMES
+    // ====================================
+
+    const departmentIds = [
+      ...new Set(
+        movements
+          .map(
+            movement =>
+              movement.DepartmentID
+          )
+          .filter(
+            id =>
+              id !== null &&
+              id !== undefined
+          )
+      )
+    ];
+
+    let departmentMap = {};
+
+    if (departmentIds.length > 0) {
+
+      const {
+        data: departments,
+        error: departmentError
+      } = await client
+        .from("tblDepartment")
+        .select(
+          "DepartmentID, DepartmentName"
+        )
+        .in(
+          "DepartmentID",
+          departmentIds
+        );
+
+      if (departmentError) {
+        throw departmentError;
+      }
+
+      (departments || []).forEach(
+        department => {
+
+          departmentMap[
+            department.DepartmentID
+          ] =
+            department.DepartmentName ||
+            "Unknown department";
+
+        }
+      );
+
+    }
+
+
+    // ====================================
+    // DISPLAY MOVEMENT HISTORY
+    // ====================================
+
+    storeMovementHistoryTableBody.innerHTML = "";
+
+    movements.forEach(
+      movement => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+        const movementDate =
+          movement.MovementDate
+            ? new Date(
+                movement.MovementDate
+              ).toLocaleDateString()
+            : "";
+
+        row.innerHTML = `
+          <td>
+            ${
+              storeMap[
+                movement.StoreID
+              ] ||
+              "Unknown equipment"
+            }
+          </td>
+
+          <td>
+            ${
+              movement.MovementType ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              movement.Quantity ??
+              0
+            }
+          </td>
+
+          <td>
+            ${
+              departmentMap[
+                movement.DepartmentID
+              ] ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${movementDate}
+          </td>
+
+          <td>
+            ${
+              movement.MovedBy ||
+              ""
+            }
+          </td>
+
+          <td>
+            ${
+              movement.Remarks ||
+              ""
+            }
+          </td>
+        `;
+
+        storeMovementHistoryTableBody.appendChild(
+          row
+        );
+
+      }
+    );
+
+    if (storeMovementHistoryMessage) {
+      storeMovementHistoryMessage.textContent =
+        `${movements.length} movement record(s) found.`;
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Store movement history error:",
+      error
+    );
+
+    storeMovementHistoryTableBody.innerHTML = `
+      <tr>
+        <td colspan="7">
+          Unable to load store movement history.
+        </td>
+      </tr>
+    `;
+
+    if (storeMovementHistoryMessage) {
+      storeMovementHistoryMessage.textContent =
+        "Error loading movement history: " +
+        error.message;
+    }
+
+  }
+
+}
+// ==========================================
 // LOAD DEPARTMENTS FOR STORE DEPLOYMENT
 // ==========================================
 
