@@ -4077,6 +4077,10 @@ if (storeDeploymentForm) {
   Number(
     deploymentStoreId.value
   );
+        alert(
+  "Selected StoreID: " +
+  storeId
+);
 
         const quantity =
           Number(
