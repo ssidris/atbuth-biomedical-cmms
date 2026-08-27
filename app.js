@@ -4198,6 +4198,7 @@ if (storeDeploymentForm) {
 
     
         storeDeploymentForm.reset();
+        await loadStoreDeploymentDropdown();
 
 if (
   typeof loadDashboard ===
