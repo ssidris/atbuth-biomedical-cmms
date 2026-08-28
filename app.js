@@ -4160,6 +4160,13 @@ if (!storeItem) {
   );
 
 }
+        alert(
+  "Deployment check:\n" +
+  "StoreID = " +
+  storeId +
+  "\nStore item = " +
+  JSON.stringify(storeItem)
+);
         // ----------------------------------
         // CHECK AVAILABLE QUANTITY
         // ----------------------------------
