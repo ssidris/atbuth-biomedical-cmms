@@ -12514,3 +12514,151 @@ if (printStoreMovementHistoryBtn) {
   );
 
 }
+
+const downloadStoreMovementHistoryPdfBtn =
+  document.getElementById(
+    "downloadStoreMovementHistoryPdfBtn"
+  );
+
+if (downloadStoreMovementHistoryPdfBtn) {
+
+  downloadStoreMovementHistoryPdfBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "storeMovementHistoryTable"
+        );
+
+      if (!table) {
+
+        alert(
+          "Store Movement History table was not found."
+        );
+
+        return;
+      }
+
+      if (
+        typeof window.jspdf ===
+        "undefined"
+      ) {
+
+        alert(
+          "PDF library is not available."
+        );
+
+        return;
+      }
+
+      const {
+        jsPDF
+      } = window.jspdf;
+
+      const doc =
+        new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4"
+        });
+
+      doc.setFontSize(16);
+
+      doc.text(
+        "Store Movement History",
+        148,
+        15,
+        {
+          align: "center"
+        }
+      );
+
+      doc.setFontSize(10);
+
+      doc.text(
+        "Generated: " +
+        new Date().toLocaleString(),
+        14,
+        23
+      );
+
+      const rows = [];
+
+      table
+        .querySelectorAll(
+          "tbody tr"
+        )
+        .forEach(
+          row => {
+
+            const cells =
+              row.querySelectorAll(
+                "td"
+              );
+
+            if (
+              cells.length >= 7
+            ) {
+
+              rows.push([
+                cells[0].innerText.trim(),
+                cells[1].innerText.trim(),
+                cells[2].innerText.trim(),
+                cells[3].innerText.trim(),
+                cells[4].innerText.trim(),
+                cells[5].innerText.trim(),
+                cells[6].innerText.trim()
+              ]);
+
+            }
+
+          }
+        );
+
+      if (rows.length === 0) {
+
+        alert(
+          "There are no movement records to export."
+        );
+
+        return;
+      }
+
+      doc.autoTable({
+
+        startY: 28,
+
+        head: [[
+          "Equipment Name",
+          "Movement Type",
+          "Quantity",
+          "Department",
+          "Movement Date",
+          "Moved By",
+          "Remarks"
+        ]],
+
+        body: rows,
+
+        theme: "grid",
+
+        styles: {
+          fontSize: 8,
+          cellPadding: 2
+        },
+
+        headStyles: {
+          fontSize: 8
+        }
+
+      });
+
+      doc.save(
+        "Store_Movement_History.pdf"
+      );
+
+    }
+  );
+
+}
