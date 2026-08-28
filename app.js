@@ -12662,3 +12662,82 @@ if (downloadStoreMovementHistoryPdfBtn) {
   );
 
 }
+
+const storeInventorySearch =
+  document.getElementById(
+    "storeInventorySearch"
+  );
+
+const clearStoreInventorySearchBtn =
+  document.getElementById(
+    "clearStoreInventorySearchBtn"
+  );
+
+if (storeInventorySearch) {
+
+  storeInventorySearch.addEventListener(
+    "input",
+    function() {
+
+      const searchText =
+        this.value
+          .trim()
+          .toLowerCase();
+
+      const rows =
+        storeInventoryTableBody
+          ? storeInventoryTableBody.querySelectorAll(
+              "tr"
+            )
+          : [];
+
+      rows.forEach(
+        row => {
+
+          const rowText =
+            row.textContent
+              .toLowerCase();
+
+          if (
+            !searchText ||
+            rowText.includes(searchText)
+          ) {
+
+            row.style.display = "";
+
+          } else {
+
+            row.style.display = "none";
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+}
+
+if (clearStoreInventorySearchBtn) {
+
+  clearStoreInventorySearchBtn.addEventListener(
+    "click",
+    function() {
+
+      if (storeInventorySearch) {
+
+        storeInventorySearch.value = "";
+
+        storeInventorySearch.dispatchEvent(
+          new Event("input")
+        );
+
+        storeInventorySearch.focus();
+
+      }
+
+    }
+  );
+
+}
