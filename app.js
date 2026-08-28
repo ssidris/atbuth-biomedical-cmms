@@ -4196,8 +4196,20 @@ if (!storeItem) {
         );
 
         if (deploymentError) {
-          throw deploymentError;
-        }
+
+  console.error(
+    "RPC deployment error:",
+    deploymentError
+  );
+
+  alert(
+    "RPC ERROR:\n" +
+    deploymentError.message
+  );
+
+  throw deploymentError;
+
+}
         // ----------------------------------
         // DEPLOYMENT SUCCESS
         // ----------------------------------
