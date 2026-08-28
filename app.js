@@ -4140,15 +4140,6 @@ if (storeItemError) {
     storeItemError
   );
 
-  alert(
-    "Store retrieval error:\n\n" +
-    JSON.stringify(
-      storeItemError,
-      null,
-      2
-    )
-  );
-
   throw storeItemError;
 
 }
@@ -4160,13 +4151,7 @@ if (!storeItem) {
   );
 
 }
-        alert(
-  "Deployment check:\n" +
-  "StoreID = " +
-  storeId +
-  "\nStore item = " +
-  JSON.stringify(storeItem)
-);
+        
         // ----------------------------------
         // CHECK AVAILABLE QUANTITY
         // ----------------------------------
