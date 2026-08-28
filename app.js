@@ -12399,3 +12399,118 @@ async function setupPMEquipmentSearch() {
 // ==========================================
 
 setupPMEquipmentSearch();
+const printStoreMovementHistoryBtn =
+  document.getElementById(
+    "printStoreMovementHistoryBtn"
+  );
+
+if (printStoreMovementHistoryBtn) {
+
+  printStoreMovementHistoryBtn.addEventListener(
+    "click",
+    function() {
+
+      const table =
+        document.getElementById(
+          "storeMovementHistoryTable"
+        );
+
+      if (!table) {
+        alert(
+          "Store Movement History table was not found."
+        );
+        return;
+      }
+
+      const printWindow =
+        window.open(
+          "",
+          "_blank"
+        );
+
+      if (!printWindow) {
+
+        alert(
+          "Unable to open print window. Please allow pop-ups."
+        );
+
+        return;
+      }
+
+      printWindow.document.write(`
+        <html>
+        <head>
+
+          <title>
+            Store Movement History
+          </title>
+
+          <style>
+
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+            }
+
+            h1 {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+
+            th,
+            td {
+              border: 1px solid #000;
+              padding: 8px;
+              text-align: left;
+            }
+
+            th {
+              font-weight: bold;
+            }
+
+            @media print {
+
+              body {
+                margin: 10mm;
+              }
+
+            }
+
+          </style>
+
+        </head>
+
+        <body>
+
+          <h1>
+            Store Movement History
+          </h1>
+
+          ${table.outerHTML}
+
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+
+      printWindow.focus();
+
+      setTimeout(
+        function() {
+
+          printWindow.print();
+
+        },
+        500
+      );
+
+    }
+  );
+
+}
