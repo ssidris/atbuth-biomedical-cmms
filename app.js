@@ -6767,6 +6767,10 @@ async function loadDashboard() {
     document.getElementById(
       "dashboardAwaitingParts"
     );
+  const outOfService =
+  document.getElementById(
+    "dashboardOutOfService"
+  );
 
   const pmDueToday =
     document.getElementById(
