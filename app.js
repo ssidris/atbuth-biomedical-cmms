@@ -8995,6 +8995,10 @@ const underRepairCard =
 
 const awaitingPartsCard =
   document.getElementById("awaitingPartsCard");
+const outOfServiceCard =
+  document.getElementById(
+    "outOfServiceCard"
+  );
 const storeEquipmentCard =
   document.getElementById(
     "storeEquipmentCard"
