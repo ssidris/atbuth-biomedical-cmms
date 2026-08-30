@@ -217,29 +217,25 @@ button.secondary {
 /* Dashboard Status Colors */
 
 .dashboard-total {
-  background: #2196F3;
-  color: #ffffff;
+  background: #E3F2FD;
 }
 
 .dashboard-working {
-  background: #4CAF50;
-  color: #ffffff;
+  background: #E8F5E9;
 }
 
 .dashboard-repair {
-  background: #FF9800;
-  color: #ffffff;
+  background: #FFF3E0;
 }
 
 .dashboard-awaiting {
-  background: #FFC107;
-  color: #ffffff;
+  background: #FFFDE7;
 }
 
 .dashboard-outofservice {
-  background: #F44336;
-  color: #ffffff;
+  background: #FFEBEE;
 }
+
 
 /* ==========================================
    CLICKABLE DASHBOARD CARDS
