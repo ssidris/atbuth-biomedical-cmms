@@ -6994,6 +6994,22 @@ const {
 
 awaitingParts.textContent =
   awaitingPartsCount || 0;
+    // Out of Service Equipment
+
+const {
+  count: outOfServiceCount
+} = await client
+  .from("tblEquipment")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("StatusID", 4);
+
+if (outOfService) {
+  outOfService.textContent =
+    outOfServiceCount || 0;
+}
     await loadDashboardRecentReports();
     
   }
