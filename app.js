@@ -1810,6 +1810,65 @@ async function loadEquipmentHistoryDropdown() {
 
 }
 // ==========================================
+// EQUIPMENT HISTORY SEARCH
+// ==========================================
+
+function setupEquipmentHistorySearch() {
+
+  const searchInput =
+    document.getElementById(
+      "historyEquipmentSearch"
+    );
+
+  const equipmentSelect =
+    document.getElementById(
+      "historyEquipmentId"
+    );
+
+  if (
+    !searchInput ||
+    !equipmentSelect
+  ) {
+    return;
+  }
+
+  searchInput.addEventListener(
+    "input",
+    function() {
+
+      const searchTerm =
+        this.value
+          .toLowerCase()
+          .trim();
+
+      Array.from(
+        equipmentSelect.options
+      ).forEach(
+        option => {
+
+          if (!option.value) {
+            option.hidden = false;
+            return;
+          }
+
+          const equipmentText =
+            option.textContent
+              .toLowerCase();
+
+          option.hidden =
+            searchTerm &&
+            !equipmentText.includes(
+              searchTerm
+            );
+
+        }
+      );
+
+    }
+  );
+
+}
+// ==========================================
 // EQUIPMENT SEARCH
 // ==========================================
 
@@ -12637,6 +12696,7 @@ async function setupPMEquipmentSearch() {
 // ==========================================
 
 setupPMEquipmentSearch();
+setupEquipmentHistorySearch();
 const printStoreMovementHistoryBtn =
   document.getElementById(
     "printStoreMovementHistoryBtn"
