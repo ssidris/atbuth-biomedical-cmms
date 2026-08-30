@@ -217,23 +217,28 @@ button.secondary {
 /* Dashboard Status Colors */
 
 .dashboard-total {
-  background: #E3F2FD;
+  background: #2196F3;
+  color: #ffffff;
 }
 
 .dashboard-working {
-  background: #E8F5E9;
+  background: #4CAF50;
+  color: #ffffff;
 }
 
 .dashboard-repair {
-  background: #FFF3E0;
+  background: #FF9800;
+  color: #ffffff;
 }
 
 .dashboard-awaiting {
-  background: #FFFDE7;
+  background: #FFC107;
+  color: #ffffff;
 }
 
 .dashboard-outofservice {
-  background: #FFEBEE;
+  background: #F44336;
+  color: #ffffff;
 }
 
 /* ==========================================
