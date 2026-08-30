@@ -11374,7 +11374,221 @@ catch (error) {
   );
 
 }
+// ==========================================
+// OUT OF SERVICE CARD
+// ==========================================
 
+if (outOfServiceCard) {
+
+  outOfServiceCard.addEventListener(
+    "click",
+    async function() {
+
+      openDashboardDetails();
+
+      const title =
+        document.getElementById(
+          "dashboardDetailsTitle"
+        );
+
+      const loading =
+        document.getElementById(
+          "dashboardDetailsLoading"
+        );
+
+      const tableHead =
+        document.getElementById(
+          "dashboardDetailsTableHead"
+        );
+
+      const tableBody =
+        document.getElementById(
+          "dashboardDetailsTableBody"
+        );
+
+      if (title) {
+        title.textContent =
+          "Equipment Out of Service";
+      }
+
+      if (loading) {
+        loading.textContent =
+          "Loading equipment out of service...";
+      }
+
+      if (tableHead) {
+        tableHead.innerHTML = `
+          <tr>
+            <th>BME Number</th>
+            <th>Equipment</th>
+            <th>Department</th>
+            <th>Manufacturer</th>
+            <th>Model</th>
+            <th>Serial Number</th>
+            <th>Status</th>
+          </tr>
+        `;
+      }
+
+      if (tableBody) {
+        tableBody.innerHTML = "";
+      }
+
+      try {
+
+        const {
+          data: equipment,
+          error: equipmentError
+        } = await client
+          .from("tblEquipment")
+          .select(
+            "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model, SerialNumber, DepartmentID, StatusID"
+          )
+          .eq(
+            "StatusID",
+            4
+          )
+          .order(
+            "BMENumber",
+            {
+              ascending: true
+            }
+          );
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+        if (title) {
+          title.textContent =
+            `Equipment Out of Service — ${
+              (equipment || []).length
+            } Records`;
+        }
+
+        const {
+          data: departments,
+          error: departmentError
+        } = await client
+          .from("tblDepartment")
+          .select(
+            "DepartmentID, DepartmentName"
+          );
+
+        if (departmentError) {
+          throw departmentError;
+        }
+
+        const departmentMap = {};
+
+        (departments || []).forEach(
+          department => {
+
+            departmentMap[
+              department.DepartmentID
+            ] =
+              department.DepartmentName;
+
+          }
+        );
+
+        if (
+          !equipment ||
+          equipment.length === 0
+        ) {
+
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="7">
+                No equipment is currently out of service.
+              </td>
+            </tr>
+          `;
+
+          loading.textContent =
+            "No equipment is currently out of service.";
+
+          return;
+        }
+
+        equipment.forEach(
+          item => {
+
+            const row =
+              document.createElement(
+                "tr"
+              );
+
+            row.innerHTML = `
+              <td>
+                ${item.BMENumber || ""}
+              </td>
+
+              <td>
+                ${item.EquipmentName || ""}
+              </td>
+
+              <td>
+                ${
+                  departmentMap[
+                    item.DepartmentID
+                  ] || ""
+                }
+              </td>
+
+              <td>
+                ${item.Manufacturer || ""}
+              </td>
+
+              <td>
+                ${item.Model || ""}
+              </td>
+
+              <td>
+                ${item.SerialNumber || ""}
+              </td>
+
+              <td>
+                Out of Service
+              </td>
+            `;
+
+            tableBody.appendChild(
+              row
+            );
+
+          }
+        );
+
+        loading.textContent =
+          `${equipment.length} equipment out of service.`;
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Out of service error:",
+          error
+        );
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              Unable to load equipment out of service.
+            </td>
+          </tr>
+        `;
+
+        loading.textContent =
+          "Unable to load equipment out of service.";
+
+      }
+
+    }
+  );
+
+}
 if (storeEquipmentCard) {
 
   storeEquipmentCard.addEventListener(
