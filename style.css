@@ -217,23 +217,23 @@ button.secondary {
 /* Dashboard Status Colors */
 
 .dashboard-total {
-  border-left: 6px solid #2196F3;
+  background: #E3F2FD;
 }
 
 .dashboard-working {
-  border-left: 6px solid #4CAF50;
+  background: #E8F5E9;
 }
 
 .dashboard-repair {
-  border-left: 6px solid #FF9800;
+  background: #FFF3E0;
 }
 
 .dashboard-awaiting {
-  border-left: 6px solid #FFC107;
+  background: #FFFDE7;
 }
 
 .dashboard-outofservice {
-  border-left: 6px solid #F44336;
+  background: #FFEBEE;
 }
 
 /* ==========================================
