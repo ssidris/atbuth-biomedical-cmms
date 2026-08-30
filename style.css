@@ -214,6 +214,27 @@ button.secondary {
   margin: 0;
 
 }
+/* Dashboard Status Colors */
+
+.dashboard-total {
+  border-left: 6px solid #2196F3;
+}
+
+.dashboard-working {
+  border-left: 6px solid #4CAF50;
+}
+
+.dashboard-repair {
+  border-left: 6px solid #FF9800;
+}
+
+.dashboard-awaiting {
+  border-left: 6px solid #FFC107;
+}
+
+.dashboard-outofservice {
+  border-left: 6px solid #F44336;
+}
 
 /* ==========================================
    CLICKABLE DASHBOARD CARDS
