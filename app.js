@@ -6949,7 +6949,8 @@ const {
   .select("*", {
     count: "exact",
     head: true
-  });
+  })
+  .gt("Quantity", 0);
 
 if (dashboardStoreTypes) {
   dashboardStoreTypes.textContent =
