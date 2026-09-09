@@ -41,7 +41,6 @@ if (departmentLoginForm) {
     async function (event) {
 
       event.preventDefault();
-      alert("LOGIN BUTTON IS WORKING");
 
       const username =
         departmentUsername.value.trim();
@@ -73,7 +72,7 @@ if (departmentLoginForm) {
 
         const response =
           await fetch(
-            `${SUPABASE_URL}/functions/v1/department-login`,
+            `${SUPABASE_URL}/functions/v1/swift-responder`,
             {
               method: "POST",
 
