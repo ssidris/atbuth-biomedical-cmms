@@ -42,6 +42,7 @@ if (departmentLoginForm) {
     async function (event) {
 
       event.preventDefault();
+      alert("LOGIN BUTTON IS WORKING");
 
       const username =
         departmentUsername.value.trim();
