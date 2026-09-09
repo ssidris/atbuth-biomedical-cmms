@@ -29,7 +29,11 @@ const departmentLoginBtn =
 
 const departmentLoginMessage =
   document.getElementById("departmentLoginMessage");
-
+alert(
+  departmentLoginForm
+    ? "LOGIN FORM FOUND"
+    : "LOGIN FORM NOT FOUND"
+);
 
 // ==========================================
 // DEPARTMENT LOGIN
