@@ -1,14 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ATBUTH Department Portal</title>
-</head>
-<body>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>ATBUTH Department Portal</title>  <link rel="stylesheet" href="department.css">
+</head><body>  <div class="portal-container"><div class="portal-card">
 
-  <h1>ATBUTH Department Portal</h1>
-  <p>Department Portal is under development.</p>
+  <h1>ATBUTH</h1>
+  <h2>Department Portal</h2>
 
-</body>
+  <p class="portal-subtitle">
+    Biomedical Equipment Maintenance Reporting
+  </p>
+
+  <form id="departmentLoginForm">
+
+    <label for="departmentUsername">
+      Username
+    </label>
+
+    <input
+      type="text"
+      id="departmentUsername"
+      placeholder="Enter department username"
+      autocomplete="username"
+      required
+    >
+
+    <label for="departmentPassword">
+      Password
+    </label>
+
+    <input
+      type="password"
+      id="departmentPassword"
+      placeholder="Enter password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button type="submit" id="departmentLoginBtn">
+      Sign In
+    </button>
+
+    <p id="departmentLoginMessage" class="login-message"></p>
+
+  </form>
+
+</div>
+
+  </div>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <script src="department.js"></script></body>
 </html>
