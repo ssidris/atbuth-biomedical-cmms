@@ -1,3 +1,4 @@
+alert("Department JavaScript is working!");
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
