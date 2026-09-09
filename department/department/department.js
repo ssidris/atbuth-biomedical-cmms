@@ -1,4 +1,4 @@
-alert("Department JavaScript is working!");
+
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
@@ -29,11 +29,6 @@ const departmentLoginBtn =
 
 const departmentLoginMessage =
   document.getElementById("departmentLoginMessage");
-alert(
-  departmentLoginForm
-    ? "LOGIN FORM FOUND"
-    : "LOGIN FORM NOT FOUND"
-);
 
 // ==========================================
 // DEPARTMENT LOGIN
