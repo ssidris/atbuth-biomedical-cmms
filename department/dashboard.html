@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ATBUTH Department Portal</title>
+
+  <link
+    rel="stylesheet"
+    href="department.css"
+  >
+
+</head>
+
+
+<body>
+
+  <div class="portal-container">
+
+    <div
+      class="portal-card"
+      style="max-width: 900px;"
+    >
+
+      <h1>ATBUTH</h1>
+
+      <h2>Department Portal</h2>
+
+      <p
+        id="welcomeText"
+        class="portal-subtitle"
+      >
+        Welcome
+      </p>
+
+
+      <!-- ==========================================
+           DEPARTMENT INFORMATION
+           ========================================== -->
+
+      <div
+        style="
+          background:#f0fdf4;
+          padding:20px;
+          border-radius:10px;
+          margin-bottom:20px;
+          text-align:left;
+        "
+      >
+
+        <h3>
+          Department Information
+        </h3>
+
+        <p>
+          <strong>Department:</strong>
+          <span id="departmentName">
+            Loading...
+          </span>
+        </p>
+
+        <p>
+          <strong>Hospital:</strong>
+          <span id="hospitalName">
+            ATBUTH
+          </span>
+        </p>
+
+      </div>
+
+
+      <!-- ==========================================
+           EQUIPMENT SECTION
+           ========================================== -->
+
+      <div
+        style="
+          background:#ffffff;
+          padding:20px;
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+          text-align:left;
+        "
+      >
+
+        <h3>
+          My Department Equipment
+        </h3>
+
+        <p
+          id="equipmentLoading"
+          style="color:#64748b;"
+        >
+          Loading equipment...
+        </p>
+
+        <div id="equipmentList">
+        </div>
+
+      </div>
+
+
+      <!-- ==========================================
+           LOGOUT
+           ========================================== -->
+
+      <button
+        id="departmentLogoutBtn"
+        type="button"
+        style="
+          width:100%;
+          margin-top:20px;
+          padding:13px;
+          border:none;
+          border-radius:8px;
+          background:#991b1b;
+          color:white;
+          font-size:16px;
+          font-weight:600;
+          cursor:pointer;
+        "
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUPABASE -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- DASHBOARD JAVASCRIPT -->
+
+  <script src="dashboard.js"></script>
+
+</body>
+
+</html>
