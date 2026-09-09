@@ -217,18 +217,15 @@ if (departmentLoginForm) {
 
 
         // ==========================================
-        // TEMPORARY SUCCESS MESSAGE
-        // ==========================================
+// OPEN DEPARTMENT DASHBOARD
+// ==========================================
 
-        setTimeout(function () {
+setTimeout(function () {
 
-          alert(
-            "Welcome " +
-            departmentUser["Full name"] +
-            "!"
-          );
+  window.location.href =
+    "department/dashboard.html";
 
-        }, 300);
+}, 500);
 
 
       } catch (error) {
