@@ -223,7 +223,7 @@ if (departmentLoginForm) {
 setTimeout(function () {
 
   window.location.href =
-    "department/dashboard.html";
+  "dashboard.html";
 
 }, 500);
 
