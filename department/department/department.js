@@ -1,8 +1,3 @@
-// ==========================================
-// ATBUTH DEPARTMENT PORTAL
-// SUPABASE CONNECTION
-// ==========================================
-
 const SUPABASE_URL =
   "https://vfnfbhrgmptgleytmeyq.supabase.co";
 
@@ -16,7 +11,7 @@ const client = supabase.createClient(
 
 
 // ==========================================
-// DEPARTMENT LOGIN
+// DEPARTMENT LOGIN ELEMENTS
 // ==========================================
 
 const departmentLoginForm =
@@ -35,6 +30,10 @@ const departmentLoginMessage =
   document.getElementById("departmentLoginMessage");
 
 
+// ==========================================
+// DEPARTMENT LOGIN
+// ==========================================
+
 if (departmentLoginForm) {
 
   departmentLoginForm.addEventListener(
@@ -49,6 +48,7 @@ if (departmentLoginForm) {
       const password =
         departmentPassword.value;
 
+
       if (!username || !password) {
 
         departmentLoginMessage.textContent =
@@ -56,6 +56,7 @@ if (departmentLoginForm) {
 
         return;
       }
+
 
       departmentLoginBtn.disabled = true;
 
@@ -66,51 +67,168 @@ if (departmentLoginForm) {
       try {
 
         // ==========================================
-        // FIND DEPARTMENT USER
+        // STEP 1: GET AUTH EMAIL FROM EDGE FUNCTION
         // ==========================================
 
-        const { data: userData, error: userError } =
+        const response =
+          await fetch(
+            `${SUPABASE_URL}/functions/v1/department-login`,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "apikey":
+                  SUPABASE_PUBLISHABLE_KEY
+              },
+
+              body: JSON.stringify({
+                username: username
+              })
+            }
+          );
+
+
+        const loginData =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            loginData.error ||
+            "Department username not found."
+          );
+        }
+
+
+        const authEmail =
+          loginData.email;
+
+
+        if (!authEmail) {
+
+          throw new Error(
+            "Authentication email was not found."
+          );
+        }
+
+
+        // ==========================================
+        // STEP 2: AUTHENTICATE WITH SUPABASE
+        // ==========================================
+
+        const {
+          data: authData,
+          error: authError
+        } =
+          await client.auth.signInWithPassword({
+
+            email: authEmail,
+
+            password: password
+
+          });
+
+
+        if (authError) {
+
+          throw new Error(
+            "Invalid username or password."
+          );
+        }
+
+
+        if (!authData?.user) {
+
+          throw new Error(
+            "Authentication failed."
+          );
+        }
+
+
+        // ==========================================
+        // STEP 3: GET DEPARTMENT USER PROFILE
+        // ==========================================
+
+        const {
+          data: departmentUser,
+          error: profileError
+        } =
           await client
             .from("tblUsers")
             .select(
               '"UserID", "Username", "Full name", "UserRole", "Status", "AuthUserID", "DepartmentID", "HospitalID"'
             )
-            .ilike("Username", username)
-            .eq("UserRole", "Department")
-            .eq("Status", "Active")
+            .eq(
+              "AuthUserID",
+              authData.user.id
+            )
+            .eq(
+              "UserRole",
+              "Department"
+            )
+            .eq(
+              "Status",
+              "Active"
+            )
             .maybeSingle();
 
 
-        if (userError) {
-          throw userError;
+        if (profileError) {
+
+          throw profileError;
         }
 
 
-        if (!userData) {
+        if (!departmentUser) {
 
-          departmentLoginMessage.textContent =
-            "Invalid department username or password.";
+          await client.auth.signOut();
 
-          departmentLoginBtn.disabled = false;
-
-          return;
+          throw new Error(
+            "Department profile was not found."
+          );
         }
 
 
         // ==========================================
-        // TEMPORARY CHECK
+        // STEP 4: SAVE DEPARTMENT SESSION
         // ==========================================
 
-        console.log(
-          "Department user found:",
-          userData
+        sessionStorage.setItem(
+          "departmentUser",
+          JSON.stringify(
+            departmentUser
+          )
         );
 
 
-        departmentLoginMessage.textContent =
-          "Department account found. Authentication setup is next.";
+        // ==========================================
+        // LOGIN SUCCESS
+        // ==========================================
 
-        departmentLoginBtn.disabled = false;
+        departmentLoginMessage.textContent =
+          "Login successful.";
+
+        departmentLoginMessage.style.color =
+          "green";
+
+
+        // ==========================================
+        // TEMPORARY SUCCESS MESSAGE
+        // ==========================================
+
+        setTimeout(function () {
+
+          alert(
+            "Welcome " +
+            departmentUser["Full name"] +
+            "!"
+          );
+
+        }, 300);
 
 
       } catch (error) {
@@ -120,10 +238,19 @@ if (departmentLoginForm) {
           error
         );
 
+
         departmentLoginMessage.textContent =
+          error.message ||
           "Unable to sign in. Please try again.";
 
-        departmentLoginBtn.disabled = false;
+        departmentLoginMessage.style.color =
+          "red";
+
+      } finally {
+
+        departmentLoginBtn.disabled =
+          false;
+
       }
 
     }
