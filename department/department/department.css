@@ -1,0 +1,113 @@
+* {
+box-sizing: border-box;
+}
+
+body {
+margin: 0;
+font-family: Arial, sans-serif;
+background: #f1f5f9;
+color: #1f2937;
+}
+
+.portal-container {
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+}
+
+.portal-card {
+width: 100%;
+max-width: 420px;
+background: #ffffff;
+padding: 35px 30px;
+border-radius: 14px;
+box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+text-align: center;
+}
+
+.portal-card h1 {
+margin: 0;
+font-size: 32px;
+color: #166534;
+}
+
+.portal-card h2 {
+margin: 8px 0;
+font-size: 23px;
+}
+
+.portal-subtitle {
+margin: 0 0 28px;
+color: #64748b;
+font-size: 14px;
+line-height: 1.5;
+}
+
+#departmentLoginForm {
+text-align: left;
+}
+
+#departmentLoginForm label {
+display: block;
+margin-bottom: 7px;
+font-weight: 600;
+font-size: 14px;
+}
+
+#departmentLoginForm input {
+width: 100%;
+padding: 13px 14px;
+margin-bottom: 18px;
+border: 1px solid #cbd5e1;
+border-radius: 8px;
+font-size: 16px;
+outline: none;
+}
+
+#departmentLoginForm input:focus {
+border-color: #166534;
+}
+
+#departmentLoginBtn {
+width: 100%;
+padding: 13px;
+border: none;
+border-radius: 8px;
+background: #166534;
+color: #ffffff;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+}
+
+#departmentLoginBtn:hover {
+opacity: 0.92;
+}
+
+#departmentLoginBtn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+
+.login-message {
+min-height: 20px;
+margin: 15px 0 0;
+text-align: center;
+font-size: 14px;
+}
+
+@media (max-width: 480px) {
+.portal-card {
+padding: 30px 22px;
+}
+
+.portal-card h1 {
+font-size: 28px;
+}
+
+.portal-card h2 {
+font-size: 21px;
+}
+}
