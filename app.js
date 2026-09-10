@@ -13100,6 +13100,10 @@ async function loadNotifications() {
         ascending: false
       });
 console.log("Notifications returned:", notifications);
+    alert(
+  "Notifications returned: " +
+  JSON.stringify(notifications)
+);
 console.log("Notification query error:", error);
     if (error) {
       throw error;
