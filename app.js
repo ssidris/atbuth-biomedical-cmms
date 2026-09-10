@@ -3788,18 +3788,20 @@ if (requiredPart) {
         // ----------------------------------
 
         const {
-          error
-        } = await client
-          .from(
-            "tblMaintenanceReport"
-          )
-          .insert(
-            payload
-          );
+  data: maintenanceData,
+  error
+} = await client
+  .from("tblMaintenanceReport")
+  .insert(payload)
+  .select("MaintenanceID")
+  .single();
 
-        if (error) {
-          throw error;
-        }
+if (error) {
+  throw error;
+}
+
+const maintenanceID =
+  maintenanceData.MaintenanceID;
 // ==========================================
 // UPDATE EQUIPMENT CURRENT STATUS
 // ==========================================
