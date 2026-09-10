@@ -3802,6 +3802,29 @@ if (error) {
 
 const maintenanceID =
   maintenanceData.MaintenanceID;
+        // ----------------------------------
+// CREATE MAINTENANCE NOTIFICATION
+// ----------------------------------
+
+const { error: notificationError } = await client
+  .from("tblNotifications")
+  .insert({
+    NotificationType: "Maintenance",
+    Title: "New Maintenance Report",
+    Message: "A new maintenance report has been submitted.",
+    MaintenanceID: maintenanceID,
+    HospitalID: 1,
+    IsRead: false,
+    CreatedAt: new Date().toISOString(),
+    ReadAt: null
+  });
+
+if (notificationError) {
+  console.error(
+    "Notification creation error:",
+    notificationError
+  );
+}
 // ==========================================
 // UPDATE EQUIPMENT CURRENT STATUS
 // ==========================================
