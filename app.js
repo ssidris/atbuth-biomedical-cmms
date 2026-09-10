@@ -13150,17 +13150,11 @@ async function loadNotifications() {
         `;
 
       }).join("");
-
 } catch (error) {
 
   console.error(
     "Notification loading error:",
     error
-  );
-
-  alert(
-    "Notification Error:\n\n" +
-    (error.message || error)
   );
 
 }
