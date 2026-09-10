@@ -13084,6 +13084,7 @@ async function loadNotifications() {
   }
 
   try {
+    console.log("loadNotifications() started");
 
     const {
       data: notifications,
