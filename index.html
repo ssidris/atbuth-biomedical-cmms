@@ -81,56 +81,51 @@ content="width=device-width, initial-scale=1.0"
        NOTIFICATION BELL
        ========================================== -->
 
-  <div class="notification-wrapper">
+  <div class="notification-wrapper"><button
+type="button"
+id="notificationBtn"
+class="notification-btn"
+title="Notifications"
 
-    <button
-      id="notificationBtn"
-      class="notification-btn"
-      title="Notifications"
-    >
-      🔔
-      <span
-        id="notificationCount"
-        class="notification-count"
-      >
-        0
-      </span>
-    </button>
+«»
 
-    <!-- Notification Panel -->
+🔔
 
-    <div
-      id="notificationPanel"
-      class="notification-panel"
-      style="display: none;"
-    >
+<span
+  id="notificationCount"
+  class="notification-count"
+>
+  0
+</span>
 
-      <div class="notification-panel-header">
+  </button>  <div
+    id="notificationPanel"
+    class="notification-panel"
+    style="display: none;"
+  ><div class="notification-panel-header">
 
-        <strong>
-          Notifications
-        </strong>
+  <strong>Notifications</strong>
 
-        <button
-          id="closeNotificationBtn"
-          type="button"
-        >
-          ×
-        </button>
+  <button
+    type="button"
+    id="closeNotificationBtn"
+    aria-label="Close notifications"
+  >
+    ×
+  </button>
 
-      </div>
+</div>
 
-      <div id="notificationList">
 
-        <p class="no-notifications">
-          No new notifications.
-        </p>
+<div id="notificationList">
 
-      </div>
+  <p class="no-notifications">
+    No new notifications.
+  </p>
 
-    </div>
+</div>
 
-  </div>
+  </div></div>
 
 
   <button
