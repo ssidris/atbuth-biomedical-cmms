@@ -130,10 +130,7 @@ async function loadDepartmentDashboard() {
     const departmentId =
       departmentUser.DepartmentID;
     
-alert(
-  "DepartmentID: " +
-  departmentId
-);
+
 
     welcomeText.textContent =
       "Welcome, " + fullName;
