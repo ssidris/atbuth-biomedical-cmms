@@ -195,11 +195,11 @@ const {
       departmentUser.HospitalID
     )
     .order(
-      "EquipmentName",
-      {
-        ascending: true
-      }
-    );
+  "BMENumber",
+  {
+    ascending: true
+  }
+);
 
 
 if (equipmentError) {
