@@ -754,7 +754,36 @@ if (departmentComplaintForm) {
           throw maintenanceError;
         }
 
+// ==========================================
+// CREATE CMMS NOTIFICATION
+// ==========================================
 
+const { error: notificationError } = await client
+  .from("tblNotifications")
+  .insert({
+    NotificationType: "Maintenance",
+    Title: "New Maintenance Report",
+    Message:
+      "A new fault report has been submitted for " +
+      selectedEquipment.BMENumber +
+      " — " +
+      selectedEquipment.EquipmentName +
+      ".",
+    MaintenanceID:
+      maintenanceReport.MaintenanceID,
+    HospitalID:
+      departmentUser.HospitalID,
+    IsRead: false,
+    CreatedAt: new Date().toISOString(),
+    ReadAt: null
+  });
+
+if (notificationError) {
+  console.error(
+    "Notification creation error:",
+    notificationError
+  );
+}
         // ========================================
         // SUCCESS
         // ========================================
