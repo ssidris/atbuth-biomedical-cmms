@@ -853,6 +853,7 @@ async function loadFormData() {
   await loadStoreInventoryTable();
   await loadStoreMovementHistory();
   await loadStoreDeploymentDepartments();
+  await loadNotifications();
 
 }
 
