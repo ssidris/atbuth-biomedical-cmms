@@ -13065,3 +13065,98 @@ if (clearStoreInventorySearchBtn) {
   );
 
 }
+
+// ==========================================
+// NOTIFICATION SYSTEM
+// ==========================================
+
+async function loadNotifications() {
+
+  const notificationCount =
+    document.getElementById("notificationCount");
+
+  const notificationList =
+    document.getElementById("notificationList");
+
+  if (!notificationCount || !notificationList) {
+    return;
+  }
+
+  try {
+
+    const {
+      data: notifications,
+      error
+    } = await client
+      .from("tblNotifications")
+      .select(
+        "NotificationID, NotificationType, Title, Message, MaintenanceID, HospitalID, IsRead, CreatedAt"
+      )
+      .eq("HospitalID", 1)
+      .eq("IsRead", false)
+      .order("CreatedAt", {
+        ascending: false
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    // Unread notification count
+    notificationCount.textContent =
+      notifications.length;
+
+    // No notifications
+    if (!notifications.length) {
+
+      notificationList.innerHTML = `
+        <p class="no-notifications">
+          No new notifications.
+        </p>
+      `;
+
+      return;
+    }
+
+    // Display notifications
+    notificationList.innerHTML =
+      notifications.map(notification => {
+
+        const date =
+          new Date(
+            notification.CreatedAt
+          ).toLocaleString();
+
+        return `
+          <div
+            class="notification-item"
+            data-notification-id="${notification.NotificationID}"
+          >
+
+            <strong>
+              ${notification.Title}
+            </strong>
+
+            <p>
+              ${notification.Message}
+            </p>
+
+            <span class="notification-time">
+              ${date}
+            </span>
+
+          </div>
+        `;
+
+      }).join("");
+
+  } catch (error) {
+
+    console.error(
+      "Notification loading error:",
+      error
+    );
+
+  }
+
+}
