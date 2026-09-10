@@ -692,8 +692,7 @@ if (departmentComplaintForm) {
               {
 
                 JobOrderNumber:
-                  "DEP-" +
-                  Date.now(),
+  Date.now(),
 
                 ReportDate:
                   new Date()
