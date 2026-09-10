@@ -105,7 +105,120 @@
         </div>
 
       </div>
+<!-- ==========================================
+     REPORT EQUIPMENT FAULT
+     ========================================== -->
 
+<div
+  style="
+    background:#ffffff;
+    padding:20px;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    margin-top:20px;
+    text-align:left;
+  "
+>
+
+  <h3>
+    Report Equipment Fault
+  </h3>
+
+  <p
+    style="
+      color:#64748b;
+      font-size:14px;
+      line-height:1.5;
+    "
+  >
+    Select the affected equipment and describe
+    the problem you are experiencing.
+  </p>
+
+
+  <form id="departmentComplaintForm">
+
+    <!-- EQUIPMENT -->
+
+    <label for="complaintEquipment">
+      Equipment
+    </label>
+
+    <select
+      id="complaintEquipment"
+      required
+      style="
+        width:100%;
+        padding:13px;
+        margin:7px 0 18px;
+        border:1px solid #cbd5e1;
+        border-radius:8px;
+        font-size:16px;
+        background:white;
+      "
+    >
+
+      <option value="">
+        Select equipment
+      </option>
+
+    </select>
+
+
+    <!-- FAULT -->
+
+    <label for="complaintFault">
+      Fault / Complaint
+    </label>
+
+    <textarea
+      id="complaintFault"
+      rows="5"
+      placeholder="Describe the fault or problem..."
+      required
+      style="
+        width:100%;
+        padding:13px;
+        margin:7px 0 18px;
+        border:1px solid #cbd5e1;
+        border-radius:8px;
+        font-size:16px;
+        resize:vertical;
+      "
+    ></textarea>
+
+
+    <!-- SUBMIT -->
+
+    <button
+      type="submit"
+      id="submitComplaintBtn"
+      style="
+        width:100%;
+        padding:13px;
+        border:none;
+        border-radius:8px;
+        background:#166534;
+        color:white;
+        font-size:16px;
+        font-weight:600;
+        cursor:pointer;
+      "
+    >
+      Submit Fault Report
+    </button>
+
+
+    <!-- MESSAGE -->
+
+    <p
+      id="complaintMessage"
+      class="login-message"
+    ></p>
+
+  </form>
+
+</div>
 
       <!-- ==========================================
            LOGOUT
