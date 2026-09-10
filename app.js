@@ -13161,3 +13161,60 @@ async function loadNotifications() {
   }
 
 }
+
+// ==========================================
+// OPEN / CLOSE NOTIFICATION PANEL
+// ==========================================
+
+const notificationBtn =
+  document.getElementById("notificationBtn");
+
+const notificationPanel =
+  document.getElementById("notificationPanel");
+
+const closeNotificationBtn =
+  document.getElementById("closeNotificationBtn");
+
+
+if (notificationBtn && notificationPanel) {
+
+  notificationBtn.addEventListener(
+    "click",
+    async function () {
+
+      if (
+        notificationPanel.style.display ===
+        "none"
+      ) {
+
+        notificationPanel.style.display =
+          "block";
+
+        await loadNotifications();
+
+      } else {
+
+        notificationPanel.style.display =
+          "none";
+
+      }
+
+    }
+  );
+
+}
+
+
+if (closeNotificationBtn) {
+
+  closeNotificationBtn.addEventListener(
+    "click",
+    function () {
+
+      notificationPanel.style.display =
+        "none";
+
+    }
+  );
+
+}
