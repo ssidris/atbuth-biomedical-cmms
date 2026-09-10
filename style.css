@@ -419,16 +419,23 @@ background: #f7f7f7;
 }
 
 .notification-item strong {
-display: block;
-margin-bottom: 5px;
+  display: block;
+  margin-bottom: 5px;
+
+  color: #dc2626;
+
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .notification-item p {
-margin: 0;
+  margin: 0;
 
-font-size: 13px;
+  font-size: 13px;
 
-color: #555;
+  color: #1f2937;
+
+  font-weight: 500;
 }
 
 .notification-time {
