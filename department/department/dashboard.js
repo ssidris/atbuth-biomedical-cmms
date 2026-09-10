@@ -331,3 +331,484 @@ if (departmentLogoutBtn) {
 // ==========================================
 
 loadDepartmentDashboard();
+
+// ==========================================
+// DEPARTMENT COMPLAINT SUBMISSION
+// ==========================================
+
+const departmentComplaintForm =
+  document.getElementById(
+    "departmentComplaintForm"
+  );
+
+const complaintEquipment =
+  document.getElementById(
+    "complaintEquipment"
+  );
+
+const complaintFault =
+  document.getElementById(
+    "complaintFault"
+  );
+
+const submitComplaintBtn =
+  document.getElementById(
+    "submitComplaintBtn"
+  );
+
+const complaintMessage =
+  document.getElementById(
+    "complaintMessage"
+  );
+
+
+// ==========================================
+// LOAD EQUIPMENT INTO COMPLAINT DROPDOWN
+// ==========================================
+
+async function loadComplaintEquipment() {
+
+  try {
+
+    const {
+      data: sessionData,
+      error: sessionError
+    } = await client.auth.getSession();
+
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+
+    const session =
+      sessionData.session;
+
+
+    if (!session) {
+      return;
+    }
+
+
+    const {
+      data: departmentUser,
+      error: userError
+    } =
+      await client
+        .from("tblUsers")
+        .select(
+          '"DepartmentID", "HospitalID", "UserRole", "Status"'
+        )
+        .eq(
+          "AuthUserID",
+          session.user.id
+        )
+        .eq(
+          "UserRole",
+          "Department"
+        )
+        .eq(
+          "Status",
+          "Active"
+        )
+        .maybeSingle();
+
+
+    if (userError) {
+      throw userError;
+    }
+
+
+    if (!departmentUser) {
+      throw new Error(
+        "Department profile not found."
+      );
+    }
+
+
+    const {
+      data: equipment,
+      error: equipmentError
+    } =
+      await client
+        .from("tblEquipment")
+        .select(
+          '"EquipmentID", "BMENumber", "EquipmentName", "DepartmentID"'
+        )
+        .eq(
+          "DepartmentID",
+          departmentUser.DepartmentID
+        )
+        .order(
+          "BMENumber",
+          {
+            ascending: true
+          }
+        );
+
+
+    if (equipmentError) {
+      throw equipmentError;
+    }
+
+
+    complaintEquipment.innerHTML =
+      `
+        <option value="">
+          Select equipment
+        </option>
+      `;
+
+
+    (equipment || []).forEach(
+      function (item) {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          item.EquipmentID;
+
+        option.textContent =
+          item.BMENumber +
+          " — " +
+          item.EquipmentName;
+
+        complaintEquipment.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Complaint equipment loading error:",
+      error
+    );
+
+    complaintEquipment.innerHTML =
+      `
+        <option value="">
+          Unable to load equipment
+        </option>
+      `;
+
+  }
+
+}
+
+
+// ==========================================
+// SUBMIT COMPLAINT
+// ==========================================
+
+if (departmentComplaintForm) {
+
+  departmentComplaintForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+
+      const equipmentId =
+        complaintEquipment.value;
+
+      const fault =
+        complaintFault.value.trim();
+
+
+      if (!equipmentId || !fault) {
+
+        complaintMessage.textContent =
+          "Please select equipment and describe the fault.";
+
+        complaintMessage.style.color =
+          "red";
+
+        return;
+      }
+
+
+      submitComplaintBtn.disabled =
+        true;
+
+      complaintMessage.textContent =
+        "Submitting fault report...";
+
+      complaintMessage.style.color =
+        "#64748b";
+
+
+      try {
+
+        // ========================================
+        // GET CURRENT AUTHENTICATED USER
+        // ========================================
+
+        const {
+          data: sessionData,
+          error: sessionError
+        } = await client.auth.getSession();
+
+
+        if (sessionError) {
+          throw sessionError;
+        }
+
+
+        const session =
+          sessionData.session;
+
+
+        if (!session) {
+
+          throw new Error(
+            "Your session has expired. Please sign in again."
+          );
+
+        }
+
+
+        // ========================================
+        // GET DEPARTMENT USER
+        // ========================================
+
+        const {
+          data: departmentUser,
+          error: userError
+        } =
+          await client
+            .from("tblUsers")
+            .select(
+              '"UserID", "DepartmentID", "HospitalID", "UserRole", "Status"'
+            )
+            .eq(
+              "AuthUserID",
+              session.user.id
+            )
+            .eq(
+              "UserRole",
+              "Department"
+            )
+            .eq(
+              "Status",
+              "Active"
+            )
+            .maybeSingle();
+
+
+        if (userError) {
+          throw userError;
+        }
+
+
+        if (!departmentUser) {
+
+          throw new Error(
+            "Department account could not be identified."
+          );
+
+        }
+
+
+        // ========================================
+        // VERIFY SELECTED EQUIPMENT
+        // ========================================
+
+        const {
+          data: selectedEquipment,
+          error: equipmentError
+        } =
+          await client
+            .from("tblEquipment")
+            .select(
+              '"EquipmentID", "BMENumber", "EquipmentName", "DepartmentID"'
+            )
+            .eq(
+              "EquipmentID",
+              Number(equipmentId)
+            )
+            .eq(
+              "DepartmentID",
+              departmentUser.DepartmentID
+            )
+            .maybeSingle();
+
+
+        if (equipmentError) {
+          throw equipmentError;
+        }
+
+
+        if (!selectedEquipment) {
+
+          throw new Error(
+            "The selected equipment does not belong to your department."
+          );
+
+        }
+
+
+        // ========================================
+        // GET CURRENT EQUIPMENT STATUS
+        // ========================================
+
+        const {
+          data: equipmentStatus,
+          error: statusError
+        } =
+          await client
+            .from("tblEquipment")
+            .select(
+              '"StatusID"'
+            )
+            .eq(
+              "EquipmentID",
+              Number(equipmentId)
+            )
+            .maybeSingle();
+
+
+        if (statusError) {
+          throw statusError;
+        }
+
+
+        // ========================================
+        // CREATE MAINTENANCE REPORT
+        // ========================================
+
+        const {
+          data: maintenanceReport,
+          error: maintenanceError
+        } =
+          await client
+            .from("tblMaintenanceReport")
+            .insert([
+              {
+
+                JobOrderNumber:
+                  "DEP-" +
+                  Date.now(),
+
+                ReportDate:
+                  new Date()
+                    .toISOString()
+                    .split("T")[0],
+
+                EquipmentID:
+                  Number(equipmentId),
+
+                EngineerID:
+                  null,
+
+                MaintenanceTypeID:
+                  1,
+
+                FaultReported:
+                  fault,
+
+                Diagnosis:
+                  null,
+
+                ActionTaken:
+                  null,
+
+                PartUsed:
+                  null,
+
+                RequiredPart:
+                  null,
+
+                QuantityRequired:
+                  null,
+
+                PartRequestedStatus:
+                  null,
+
+                StatusID:
+                  equipmentStatus?.StatusID ||
+                  null,
+
+                Remarks:
+                  "Reported by " +
+                  departmentUser.UserID +
+                  " through Department Portal.",
+
+                PartStatusID:
+                  null,
+
+                HospitalID:
+                  departmentUser.HospitalID
+
+              }
+            ])
+            .select()
+            .single();
+
+
+        if (maintenanceError) {
+          throw maintenanceError;
+        }
+
+
+        // ========================================
+        // SUCCESS
+        // ========================================
+
+        complaintMessage.textContent =
+          "Fault report submitted successfully.";
+
+        complaintMessage.style.color =
+          "green";
+
+
+        complaintFault.value = "";
+
+        complaintEquipment.value = "";
+
+
+        console.log(
+          "Maintenance report created:",
+          maintenanceReport
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Complaint submission error:",
+          error
+        );
+
+
+        complaintMessage.textContent =
+          error.message ||
+          "Unable to submit fault report.";
+
+        complaintMessage.style.color =
+          "red";
+
+
+      } finally {
+
+        submitComplaintBtn.disabled =
+          false;
+
+      }
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// START COMPLAINT EQUIPMENT LOADING
+// ==========================================
+
+loadComplaintEquipment();
