@@ -173,21 +173,112 @@ async function loadDepartmentDashboard() {
 
     }
 
+// ========================================
+// LOAD DEPARTMENT EQUIPMENT
+// ========================================
 
-    // ========================================
-    // TEMPORARY EQUIPMENT MESSAGE
-    // ========================================
+const {
+  data: equipment,
+  error: equipmentError
+} =
+  await client
+    .from("tblEquipment")
+    .select(
+      "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model, SerialNumber, Location, StatusID"
+    )
+    .eq(
+      "DepartmentID",
+      departmentId
+    )
+    .eq(
+      "HospitalID",
+      departmentUser.HospitalID
+    )
+    .order(
+      "EquipmentName",
+      {
+        ascending: true
+      }
+    );
 
-    equipmentLoading.textContent =
-      "Department identified successfully.";
 
-    equipmentList.innerHTML =
-      `
-        <p style="color:#64748b;">
-          Equipment loading will be connected
-          in the next step.
-        </p>
+if (equipmentError) {
+  throw equipmentError;
+}
+
+
+// ========================================
+// DISPLAY EQUIPMENT
+// ========================================
+
+if (!equipment || equipment.length === 0) {
+
+  equipmentLoading.textContent =
+    "No equipment assigned to this department.";
+
+  equipmentList.innerHTML =
+    `
+      <p style="color:#64748b;">
+        No biomedical equipment was found
+        for this department.
+      </p>
+    `;
+
+} else {
+
+  equipmentLoading.textContent =
+    equipment.length +
+    " equipment item(s) found.";
+
+  equipmentList.innerHTML =
+    equipment.map(function(item) {
+
+      return `
+        <div
+          style="
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
+            border-radius:8px;
+            padding:15px;
+            margin-bottom:10px;
+          "
+        >
+
+          <strong>
+            ${item.BMENumber || "No BME Number"}
+          </strong>
+
+          <div>
+            ${item.EquipmentName || "Unnamed Equipment"}
+          </div>
+
+          <div style="color:#64748b;">
+            Manufacturer:
+            ${item.Manufacturer || "N/A"}
+          </div>
+
+          <div style="color:#64748b;">
+            Model:
+            ${item.Model || "N/A"}
+          </div>
+
+          <div style="color:#64748b;">
+            Serial Number:
+            ${item.SerialNumber || "N/A"}
+          </div>
+
+          <div style="color:#64748b;">
+            Location:
+            ${item.Location || "N/A"}
+          </div>
+
+        </div>
       `;
+
+    }).join("");
+
+}
+    
 
 
   } catch (error) {
