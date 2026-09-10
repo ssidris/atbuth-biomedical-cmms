@@ -13099,7 +13099,8 @@ async function loadNotifications() {
       .order("CreatedAt", {
         ascending: false
       });
-
+console.log("Notifications returned:", notifications);
+console.log("Notification query error:", error);
     if (error) {
       throw error;
     }
