@@ -780,9 +780,13 @@ const { error: notificationError } = await client
 
 if (notificationError) {
   console.error(
-    "Notification creation error:",
-    notificationError
-  );
+  "Notification creation error:",
+  notificationError
+);
+
+if (notificationError) {
+  throw notificationError;
+}
 }
         // ========================================
         // SUCCESS
