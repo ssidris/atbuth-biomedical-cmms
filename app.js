@@ -895,6 +895,17 @@ if (startMaintenanceBtn) {
     maintenanceID;
 
 }
+    const awaitingPartsBtn =
+  document.getElementById(
+    "awaitingPartsBtn"
+  );
+
+if (awaitingPartsBtn) {
+
+  awaitingPartsBtn.dataset.maintenanceId =
+    maintenanceID;
+
+}
     // SHOW PANEL
 
     panel.style.display =
@@ -985,6 +996,87 @@ if (startMaintenanceBtn) {
 
       alert(
         "Maintenance has been started successfully."
+      );
+
+    }
+  );
+
+}
+// ==========================================
+// AWAITING PARTS
+// UNDER MAINTENANCE → AWAITING PARTS
+// ==========================================
+
+const awaitingPartsBtn =
+  document.getElementById(
+    "awaitingPartsBtn"
+  );
+
+if (awaitingPartsBtn) {
+
+  awaitingPartsBtn.addEventListener(
+    "click",
+    async function () {
+
+      const maintenanceID =
+        this.dataset.maintenanceId;
+
+      if (!maintenanceID) {
+
+        alert(
+          "No maintenance request selected."
+        );
+
+        return;
+      }
+
+
+      const {
+        error
+      } = await client
+        .from("tblMaintenanceReport")
+        .update({
+          MaintenanceStatus:
+            "Awaiting Parts"
+        })
+        .eq(
+          "MaintenanceID",
+          maintenanceID
+        );
+
+
+      if (error) {
+
+        console.error(
+          "Awaiting parts error:",
+          error
+        );
+
+        alert(
+          "Unable to update maintenance status."
+        );
+
+        return;
+      }
+
+
+      // UPDATE DISPLAY
+
+      const statusElement =
+        document.getElementById(
+          "incomingMaintenanceStatus"
+        );
+
+      if (statusElement) {
+
+        statusElement.textContent =
+          "Awaiting Parts";
+
+      }
+
+
+      alert(
+        "Maintenance status changed to Awaiting Parts."
       );
 
     }
