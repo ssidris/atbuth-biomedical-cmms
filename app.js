@@ -9433,6 +9433,54 @@ if (downloadEquipmentHistoryPDFBtn) {
         if (historyError) {
           throw historyError;
         }
+        // LOAD ALL ENGINEERS ASSIGNED TO EACH EQUIPMENT HISTORY REPORT
+for (const report of history || []) {
+
+  const {
+    data: engineerAssignments,
+    error: engineerError
+  } = await client
+    .from("tblMaintenanceReportEngineers")
+    .select(`
+      EngineerID,
+      tblEngineers (
+        FirstName,
+        LastName
+      )
+    `)
+    .eq(
+      "MaintenanceID",
+      report.MaintenanceID
+    );
+
+  if (engineerError) {
+
+    console.error(
+      "Engineer assignment loading error:",
+      engineerError
+    );
+
+    continue;
+  }
+
+  if (
+    engineerAssignments &&
+    engineerAssignments.length > 0
+  ) {
+
+    report.EngineerName =
+      engineerAssignments
+        .map(
+          assignment =>
+            `${assignment.tblEngineers?.FirstName || ""} ${
+              assignment.tblEngineers?.LastName || ""
+            }`.trim()
+        )
+        .filter(name => name)
+        .join(", ");
+
+  }
+}
 
         if (
           !history ||
