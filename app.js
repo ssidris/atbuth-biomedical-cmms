@@ -948,17 +948,8 @@ startMaintenanceBtn.dataset.maintenanceId =
   maintenanceID;
     awaitingPartsBtn.dataset.maintenanceId =
   maintenanceID;
-    const continueMaintenanceBtn =
-  document.getElementById(
-    "continueMaintenanceBtn"
-  );
-
-if (continueMaintenanceBtn) {
-
-  continueMaintenanceBtn.dataset.maintenanceId =
-    maintenanceID;
-
-}
+    continueMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
     // SHOW PANEL
 
     panel.style.display =
