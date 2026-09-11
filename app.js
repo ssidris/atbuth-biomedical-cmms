@@ -880,7 +880,21 @@ async function loadIncomingMaintenanceRequest(
       report.MaintenanceStatus ||
       "-";
 
+// ==========================================
+// STORE MAINTENANCE ID FOR START BUTTON
+// ==========================================
 
+const startMaintenanceBtn =
+  document.getElementById(
+    "startMaintenanceBtn"
+  );
+
+if (startMaintenanceBtn) {
+
+  startMaintenanceBtn.dataset.maintenanceId =
+    maintenanceID;
+
+}
     // SHOW PANEL
 
     panel.style.display =
@@ -894,6 +908,87 @@ async function loadIncomingMaintenanceRequest(
     );
 
   }
+
+}
+// ==========================================
+// START MAINTENANCE
+// ACKNOWLEDGED → UNDER MAINTENANCE
+// ==========================================
+
+const startMaintenanceBtn =
+  document.getElementById(
+    "startMaintenanceBtn"
+  );
+
+if (startMaintenanceBtn) {
+
+  startMaintenanceBtn.addEventListener(
+    "click",
+    async function () {
+
+      const maintenanceID =
+        this.dataset.maintenanceId;
+
+      if (!maintenanceID) {
+
+        alert(
+          "No maintenance request selected."
+        );
+
+        return;
+      }
+
+
+      const {
+        error
+      } = await client
+        .from("tblMaintenanceReport")
+        .update({
+          MaintenanceStatus:
+            "Under Maintenance"
+        })
+        .eq(
+          "MaintenanceID",
+          maintenanceID
+        );
+
+
+      if (error) {
+
+        console.error(
+          "Start maintenance error:",
+          error
+        );
+
+        alert(
+          "Unable to start maintenance."
+        );
+
+        return;
+      }
+
+
+      // UPDATE DISPLAY
+
+      const statusElement =
+        document.getElementById(
+          "incomingMaintenanceStatus"
+        );
+
+      if (statusElement) {
+
+        statusElement.textContent =
+          "Under Maintenance";
+
+      }
+
+
+      alert(
+        "Maintenance has been started successfully."
+      );
+
+    }
+  );
 
 }
 // ==========================================
