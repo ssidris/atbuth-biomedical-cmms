@@ -3701,8 +3701,8 @@ async function loadDashboardRecentReports() {
         "vwMaintenanceReport"
       )
       .select(
-        "ReportDate, BMENumber, EquipmentName, DepartmentName, EngineerName, StatusName"
-      )
+  "MaintenanceID, ReportDate, BMENumber, EquipmentName, DepartmentName, EngineerName, StatusName"
+)
       .order(
         "ReportDate",
         {
@@ -3714,6 +3714,53 @@ async function loadDashboardRecentReports() {
     if (error) {
       throw error;
     }
+    // LOAD ALL ENGINEERS ASSIGNED TO EACH RECENT REPORT
+for (const report of data || []) {
+
+  const {
+    data: engineerAssignments,
+    error: engineerError
+  } = await client
+    .from("tblMaintenanceReportEngineers")
+    .select(`
+      EngineerID,
+      tblEngineers (
+        FirstName,
+        LastName
+      )
+    `)
+    .eq(
+      "MaintenanceID",
+      report.MaintenanceID
+    );
+
+  if (engineerError) {
+    console.error(
+      "Engineer assignment loading error:",
+      engineerError
+    );
+
+    continue;
+  }
+
+  if (
+    engineerAssignments &&
+    engineerAssignments.length > 0
+  ) {
+
+    report.EngineerName =
+      engineerAssignments
+        .map(
+          assignment =>
+            `${assignment.tblEngineers?.FirstName || ""} ${
+              assignment.tblEngineers?.LastName || ""
+            }`.trim()
+        )
+        .filter(name => name)
+        .join(", ");
+
+  }
+}
 
     tableBody.innerHTML = "";
 
