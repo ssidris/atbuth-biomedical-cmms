@@ -4167,10 +4167,22 @@ if (maintenanceForm) {
             "equipmentId"
           ).value;
 
-        const engineerValue =
-          document.getElementById(
-            "engineerId"
-          ).value;
+        const engineerSelect =
+  document.getElementById(
+    "engineerId"
+  );
+
+const engineerValues =
+  Array.from(
+    engineerSelect.selectedOptions
+  ).map(
+    option => Number(option.value)
+  );
+
+const engineerValue =
+  engineerValues.length > 0
+    ? engineerValues[0]
+    : null;
 
         const maintenanceTypeValue =
           document.getElementById(
@@ -4384,6 +4396,40 @@ if (error) {
 
 const maintenanceID =
   maintenanceData.MaintenanceID;
+        if (engineerValues.length > 0) {
+
+  const engineerAssignments =
+    engineerValues.map(
+      engineerID => ({
+        MaintenanceID:
+          maintenanceID,
+
+        EngineerID:
+          engineerID
+      })
+    );
+
+  const {
+    error: engineerAssignmentError
+  } = await client
+    .from(
+      "tblMaintenanceReportEngineers"
+    )
+    .insert(
+      engineerAssignments
+    );
+
+  if (engineerAssignmentError) {
+
+    console.error(
+      "Engineer assignment error:",
+      engineerAssignmentError
+    );
+
+    throw engineerAssignmentError;
+  }
+
+}
         // ----------------------------------
 // CREATE MAINTENANCE NOTIFICATION
 // ----------------------------------
