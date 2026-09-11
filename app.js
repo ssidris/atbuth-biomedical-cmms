@@ -733,7 +733,169 @@ async function loadMaintenanceFormData() {
 
 }
 
+async function loadIncomingMaintenanceRequest(
+  maintenanceID
+) {
 
+  const panel =
+    document.getElementById(
+      "incomingMaintenancePanel"
+    );
+
+  if (!panel || !maintenanceID) {
+    return;
+  }
+
+  try {
+
+    const {
+      data: report,
+      error
+    } = await client
+      .from("tblMaintenanceReport")
+      .select(`
+        MaintenanceID,
+        JobOrderNumber,
+        ReportDate,
+        EquipmentID,
+        FaultReported,
+        StatusID,
+        MaintenanceStatus,
+        tblEquipment (
+          BMENumber,
+          EquipmentName,
+          DepartmentID,
+          tblDepartment (
+            DepartmentName
+          )
+        ),
+        tblEquipmentStatus (
+          StatusName
+        )
+      `)
+      .eq(
+        "MaintenanceID",
+        maintenanceID
+      )
+      .single();
+
+
+    if (error) {
+
+      console.error(
+        "Incoming maintenance request error:",
+        error
+      );
+
+      return;
+    }
+
+
+    if (!report) {
+      return;
+    }
+
+
+    // JOB ORDER
+
+    document.getElementById(
+      "incomingJobOrderNumber"
+    ).textContent =
+      report.JobOrderNumber || "-";
+
+
+    // REPORT DATE
+
+    document.getElementById(
+      "incomingReportDate"
+    ).textContent =
+      report.ReportDate || "-";
+
+
+    // EQUIPMENT
+
+    const equipment =
+      report.tblEquipment;
+
+    if (equipment) {
+
+      const bme =
+        equipment.BMENumber || "";
+
+      const name =
+        equipment.EquipmentName || "";
+
+      document.getElementById(
+        "incomingEquipment"
+      ).textContent =
+        bme
+          ? `${bme} — ${name}`
+          : name;
+
+
+      // DEPARTMENT
+
+      document.getElementById(
+        "incomingDepartment"
+      ).textContent =
+        equipment.tblDepartment?.DepartmentName ||
+        "-";
+
+    } else {
+
+      document.getElementById(
+        "incomingEquipment"
+      ).textContent =
+        "-";
+
+      document.getElementById(
+        "incomingDepartment"
+      ).textContent =
+        "-";
+    }
+
+
+    // FAULT REPORTED
+
+    document.getElementById(
+      "incomingFaultReported"
+    ).textContent =
+      report.FaultReported || "-";
+
+
+    // EQUIPMENT STATUS
+
+    document.getElementById(
+      "incomingEquipmentStatus"
+    ).textContent =
+      report.tblEquipmentStatus?.StatusName ||
+      "-";
+
+
+    // MAINTENANCE STATUS
+
+    document.getElementById(
+      "incomingMaintenanceStatus"
+    ).textContent =
+      report.MaintenanceStatus ||
+      "-";
+
+
+    // SHOW PANEL
+
+    panel.style.display =
+      "block";
+
+  } catch (error) {
+
+    console.error(
+      "Error loading incoming maintenance request:",
+      error
+    );
+
+  }
+
+}
 // ==========================================
 // LOAD PM ENGINEER DROPDOWN
 // ==========================================
@@ -13297,6 +13459,17 @@ if (maintenanceSection) {
 
 }
 
+            // ==========================================
+// LOAD THE SELECTED MAINTENANCE REQUEST
+// ==========================================
+
+if (maintenanceID) {
+
+  await loadIncomingMaintenanceRequest(
+    maintenanceID
+  );
+
+}
 
             // ==================================
             // CLOSE NOTIFICATION PANEL
