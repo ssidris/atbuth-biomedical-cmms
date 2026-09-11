@@ -900,7 +900,10 @@ const continueMaintenanceBtn =
   document.getElementById(
     "continueMaintenanceBtn"
   );
-
+const completeMaintenanceBtn =
+  document.getElementById(
+    "completeMaintenanceBtn"
+  );
 
 // ACKNOWLEDGED
 
@@ -926,7 +929,17 @@ if (awaitingPartsBtn) {
       : "none";
 
 }
+// COMPLETE MAINTENANCE
 
+if (completeMaintenanceBtn) {
+
+  completeMaintenanceBtn.style.display =
+    currentMaintenanceStatus ===
+    "Under Maintenance"
+      ? "inline-block"
+      : "none";
+
+}
 
 // AWAITING PARTS
 
@@ -950,6 +963,9 @@ startMaintenanceBtn.dataset.maintenanceId =
   maintenanceID;
     continueMaintenanceBtn.dataset.maintenanceId =
   maintenanceID;
+    completeMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
+    
     // SHOW PANEL
 
     panel.style.display =
