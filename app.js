@@ -1122,6 +1122,11 @@ if (awaitingPartsBtn) {
           "Awaiting Parts";
 
       }
+      // REFRESH MAINTENANCE BUTTONS
+
+await loadIncomingMaintenanceRequest(
+  maintenanceID
+);
 
 
       alert(
