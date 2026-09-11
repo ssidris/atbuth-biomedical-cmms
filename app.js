@@ -946,17 +946,8 @@ if (continueMaintenanceBtn) {
 
 startMaintenanceBtn.dataset.maintenanceId =
   maintenanceID;
-    const awaitingPartsBtn =
-  document.getElementById(
-    "awaitingPartsBtn"
-  );
-
-if (awaitingPartsBtn) {
-
-  awaitingPartsBtn.dataset.maintenanceId =
-    maintenanceID;
-
-}
+    awaitingPartsBtn.dataset.maintenanceId =
+  maintenanceID;
     const continueMaintenanceBtn =
   document.getElementById(
     "continueMaintenanceBtn"
