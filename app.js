@@ -10970,6 +10970,53 @@ if (maintenanceReportsCard) {
         if (error) {
           throw error;
         }
+        // LOAD ALL ENGINEERS ASSIGNED TO EACH MAINTENANCE REPORT
+for (const report of data || []) {
+
+  const {
+    data: engineerAssignments,
+    error: engineerError
+  } = await client
+    .from("tblMaintenanceReportEngineers")
+    .select(`
+      EngineerID,
+      tblEngineers (
+        FirstName,
+        LastName
+      )
+    `)
+    .eq(
+      "MaintenanceID",
+      report.MaintenanceID
+    );
+
+  if (engineerError) {
+    console.error(
+      "Engineer assignment loading error:",
+      engineerError
+    );
+
+    continue;
+  }
+
+  if (
+    engineerAssignments &&
+    engineerAssignments.length > 0
+  ) {
+
+    report.EngineerName =
+      engineerAssignments
+        .map(
+          assignment =>
+            `${assignment.tblEngineers?.FirstName || ""} ${
+              assignment.tblEngineers?.LastName || ""
+            }`.trim()
+        )
+        .filter(name => name)
+        .join(", ");
+
+  }
+}
         // Display maintenance report count in title
 
 if (title) {
