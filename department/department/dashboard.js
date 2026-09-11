@@ -688,71 +688,77 @@ if (departmentComplaintForm) {
         } =
           await client
             .from("tblMaintenanceReport")
-            .insert([
-              {
+.insert([
+  {
 
-                JobOrderNumber:
-  Date.now(),
+    JobOrderNumber:
+      Date.now(),
 
-                ReportDate:
-                  new Date()
-                    .toISOString()
-                    .split("T")[0],
+    ReportDate:
+      new Date()
+        .toISOString()
+        .split("T")[0],
 
-                EquipmentID:
-                  Number(equipmentId),
+    EquipmentID:
+      Number(equipmentId),
 
-                EngineerID:
-                  null,
+    EngineerID:
+      null,
 
-                MaintenanceTypeID:
-                  1,
+    MaintenanceTypeID:
+      1,
 
-                FaultReported:
-                  fault,
+    FaultReported:
+      fault,
 
-                Diagnosis:
-                  null,
+    Diagnosis:
+      null,
 
-                ActionTaken:
-                  null,
+    ActionTaken:
+      null,
 
-                PartUsed:
-                  null,
+    PartUsed:
+      null,
 
-                RequiredPart:
-                  null,
+    RequiredPart:
+      null,
 
-                QuantityRequired:
-                  null,
+    QuantityRequired:
+      null,
 
-                PartRequestedStatus:
-                  null,
+    PartRequestedStatus:
+      null,
 
-                StatusID:
-                  equipmentStatus?.StatusID ||
-                  null,
+    // Equipment's current physical status
+    StatusID:
+      equipmentStatus?.StatusID ||
+      null,
 
-                Remarks:
-                  "Reported by " +
-                  departmentUser.UserID +
-                  " through Department Portal.",
+    // Maintenance job workflow status
+    MaintenanceStatus:
+      "Submitted",
 
-                PartStatusID:
-                  null,
+    Remarks:
+      "Reported by " +
+      departmentUser.UserID +
+      " through Department Portal.",
 
-                HospitalID:
-                  departmentUser.HospitalID
+    PartStatusID:
+      null,
 
-              }
-            ])
-            .select()
-            .single();
+    HospitalID:
+      departmentUser.HospitalID
+
+  }
+])
+.select()
+.single();
 
 
-        if (maintenanceError) {
-          throw maintenanceError;
-        }
+if (maintenanceError) {
+  throw maintenanceError;
+}
+            
 
 // ==========================================
 // CREATE CMMS NOTIFICATION
