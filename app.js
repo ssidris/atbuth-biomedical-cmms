@@ -13205,32 +13205,68 @@ async function loadNotifications() {
 
 
             // ==================================
-            // MARK NOTIFICATION AS READ
-            // ==================================
+// MARK NOTIFICATION AS READ
+// ==================================
 
-            const {
-              error: updateError
-            } = await client
-              .from("tblNotifications")
-              .update({
-                IsRead: true,
-                ReadAt:
-                  new Date().toISOString()
-              })
-              .eq(
-                "NotificationID",
-                notificationID
-              );
+const {
+  error: updateError
+} = await client
+  .from("tblNotifications")
+  .update({
+    IsRead: true,
+    ReadAt:
+      new Date().toISOString()
+  })
+  .eq(
+    "NotificationID",
+    notificationID
+  );
 
-            if (updateError) {
 
-              console.error(
-                "Notification update error:",
-                updateError
-              );
+if (updateError) {
 
-              return;
-            }
+  console.error(
+    "Notification update error:",
+    updateError
+  );
+
+  return;
+}
+
+
+// ==================================
+// UPDATE MAINTENANCE STATUS
+// SUBMITTED → ACKNOWLEDGED
+// ==================================
+
+if (maintenanceID) {
+
+  const {
+    error: maintenanceStatusError
+  } = await client
+    .from("tblMaintenanceReport")
+    .update({
+      MaintenanceStatus:
+        "Acknowledged"
+    })
+    .eq(
+      "MaintenanceID",
+      maintenanceID
+    );
+
+
+  if (maintenanceStatusError) {
+
+    console.error(
+      "Maintenance status update error:",
+      maintenanceStatusError
+    );
+
+    return;
+  }
+
+}
+              
 
 
             // ==================================
