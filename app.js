@@ -13281,26 +13281,21 @@ if (maintenanceID) {
             // ==================================
 
             const maintenanceSection =
-              document.getElementById(
-                "maintenanceSection"
-              );
+  document.getElementById(
+    "maintenanceSection"
+  );
 
-            if (maintenanceSection) {
+if (maintenanceSection) {
 
-              document
-                .querySelectorAll(
-                  "section"
-                )
-                .forEach(section => {
+  maintenanceSection.style.display =
+    "block";
 
-                  section.style.display =
-                    "none";
+  maintenanceSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 
-                });
-
-              maintenanceSection.style.display =
-                "block";
-            }
+}
 
 
             // ==================================
