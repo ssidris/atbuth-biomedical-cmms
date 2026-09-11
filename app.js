@@ -1233,6 +1233,89 @@ if (continueMaintenanceBtn) {
 
 }
 // ==========================================
+// COMPLETE MAINTENANCE
+// UNDER MAINTENANCE → COMPLETED
+// ==========================================
+
+const completeMaintenanceBtn =
+  document.getElementById(
+    "completeMaintenanceBtn"
+  );
+
+if (completeMaintenanceBtn) {
+
+  completeMaintenanceBtn.addEventListener(
+    "click",
+    async function () {
+
+      const maintenanceID =
+        this.dataset.maintenanceId;
+
+      if (!maintenanceID) {
+
+        alert(
+          "No maintenance request selected."
+        );
+
+        return;
+      }
+
+      const {
+        error
+      } = await client
+        .from("tblMaintenanceReport")
+        .update({
+          MaintenanceStatus:
+            "Completed"
+        })
+        .eq(
+          "MaintenanceID",
+          maintenanceID
+        );
+
+      if (error) {
+
+        console.error(
+          "Complete maintenance error:",
+          error
+        );
+
+        alert(
+          "Unable to complete maintenance."
+        );
+
+        return;
+      }
+
+      // UPDATE DISPLAY
+
+      const statusElement =
+        document.getElementById(
+          "incomingMaintenanceStatus"
+        );
+
+      if (statusElement) {
+
+        statusElement.textContent =
+          "Completed";
+
+      }
+
+      // REFRESH MAINTENANCE BUTTONS
+
+      await loadIncomingMaintenanceRequest(
+        maintenanceID
+      );
+
+      alert(
+        "Maintenance has been completed successfully."
+      );
+
+    }
+  );
+
+}
+// ==========================================
 // LOAD PM ENGINEER DROPDOWN
 // ==========================================
 
