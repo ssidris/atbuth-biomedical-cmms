@@ -9418,7 +9418,26 @@ if (downloadEquipmentHistoryPDFBtn) {
           error: historyError
         } = await client
           .from("vwMaintenanceReport")
-          .select("*")
+.select(`
+  MaintenanceID,
+  EquipmentID,
+  ReportDate,
+  JobOrderNumber,
+  BMENumber,
+  EquipmentName,
+  DepartmentName,
+  EngineerName,
+  MaintenanceType,
+  FaultReported,
+  Diagnosis,
+  ActionTaken,
+  PartUsed,
+  RequiredPart,
+  QuantityRequired,
+  PartRequestedStatus,
+  StatusName,
+  Remarks
+`)
           .eq(
             "EquipmentID",
             equipmentId
