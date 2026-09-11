@@ -1036,7 +1036,12 @@ if (startMaintenanceBtn) {
           "Under Maintenance";
 
       }
+      
+// REFRESH MAINTENANCE BUTTONS
 
+await loadIncomingMaintenanceRequest(
+  maintenanceID
+);
 
       alert(
         "Maintenance has been started successfully."
