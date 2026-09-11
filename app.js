@@ -879,6 +879,66 @@ async function loadIncomingMaintenanceRequest(
     ).textContent =
       report.MaintenanceStatus ||
       "-";
+    // ==========================================
+// CONTROL MAINTENANCE ACTION BUTTONS
+// ==========================================
+
+const currentMaintenanceStatus =
+  report.MaintenanceStatus || "";
+
+const startMaintenanceBtn =
+  document.getElementById(
+    "startMaintenanceBtn"
+  );
+
+const awaitingPartsBtn =
+  document.getElementById(
+    "awaitingPartsBtn"
+  );
+
+const continueMaintenanceBtn =
+  document.getElementById(
+    "continueMaintenanceBtn"
+  );
+
+
+// ACKNOWLEDGED
+
+if (startMaintenanceBtn) {
+
+  startMaintenanceBtn.style.display =
+    currentMaintenanceStatus ===
+    "Acknowledged"
+      ? "inline-block"
+      : "none";
+
+}
+
+
+// UNDER MAINTENANCE
+
+if (awaitingPartsBtn) {
+
+  awaitingPartsBtn.style.display =
+    currentMaintenanceStatus ===
+    "Under Maintenance"
+      ? "inline-block"
+      : "none";
+
+}
+
+
+// AWAITING PARTS
+
+if (continueMaintenanceBtn) {
+
+  continueMaintenanceBtn.style.display =
+    currentMaintenanceStatus ===
+    "Awaiting Parts"
+      ? "inline-block"
+      : "none";
+
+}
 
 // ==========================================
 // STORE MAINTENANCE ID FOR START BUTTON
@@ -903,6 +963,17 @@ if (startMaintenanceBtn) {
 if (awaitingPartsBtn) {
 
   awaitingPartsBtn.dataset.maintenanceId =
+    maintenanceID;
+
+}
+    const continueMaintenanceBtn =
+  document.getElementById(
+    "continueMaintenanceBtn"
+  );
+
+if (continueMaintenanceBtn) {
+
+  continueMaintenanceBtn.dataset.maintenanceId =
     maintenanceID;
 
 }
@@ -1077,6 +1148,85 @@ if (awaitingPartsBtn) {
 
       alert(
         "Maintenance status changed to Awaiting Parts."
+      );
+
+    }
+  );
+
+}
+// ==========================================
+// CONTINUE MAINTENANCE
+// AWAITING PARTS → UNDER MAINTENANCE
+// ==========================================
+
+const continueMaintenanceBtn =
+  document.getElementById(
+    "continueMaintenanceBtn"
+  );
+
+if (continueMaintenanceBtn) {
+
+  continueMaintenanceBtn.addEventListener(
+    "click",
+    async function () {
+
+      const maintenanceID =
+        this.dataset.maintenanceId;
+
+      if (!maintenanceID) {
+
+        alert(
+          "No maintenance request selected."
+        );
+
+        return;
+      }
+
+
+      const {
+        error
+      } = await client
+        .from("tblMaintenanceReport")
+        .update({
+          MaintenanceStatus:
+            "Under Maintenance"
+        })
+        .eq(
+          "MaintenanceID",
+          maintenanceID
+        );
+
+
+      if (error) {
+
+        console.error(
+          "Continue maintenance error:",
+          error
+        );
+
+        alert(
+          "Unable to continue maintenance."
+        );
+
+        return;
+      }
+
+
+      const statusElement =
+        document.getElementById(
+          "incomingMaintenanceStatus"
+        );
+
+      if (statusElement) {
+
+        statusElement.textContent =
+          "Under Maintenance";
+
+      }
+
+
+      alert(
+        "Maintenance has been resumed successfully."
       );
 
     }
