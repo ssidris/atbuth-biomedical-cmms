@@ -13084,37 +13084,53 @@ async function loadNotifications() {
   }
 
   try {
-    console.log("loadNotifications() started");
 
     const {
       data: notifications,
       error
     } = await client
       .from("tblNotifications")
-      .select(
-        "NotificationID, NotificationType, Title, Message, MaintenanceID, HospitalID, IsRead, CreatedAt"
-      )
+      .select(`
+        NotificationID,
+        NotificationType,
+        Title,
+        Message,
+        MaintenanceID,
+        HospitalID,
+        IsRead,
+        CreatedAt
+      `)
       .eq("HospitalID", 1)
       .eq("IsRead", false)
       .order("CreatedAt", {
         ascending: false
       });
-console.log("Notifications returned:", notifications);
-    alert(
-  "Notifications returned: " +
-  JSON.stringify(notifications)
-);
-console.log("Notification query error:", error);
+
     if (error) {
-      throw error;
+      console.error(
+        "Notification query error:",
+        error
+      );
+
+      return;
     }
 
-    // Unread notification count
-    notificationCount.textContent =
-      notifications.length;
+    const notificationData =
+      notifications || [];
 
-    // No notifications
-    if (!notifications.length) {
+    // ==========================================
+    // UPDATE NOTIFICATION COUNTER
+    // ==========================================
+
+    notificationCount.textContent =
+      notificationData.length;
+
+
+    // ==========================================
+    // NO NOTIFICATIONS
+    // ==========================================
+
+    if (notificationData.length === 0) {
 
       notificationList.innerHTML = `
         <p class="no-notifications">
@@ -13125,37 +13141,158 @@ console.log("Notification query error:", error);
       return;
     }
 
-    // Display notifications
+
+    // ==========================================
+    // DISPLAY NOTIFICATIONS
+    // ==========================================
+
     notificationList.innerHTML =
-      notifications.map(notification => {
+      notificationData.map(
+        notification => {
 
-        const date =
-          new Date(
-            notification.CreatedAt
-          ).toLocaleString();
+          const date =
+            new Date(
+              notification.CreatedAt
+            ).toLocaleString();
 
-        return `
-          <div
-            class="notification-item"
-            data-notification-id="${notification.NotificationID}"
-          >
+          return `
+            <div
+              class="notification-item"
+              data-notification-id="${notification.NotificationID}"
+              data-maintenance-id="${notification.MaintenanceID || ""}"
+            >
 
-            <strong>
-              ${notification.Title}
-            </strong>
+              <strong>
+                ${notification.Title || "Notification"}
+              </strong>
 
-            <p>
-              ${notification.Message}
-            </p>
+              <p>
+                ${notification.Message || ""}
+              </p>
 
-            <span class="notification-time">
-              ${date}
-            </span>
+              <span class="notification-time">
+                ${date}
+              </span>
 
-          </div>
-        `;
+            </div>
+          `;
 
-      }).join("");
+        }
+      ).join("");
+
+
+    // ==========================================
+    // NOTIFICATION CLICK
+    // ==========================================
+
+    const notificationItems =
+      document.querySelectorAll(
+        ".notification-item"
+      );
+
+    notificationItems.forEach(
+      item => {
+
+        item.addEventListener(
+          "click",
+          async function () {
+
+            const notificationID =
+              this.dataset.notificationId;
+
+            const maintenanceID =
+              this.dataset.maintenanceId;
+
+
+            // ==================================
+            // MARK NOTIFICATION AS READ
+            // ==================================
+
+            const {
+              error: updateError
+            } = await client
+              .from("tblNotifications")
+              .update({
+                IsRead: true,
+                ReadAt:
+                  new Date().toISOString()
+              })
+              .eq(
+                "NotificationID",
+                notificationID
+              );
+
+            if (updateError) {
+
+              console.error(
+                "Notification update error:",
+                updateError
+              );
+
+              return;
+            }
+
+
+            // ==================================
+            // REFRESH NOTIFICATIONS
+            // ==================================
+
+            await loadNotifications();
+
+
+            // ==================================
+            // OPEN MAINTENANCE SECTION
+            // ==================================
+
+            const maintenanceSection =
+              document.getElementById(
+                "maintenanceSection"
+              );
+
+            if (maintenanceSection) {
+
+              document
+                .querySelectorAll(
+                  "section"
+                )
+                .forEach(section => {
+
+                  section.style.display =
+                    "none";
+
+                });
+
+              maintenanceSection.style.display =
+                "block";
+            }
+
+
+            // ==================================
+            // CLOSE NOTIFICATION PANEL
+            // ==================================
+
+            const notificationPanel =
+              document.getElementById(
+                "notificationPanel"
+              );
+
+            if (notificationPanel) {
+
+              notificationPanel.style.display =
+                "none";
+
+            }
+
+
+            console.log(
+              "Maintenance notification opened:",
+              maintenanceID
+            );
+
+          }
+        );
+
+      });
 
   } catch (error) {
 
@@ -13170,20 +13307,29 @@ console.log("Notification query error:", error);
 
 
 // ==========================================
-// OPEN / CLOSE NOTIFICATION PANEL
+// NOTIFICATION BUTTON
 // ==========================================
 
 const notificationBtn =
-  document.getElementById("notificationBtn");
+  document.getElementById(
+    "notificationBtn"
+  );
 
 const notificationPanel =
-  document.getElementById("notificationPanel");
+  document.getElementById(
+    "notificationPanel"
+  );
 
 const closeNotificationBtn =
-  document.getElementById("closeNotificationBtn");
+  document.getElementById(
+    "closeNotificationBtn"
+  );
 
 
-if (notificationBtn && notificationPanel) {
+if (
+  notificationBtn &&
+  notificationPanel
+) {
 
   notificationBtn.addEventListener(
     "click",
@@ -13191,7 +13337,9 @@ if (notificationBtn && notificationPanel) {
 
       if (
         notificationPanel.style.display ===
-        "none"
+        "none" ||
+        notificationPanel.style.display ===
+        ""
       ) {
 
         notificationPanel.style.display =
@@ -13212,6 +13360,10 @@ if (notificationBtn && notificationPanel) {
 }
 
 
+// ==========================================
+// CLOSE NOTIFICATION PANEL
+// ==========================================
+
 if (closeNotificationBtn) {
 
   closeNotificationBtn.addEventListener(
@@ -13225,3 +13377,10 @@ if (closeNotificationBtn) {
   );
 
 }
+
+
+// ==========================================
+// LOAD NOTIFICATIONS WHEN PAGE LOADS
+// ==========================================
+
+loadNotifications();
