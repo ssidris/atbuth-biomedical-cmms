@@ -944,17 +944,8 @@ if (continueMaintenanceBtn) {
 // STORE MAINTENANCE ID FOR START BUTTON
 // ==========================================
 
-const startMaintenanceBtn =
-  document.getElementById(
-    "startMaintenanceBtn"
-  );
-
-if (startMaintenanceBtn) {
-
-  startMaintenanceBtn.dataset.maintenanceId =
-    maintenanceID;
-
-}
+startMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
     const awaitingPartsBtn =
   document.getElementById(
     "awaitingPartsBtn"
