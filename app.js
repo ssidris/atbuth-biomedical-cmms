@@ -6014,14 +6014,14 @@ async function showApp(user) {
 
     await loadDashboard();
 
-// loadActiveMaintenanceRequests().catch(
-//   function(error) {
-//     console.error(
-//       "Active maintenance loading error:",
-//       error
-//     );
-//   }
-// );
+loadActiveMaintenanceRequests().catch(
+  function(error) {
+    console.error(
+      "Active maintenance loading error:",
+      error
+    );
+  }
+);
 
 
     console.log(
