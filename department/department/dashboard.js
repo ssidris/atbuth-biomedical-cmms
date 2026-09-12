@@ -1059,18 +1059,187 @@ async function loadDepartmentMaintenanceRequests() {
             ${report.JobOrderNumber || "N/A"}
           </strong>
 
-          <span
-            style="
-              padding:6px 12px;
-              border-radius:20px;
-              background:#dcfce7;
-              color:#166534;
-              font-weight:600;
-              font-size:13px;
-            "
-          >
-            ${status}
-          </span>
+          <div
+  style="
+    width:100%;
+    margin-top:10px;
+    padding:12px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    box-sizing:border-box;
+  "
+>
+
+  <div
+    style="
+      font-size:13px;
+      font-weight:600;
+      margin-bottom:10px;
+      color:#334155;
+    "
+  >
+    Maintenance Progress
+  </div>
+
+
+  <div
+    style="
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      align-items:center;
+    "
+  >
+
+    <span
+      style="
+        padding:6px 9px;
+        border-radius:15px;
+        background:${
+          status === "Submitted"
+            ? "#166534"
+            : "#dcfce7"
+        };
+        color:${
+          status === "Submitted"
+            ? "white"
+            : "#166534"
+        };
+        font-size:12px;
+        font-weight:600;
+      "
+    >
+      ✓ Submitted
+    </span>
+
+
+    <span style="color:#94a3b8;">
+      →
+    </span>
+
+
+    <span
+      style="
+        padding:6px 9px;
+        border-radius:15px;
+        background:${
+          status === "Acknowledged"
+            ? "#166534"
+            : "#e2e8f0"
+        };
+        color:${
+          status === "Acknowledged"
+            ? "white"
+            : "#64748b"
+        };
+        font-size:12px;
+        font-weight:600;
+      "
+    >
+      ${
+        status === "Acknowledged"
+          ? "✓ "
+          : ""
+      }Acknowledged
+    </span>
+
+
+    <span style="color:#94a3b8;">
+      →
+    </span>
+
+
+    <span
+      style="
+        padding:6px 9px;
+        border-radius:15px;
+        background:${
+          status === "Under Maintenance"
+            ? "#166534"
+            : "#e2e8f0"
+        };
+        color:${
+          status === "Under Maintenance"
+            ? "white"
+            : "#64748b"
+        };
+        font-size:12px;
+        font-weight:600;
+      "
+    >
+      ${
+        status === "Under Maintenance"
+          ? "✓ "
+          : ""
+      }Under Maintenance
+    </span>
+
+
+    <span style="color:#94a3b8;">
+      →
+    </span>
+
+
+    <span
+      style="
+        padding:6px 9px;
+        border-radius:15px;
+        background:${
+          status === "Awaiting Parts"
+            ? "#166534"
+            : "#e2e8f0"
+        };
+        color:${
+          status === "Awaiting Parts"
+            ? "white"
+            : "#64748b"
+        };
+        font-size:12px;
+        font-weight:600;
+      "
+    >
+      ${
+        status === "Awaiting Parts"
+          ? "✓ "
+          : ""
+      }Awaiting Parts
+    </span>
+
+
+    <span style="color:#94a3b8;">
+      →
+    </span>
+
+
+    <span
+      style="
+        padding:6px 9px;
+        border-radius:15px;
+        background:${
+          status === "Completed"
+            ? "#166534"
+            : "#e2e8f0"
+        };
+        color:${
+          status === "Completed"
+            ? "white"
+            : "#64748b"
+        };
+        font-size:12px;
+        font-weight:600;
+      "
+    >
+      ${
+        status === "Completed"
+          ? "✓ "
+          : ""
+      }Completed
+    </span>
+
+  </div>
+
+</div>
 
         </div>
 
