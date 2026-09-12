@@ -14576,10 +14576,10 @@ async function testActiveMaintenanceQuery() {
     return;
   }
 
-  console.log(
-    "ACTIVE MAINTENANCE QUERY SUCCESS:",
-    data
-  );
+  alert(
+  "Active maintenance records found: " +
+  (data ? data.length : 0)
+);
 
 }
 // ==========================================
