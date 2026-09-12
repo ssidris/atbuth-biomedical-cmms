@@ -952,12 +952,41 @@ if (continueMaintenanceBtn) {
       : "none";
 
 }
-
+    
 // ==========================================
-// LOAD ACTIVE MAINTENANCE REQUESTS
+// STORE MAINTENANCE ID FOR START BUTTON
+// ==========================================
+
+startMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
+    awaitingPartsBtn.dataset.maintenanceId =
+  maintenanceID;
+    continueMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
+    completeMaintenanceBtn.dataset.maintenanceId =
+  maintenanceID;
+    
+    // SHOW PANEL
+
+    panel.style.display =
+      "block";
+
+  } catch (error) {
+
+    console.error(
+      "Error loading incoming maintenance request:",
+      error
+    );
+
+  }
+
+}
+// ==========================================
+// ACTIVE MAINTENANCE REQUESTS
 // ==========================================
 
 window.loadActiveMaintenanceRequests = async function() {
+
   const list =
     document.getElementById(
       "activeMaintenanceList"
@@ -976,6 +1005,7 @@ window.loadActiveMaintenanceRequests = async function() {
   }
 
   if (loading) {
+    loading.style.display = "block";
     loading.textContent =
       "Loading active maintenance requests...";
   }
@@ -1029,6 +1059,7 @@ window.loadActiveMaintenanceRequests = async function() {
     ) {
 
       if (loading) {
+        loading.style.display = "block";
         loading.textContent =
           "No active maintenance requests.";
       }
@@ -1037,8 +1068,7 @@ window.loadActiveMaintenanceRequests = async function() {
     }
 
     if (loading) {
-      loading.style.display =
-        "none";
+      loading.style.display = "none";
     }
 
     reports.forEach(
@@ -1151,42 +1181,14 @@ window.loadActiveMaintenanceRequests = async function() {
     );
 
     if (loading) {
+      loading.style.display = "block";
       loading.textContent =
         "Unable to load active maintenance requests.";
     }
 
   }
 
-}
-
-// ==========================================
-// STORE MAINTENANCE ID FOR START BUTTON
-// ==========================================
-
-startMaintenanceBtn.dataset.maintenanceId =
-  maintenanceID;
-    awaitingPartsBtn.dataset.maintenanceId =
-  maintenanceID;
-    continueMaintenanceBtn.dataset.maintenanceId =
-  maintenanceID;
-    completeMaintenanceBtn.dataset.maintenanceId =
-  maintenanceID;
-    
-    // SHOW PANEL
-
-    panel.style.display =
-      "block";
-
-  } catch (error) {
-
-    console.error(
-      "Error loading incoming maintenance request:",
-      error
-    );
-
-  }
-
-}
+};
 // ==========================================
 // START MAINTENANCE
 // ACKNOWLEDGED → UNDER MAINTENANCE
