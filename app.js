@@ -6014,8 +6014,6 @@ async function showApp(user) {
 
     await loadDashboard();
 
-await loadDashboard();
-
 // loadActiveMaintenanceRequests().catch(
 //   function(error) {
 //     console.error(
