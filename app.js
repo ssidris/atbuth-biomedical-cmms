@@ -952,14 +952,12 @@ if (continueMaintenanceBtn) {
       : "none";
 
 }
+
 // ==========================================
 // LOAD ACTIVE MAINTENANCE REQUESTS
 // ==========================================
 
 async function loadActiveMaintenanceRequests() {
-  alert(
-  "Active Maintenance function started"
-);
 
   const list =
     document.getElementById(
@@ -972,24 +970,22 @@ async function loadActiveMaintenanceRequests() {
     );
 
   if (!list) {
+    console.error(
+      "activeMaintenanceList not found."
+    );
     return;
+  }
+
+  if (loading) {
+    loading.textContent =
+      "Loading active maintenance requests...";
   }
 
   try {
 
-    if (loading) {
-      loading.style.display = "block";
-      loading.textContent =
-        "Loading active maintenance requests...";
-    }
-
-    // ==========================================
-    // LOAD ACTIVE MAINTENANCE REPORTS
-    // ==========================================
-
     const {
       data: reports,
-      error: reportError
+      error
     } = await client
       .from("tblMaintenanceReport")
       .select(`
@@ -1011,11 +1007,11 @@ async function loadActiveMaintenanceRequests() {
         }
       );
 
-    if (reportError) {
+    if (error) {
 
       console.error(
-        "Active maintenance reports error:",
-        reportError
+        "Active maintenance error:",
+        error
       );
 
       if (loading) {
@@ -1028,7 +1024,10 @@ async function loadActiveMaintenanceRequests() {
 
     list.innerHTML = "";
 
-    if (!reports || reports.length === 0) {
+    if (
+      !reports ||
+      reports.length === 0
+    ) {
 
       if (loading) {
         loading.textContent =
@@ -1038,147 +1037,18 @@ async function loadActiveMaintenanceRequests() {
       return;
     }
 
-    // ==========================================
-    // GET EQUIPMENT IDs
-    // ==========================================
-
-    const equipmentIDs =
-      reports
-        .map(
-          function(report) {
-            return report.EquipmentID;
-          }
-        )
-        .filter(
-          function(id) {
-            return id !== null &&
-                   id !== undefined;
-          }
-        );
-
-    let equipmentMap = {};
-
-    if (equipmentIDs.length > 0) {
-
-      const {
-        data: equipmentData,
-        error: equipmentError
-      } = await client
-        .from("tblEquipment")
-        .select(`
-          EquipmentID,
-          BMENumber,
-          EquipmentName,
-          DepartmentID
-        `)
-        .in(
-          "EquipmentID",
-          equipmentIDs
-        );
-
-      if (equipmentError) {
-
-        console.error(
-          "Active maintenance equipment error:",
-          equipmentError
-        );
-
-      } else {
-
-        equipmentData.forEach(
-          function(equipment) {
-
-            equipmentMap[
-              equipment.EquipmentID
-            ] = equipment;
-
-          }
-        );
-
-      }
-
-    }
-
-    // ==========================================
-    // GET DEPARTMENTS
-    // ==========================================
-
-    const {
-      data: departments,
-      error: departmentError
-    } = await client
-      .from("tblDepartment")
-      .select(`
-        DepartmentID,
-        Name
-      `);
-
-    let departmentMap = {};
-
-    if (departmentError) {
-
-      console.error(
-        "Department loading error:",
-        departmentError
-      );
-
-    } else if (departments) {
-
-      departments.forEach(
-        function(department) {
-
-          departmentMap[
-            department.DepartmentID
-          ] = department.Name;
-
-        }
-      );
-
-    }
-
-    // ==========================================
-    // HIDE LOADING MESSAGE
-    // ==========================================
-
     if (loading) {
-      loading.style.display = "none";
+      loading.style.display =
+        "none";
     }
-
-    // ==========================================
-    // DISPLAY ACTIVE MAINTENANCE REQUESTS
-    // ==========================================
 
     reports.forEach(
       function(report) {
 
-        const equipment =
-          equipmentMap[
-            report.EquipmentID
-          ];
-
-        const equipmentName =
-          equipment
-            ? (
-                equipment.BMENumber || "-"
-              ) +
-              " — " +
-              (
-                equipment.EquipmentName || "-"
-              )
-            : "-";
-
-        const department =
-          equipment &&
-          equipment.DepartmentID
-            ? (
-                departmentMap[
-                  equipment.DepartmentID
-                ] || "-"
-              )
-            : "-";
-
         const card =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         card.style.cssText = `
           border:1px solid #e2e8f0;
@@ -1200,13 +1070,8 @@ async function loadActiveMaintenanceRequests() {
           </p>
 
           <p>
-            <strong>Equipment:</strong>
-            ${equipmentName}
-          </p>
-
-          <p>
-            <strong>Department:</strong>
-            ${department}
+            <strong>Equipment ID:</strong>
+            ${report.EquipmentID || "-"}
           </p>
 
           <p>
@@ -1215,7 +1080,7 @@ async function loadActiveMaintenanceRequests() {
           </p>
 
           <p>
-            <strong>Maintenance Status:</strong>
+            <strong>Status:</strong>
             ${report.MaintenanceStatus || "-"}
           </p>
 
@@ -1235,14 +1100,14 @@ async function loadActiveMaintenanceRequests() {
           </button>
         `;
 
-        const openButton =
+        const button =
           card.querySelector(
             ".openActiveMaintenanceBtn"
           );
 
-        if (openButton) {
+        if (button) {
 
-          openButton.addEventListener(
+          button.addEventListener(
             "click",
             async function() {
 
@@ -1272,7 +1137,9 @@ async function loadActiveMaintenanceRequests() {
 
         }
 
-        list.appendChild(card);
+        list.appendChild(
+          card
+        );
 
       }
     );
@@ -1284,15 +1151,14 @@ async function loadActiveMaintenanceRequests() {
       error
     );
 
-    alert(
-  "ACTIVE MAINTENANCE ERROR:\n\n" +
-  (error.message || error)
-);
+    if (loading) {
+      loading.textContent =
+        "Unable to load active maintenance requests.";
+    }
 
   }
 
 }
-
 
 // ==========================================
 // STORE MAINTENANCE ID FOR START BUTTON
