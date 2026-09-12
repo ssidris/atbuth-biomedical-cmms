@@ -6011,14 +6011,16 @@ async function showApp(user) {
 
     await loadDashboard();
 
-loadActiveMaintenanceRequests().catch(
-  function(error) {
-    console.error(
-      "Active maintenance loading error:",
-      error
-    );
-  }
-);
+await loadDashboard();
+
+// loadActiveMaintenanceRequests().catch(
+//   function(error) {
+//     console.error(
+//       "Active maintenance loading error:",
+//       error
+//     );
+//   }
+// );
 
 
     console.log(
