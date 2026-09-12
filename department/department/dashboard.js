@@ -1100,9 +1100,28 @@ async function loadDepartmentMaintenanceRequests() {
 
 
         <p>
-          <strong>Fault Reported:</strong>
-          ${report.FaultReported || "N/A"}
-        </p>
+  <strong>Fault Reported:</strong>
+  ${report.FaultReported || "N/A"}
+</p>
+
+<button
+  type="button"
+  onclick="printDepartmentMaintenanceReport(${report.MaintenanceID})"
+  style="
+    width:100%;
+    margin-top:12px;
+    padding:11px;
+    border:none;
+    border-radius:8px;
+    background:#166534;
+    color:white;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+  "
+>
+  🖨️ Print Maintenance Report
+</button>
 
 
         ${
