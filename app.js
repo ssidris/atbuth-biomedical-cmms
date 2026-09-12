@@ -5886,6 +5886,11 @@ async function showApp(user) {
     );
 
     await loadMaintenanceReports();
+    console.log(
+  "Loading active maintenance requests..."
+);
+
+await loadActiveMaintenanceRequests();
     
     // --------------------------------------
     // LOAD DASHBOARD
