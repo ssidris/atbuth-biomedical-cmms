@@ -975,13 +975,18 @@ async function loadActiveMaintenanceRequests() {
   try {
 
     if (loading) {
+      loading.style.display = "block";
       loading.textContent =
         "Loading active maintenance requests...";
     }
 
+    // ==========================================
+    // LOAD ACTIVE MAINTENANCE REPORTS
+    // ==========================================
+
     const {
       data: reports,
-      error
+      error: reportError
     } = await client
       .from("tblMaintenanceReport")
       .select(`
@@ -990,15 +995,7 @@ async function loadActiveMaintenanceRequests() {
         ReportDate,
         EquipmentID,
         FaultReported,
-        MaintenanceStatus,
-        tblEquipment (
-          BMENumber,
-          EquipmentName,
-          DepartmentID,
-          tblDepartment (
-            DepartmentName
-          )
-        )
+        MaintenanceStatus
       `)
       .neq(
         "MaintenanceStatus",
@@ -1011,11 +1008,11 @@ async function loadActiveMaintenanceRequests() {
         }
       );
 
-    if (error) {
+    if (reportError) {
 
       console.error(
-        "Active maintenance requests error:",
-        error
+        "Active maintenance reports error:",
+        reportError
       );
 
       if (loading) {
@@ -1038,15 +1035,123 @@ async function loadActiveMaintenanceRequests() {
       return;
     }
 
+    // ==========================================
+    // GET EQUIPMENT IDs
+    // ==========================================
+
+    const equipmentIDs =
+      reports
+        .map(
+          function(report) {
+            return report.EquipmentID;
+          }
+        )
+        .filter(
+          function(id) {
+            return id !== null &&
+                   id !== undefined;
+          }
+        );
+
+    let equipmentMap = {};
+
+    if (equipmentIDs.length > 0) {
+
+      const {
+        data: equipmentData,
+        error: equipmentError
+      } = await client
+        .from("tblEquipment")
+        .select(`
+          EquipmentID,
+          BMENumber,
+          EquipmentName,
+          DepartmentID
+        `)
+        .in(
+          "EquipmentID",
+          equipmentIDs
+        );
+
+      if (equipmentError) {
+
+        console.error(
+          "Active maintenance equipment error:",
+          equipmentError
+        );
+
+      } else {
+
+        equipmentData.forEach(
+          function(equipment) {
+
+            equipmentMap[
+              equipment.EquipmentID
+            ] = equipment;
+
+          }
+        );
+
+      }
+
+    }
+
+    // ==========================================
+    // GET DEPARTMENTS
+    // ==========================================
+
+    const {
+      data: departments,
+      error: departmentError
+    } = await client
+      .from("tblDepartment")
+      .select(`
+        DepartmentID,
+        Name
+      `);
+
+    let departmentMap = {};
+
+    if (departmentError) {
+
+      console.error(
+        "Department loading error:",
+        departmentError
+      );
+
+    } else if (departments) {
+
+      departments.forEach(
+        function(department) {
+
+          departmentMap[
+            department.DepartmentID
+          ] = department.Name;
+
+        }
+      );
+
+    }
+
+    // ==========================================
+    // HIDE LOADING MESSAGE
+    // ==========================================
+
     if (loading) {
       loading.style.display = "none";
     }
+
+    // ==========================================
+    // DISPLAY ACTIVE MAINTENANCE REQUESTS
+    // ==========================================
 
     reports.forEach(
       function(report) {
 
         const equipment =
-          report.tblEquipment;
+          equipmentMap[
+            report.EquipmentID
+          ];
 
         const equipmentName =
           equipment
@@ -1061,8 +1166,12 @@ async function loadActiveMaintenanceRequests() {
 
         const department =
           equipment &&
-          equipment.tblDepartment
-            ? equipment.tblDepartment.DepartmentName
+          equipment.DepartmentID
+            ? (
+                departmentMap[
+                  equipment.DepartmentID
+                ] || "-"
+              )
             : "-";
 
         const card =
@@ -1144,12 +1253,15 @@ async function loadActiveMaintenanceRequests() {
                 );
 
               if (panel) {
-                panel.style.display = "block";
+
+                panel.style.display =
+                  "block";
 
                 panel.scrollIntoView({
                   behavior: "smooth",
                   block: "start"
                 });
+
               }
 
             }
@@ -1177,6 +1289,8 @@ async function loadActiveMaintenanceRequests() {
   }
 
 }
+
+
 // ==========================================
 // STORE MAINTENANCE ID FOR START BUTTON
 // ==========================================
