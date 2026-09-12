@@ -1645,8 +1645,7 @@ async function loadEquipmentRegistrationDropdowns() {
 async function loadFormData() {
 
   await loadMaintenanceFormData();
-  await loadActiveMaintenanceRequests();
-
+  
   await loadPMEquipmentDropdown();
 
   await loadPMEngineerDropdown();
