@@ -1190,3 +1190,540 @@ async function loadDepartmentMaintenanceRequests() {
   }
 
 }
+
+// ==========================================
+// PRINT DEPARTMENT MAINTENANCE REPORT
+// ==========================================
+
+async function printDepartmentMaintenanceReport(
+  maintenanceID
+) {
+
+  try {
+
+    // ------------------------------------------
+    // GET LOGGED-IN DEPARTMENT
+    // ------------------------------------------
+
+    const departmentUser =
+      JSON.parse(
+        sessionStorage.getItem("departmentUser")
+      );
+
+    if (!departmentUser) {
+      alert("Department session not found.");
+      return;
+    }
+
+
+    const hospitalID =
+      departmentUser.HospitalID;
+
+    const departmentID =
+      departmentUser.DepartmentID;
+
+
+    // ------------------------------------------
+    // GET MAINTENANCE REPORT
+    // ------------------------------------------
+
+    const {
+      data: report,
+      error: reportError
+    } = await client
+      .from("tblMaintenanceReport")
+      .select(`
+        MaintenanceID,
+        JobOrderNumber,
+        ReportDate,
+        EquipmentID,
+        FaultReported,
+        MaintenanceStatus,
+        Diagnosis,
+        ActionTaken,
+        RequiredPart,
+        PartUsed,
+        Remarks,
+        HospitalID
+      `)
+      .eq("MaintenanceID", maintenanceID)
+      .eq("HospitalID", hospitalID)
+      .single();
+
+
+    if (reportError) {
+      throw reportError;
+    }
+
+
+    if (!report) {
+      alert("Maintenance report not found.");
+      return;
+    }
+
+
+    // ------------------------------------------
+    // GET EQUIPMENT
+    // ------------------------------------------
+
+    const {
+      data: equipment,
+      error: equipmentError
+    } = await client
+      .from("tblEquipment")
+      .select(`
+        EquipmentID,
+        BMENumber,
+        EquipmentName,
+        Manufacturer,
+        Model,
+        SerialNumber,
+        Location,
+        DepartmentID,
+        HospitalID
+      `)
+      .eq("EquipmentID", report.EquipmentID)
+      .eq("DepartmentID", departmentID)
+      .eq("HospitalID", hospitalID)
+      .single();
+
+
+    if (equipmentError) {
+      throw equipmentError;
+    }
+
+
+    if (!equipment) {
+      alert(
+        "This equipment does not belong to your department."
+      );
+      return;
+    }
+
+
+    // ------------------------------------------
+    // OPEN PRINT WINDOW
+    // ------------------------------------------
+
+    const printWindow =
+      window.open(
+        "",
+        "_blank",
+        "width=900,height=700"
+      );
+
+
+    if (!printWindow) {
+      alert(
+        "Please allow pop-ups in your browser to print the report."
+      );
+      return;
+    }
+
+
+    // ------------------------------------------
+    // PRINT DOCUMENT
+    // ------------------------------------------
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+
+      <html>
+
+      <head>
+
+        <title>
+          Maintenance Report -
+          ${report.JobOrderNumber || ""}
+        </title>
+
+        <style>
+
+          body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #111827;
+          }
+
+          .header {
+            text-align: center;
+            border-bottom: 2px solid #111827;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+          }
+
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+          }
+
+          .header h2 {
+            margin: 8px 0;
+            font-size: 18px;
+          }
+
+          .header p {
+            margin: 5px 0;
+            color: #475569;
+          }
+
+          .section {
+            margin-top: 25px;
+          }
+
+          .section-title {
+            background: #f1f5f9;
+            padding: 10px;
+            font-weight: bold;
+            border-left: 4px solid #166534;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+          }
+
+          td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            vertical-align: top;
+          }
+
+          td:first-child {
+            width: 30%;
+            font-weight: bold;
+          }
+
+          .status {
+            font-weight: bold;
+          }
+
+          .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+          }
+
+        </style>
+
+      </head>
+
+
+      <body>
+
+
+        <div class="header">
+
+          <h1>
+            ATBUTH
+          </h1>
+
+          <h2>
+            Biomedical Equipment Maintenance Report
+          </h2>
+
+          <p>
+            Department Maintenance Request
+          </p>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            Maintenance Request Information
+          </div>
+
+          <table>
+
+            <tr>
+              <td>Job Order Number</td>
+              <td>
+                ${report.JobOrderNumber || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Report Date</td>
+              <td>
+                ${
+                  report.ReportDate
+                    ? new Date(
+                        report.ReportDate
+                      ).toLocaleDateString()
+                    : "N/A"
+                }
+              </td>
+            </tr>
+
+            <tr>
+              <td>Maintenance Status</td>
+              <td class="status">
+                ${report.MaintenanceStatus || "Submitted"}
+              </td>
+            </tr>
+
+          </table>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            Department Information
+          </div>
+
+          <table>
+
+            <tr>
+              <td>Department</td>
+              <td>
+                ${departmentUser.FullName || departmentUser.Username || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Hospital</td>
+              <td>
+                ATBUTH
+              </td>
+            </tr>
+
+          </table>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            Equipment Information
+          </div>
+
+          <table>
+
+            <tr>
+              <td>BME Number</td>
+              <td>
+                ${equipment.BMENumber || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Equipment Name</td>
+              <td>
+                ${equipment.EquipmentName || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Manufacturer</td>
+              <td>
+                ${equipment.Manufacturer || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Model</td>
+              <td>
+                ${equipment.Model || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Serial Number</td>
+              <td>
+                ${equipment.SerialNumber || "N/A"}
+              </td>
+            </tr>
+
+            <tr>
+              <td>Location</td>
+              <td>
+                ${equipment.Location || "N/A"}
+              </td>
+            </tr>
+
+          </table>
+
+        </div>
+
+
+        <div class="section">
+
+          <div class="section-title">
+            Fault / Complaint
+          </div>
+
+          <table>
+
+            <tr>
+              <td>Fault Reported</td>
+              <td>
+                ${report.FaultReported || "N/A"}
+              </td>
+            </tr>
+
+          </table>
+
+        </div>
+
+
+        ${
+          report.Diagnosis ||
+          report.ActionTaken ||
+          report.RequiredPart ||
+          report.PartUsed
+            ? `
+
+              <div class="section">
+
+                <div class="section-title">
+                  Maintenance Details
+                </div>
+
+                <table>
+
+                  ${
+                    report.Diagnosis
+                      ? `
+                        <tr>
+                          <td>Diagnosis</td>
+                          <td>
+                            ${report.Diagnosis}
+                          </td>
+                        </tr>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    report.ActionTaken
+                      ? `
+                        <tr>
+                          <td>Action Taken</td>
+                          <td>
+                            ${report.ActionTaken}
+                          </td>
+                        </tr>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    report.RequiredPart
+                      ? `
+                        <tr>
+                          <td>Required Part</td>
+                          <td>
+                            ${report.RequiredPart}
+                          </td>
+                        </tr>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    report.PartUsed
+                      ? `
+                        <tr>
+                          <td>Part Used</td>
+                          <td>
+                            ${report.PartUsed}
+                          </td>
+                        </tr>
+                      `
+                      : ""
+                  }
+
+                </table>
+
+              </div>
+
+            `
+            : ""
+        }
+
+
+        ${
+          report.Remarks
+            ? `
+
+              <div class="section">
+
+                <div class="section-title">
+                  Remarks
+                </div>
+
+                <table>
+
+                  <tr>
+                    <td>Remarks</td>
+                    <td>
+                      ${report.Remarks}
+                    </td>
+                  </tr>
+
+                </table>
+
+              </div>
+
+            `
+            : ""
+        }
+
+
+        <div class="footer">
+
+          <p>
+            ATBUTH Biomedical Equipment Maintenance Management System
+          </p>
+
+          <p>
+            Printed from Department Portal
+          </p>
+
+        </div>
+
+
+      </body>
+
+      </html>
+    `);
+
+
+    printWindow.document.close();
+
+
+    // ------------------------------------------
+    // START PRINTING
+    // ------------------------------------------
+
+    printWindow.focus();
+
+    setTimeout(
+      function() {
+        printWindow.print();
+      },
+      500
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Error printing maintenance report:",
+      error
+    );
+
+    alert(
+      "Unable to print the maintenance report."
+    );
+
+  }
+
+}
