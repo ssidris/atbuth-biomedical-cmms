@@ -14582,3 +14582,32 @@ async function testActiveMaintenanceQuery() {
   );
 
 }
+// ==========================================
+// TEMPORARY TEST BUTTON
+// ==========================================
+
+const testActiveMaintenanceBtn =
+  document.getElementById(
+    "testActiveMaintenanceBtn"
+  );
+
+if (testActiveMaintenanceBtn) {
+
+  testActiveMaintenanceBtn.addEventListener(
+    "click",
+    async function() {
+
+      alert(
+        "Testing active maintenance query..."
+      );
+
+      await testActiveMaintenanceQuery();
+
+      alert(
+        "Test completed. Please tell me if any error appeared."
+      );
+
+    }
+  );
+
+}
