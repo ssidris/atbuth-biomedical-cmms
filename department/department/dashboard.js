@@ -1727,3 +1727,14 @@ async function printDepartmentMaintenanceReport(
   }
 
 }
+
+// ==========================================
+// AUTOMATIC MAINTENANCE REQUEST REFRESH
+// ==========================================
+
+setInterval(
+  function() {
+    loadDepartmentMaintenanceRequests();
+  },
+  30000
+);
