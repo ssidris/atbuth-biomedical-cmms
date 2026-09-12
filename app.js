@@ -1025,10 +1025,14 @@ window.loadActiveMaintenanceRequests = async function() {
         FaultReported,
         MaintenanceStatus
       `)
-      .neq(
-        "MaintenanceStatus",
-        "Completed"
-      )
+      .like(
+  "Remarks",
+  "%through Department Portal%"
+)
+     .neq(
+  "MaintenanceStatus",
+  "Completed"
+) 
       .order(
         "ReportDate",
         {
