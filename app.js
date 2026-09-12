@@ -14531,3 +14531,54 @@ if (closeNotificationBtn) {
 // ==========================================
 
 loadNotifications();
+
+// ==========================================
+// TEST ACTIVE MAINTENANCE DATABASE QUERY
+// ==========================================
+
+async function testActiveMaintenanceQuery() {
+
+  console.log(
+    "Testing active maintenance query..."
+  );
+
+  const {
+    data,
+    error
+  } = await client
+    .from("tblMaintenanceReport")
+    .select(`
+      MaintenanceID,
+      JobOrderNumber,
+      ReportDate,
+      EquipmentID,
+      FaultReported,
+      MaintenanceStatus
+    `)
+    .neq(
+      "MaintenanceStatus",
+      "Completed"
+    )
+    .order(
+      "ReportDate",
+      {
+        ascending: false
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "ACTIVE MAINTENANCE QUERY ERROR:",
+      error
+    );
+
+    return;
+  }
+
+  console.log(
+    "ACTIVE MAINTENANCE QUERY SUCCESS:",
+    data
+  );
+
+}
