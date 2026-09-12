@@ -1905,5 +1905,5 @@ setInterval(
   function() {
     loadDepartmentMaintenanceRequests();
   },
-  3000
+  30000
 );
