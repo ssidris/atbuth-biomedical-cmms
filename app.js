@@ -1281,10 +1281,10 @@ async function loadActiveMaintenanceRequests() {
       error
     );
 
-    if (loading) {
-      loading.textContent =
-        "Unable to load active maintenance requests.";
-    }
+    alert(
+  "ACTIVE MAINTENANCE ERROR:\n\n" +
+  (error.message || error)
+);
 
   }
 
