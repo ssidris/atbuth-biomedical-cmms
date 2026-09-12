@@ -6010,7 +6010,15 @@ async function showApp(user) {
     );
 
     await loadDashboard();
-    await loadActiveMaintenanceRequests();
+
+loadActiveMaintenanceRequests().catch(
+  function(error) {
+    console.error(
+      "Active maintenance loading error:",
+      error
+    );
+  }
+);
 
 
     console.log(
