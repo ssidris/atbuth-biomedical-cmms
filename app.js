@@ -952,7 +952,231 @@ if (continueMaintenanceBtn) {
       : "none";
 
 }
+// ==========================================
+// LOAD ACTIVE MAINTENANCE REQUESTS
+// ==========================================
 
+async function loadActiveMaintenanceRequests() {
+
+  const list =
+    document.getElementById(
+      "activeMaintenanceList"
+    );
+
+  const loading =
+    document.getElementById(
+      "activeMaintenanceLoading"
+    );
+
+  if (!list) {
+    return;
+  }
+
+  try {
+
+    if (loading) {
+      loading.textContent =
+        "Loading active maintenance requests...";
+    }
+
+    const {
+      data: reports,
+      error
+    } = await client
+      .from("tblMaintenanceReport")
+      .select(`
+        MaintenanceID,
+        JobOrderNumber,
+        ReportDate,
+        EquipmentID,
+        FaultReported,
+        MaintenanceStatus,
+        tblEquipment (
+          BMENumber,
+          EquipmentName,
+          DepartmentID,
+          tblDepartment (
+            DepartmentName
+          )
+        )
+      `)
+      .neq(
+        "MaintenanceStatus",
+        "Completed"
+      )
+      .order(
+        "ReportDate",
+        {
+          ascending: false
+        }
+      );
+
+    if (error) {
+
+      console.error(
+        "Active maintenance requests error:",
+        error
+      );
+
+      if (loading) {
+        loading.textContent =
+          "Unable to load active maintenance requests.";
+      }
+
+      return;
+    }
+
+    list.innerHTML = "";
+
+    if (!reports || reports.length === 0) {
+
+      if (loading) {
+        loading.textContent =
+          "No active maintenance requests.";
+      }
+
+      return;
+    }
+
+    if (loading) {
+      loading.style.display = "none";
+    }
+
+    reports.forEach(
+      function(report) {
+
+        const equipment =
+          report.tblEquipment;
+
+        const equipmentName =
+          equipment
+            ? (
+                equipment.BMENumber || "-"
+              ) +
+              " — " +
+              (
+                equipment.EquipmentName || "-"
+              )
+            : "-";
+
+        const department =
+          equipment &&
+          equipment.tblDepartment
+            ? equipment.tblDepartment.DepartmentName
+            : "-";
+
+        const card =
+          document.createElement("div");
+
+        card.style.cssText = `
+          border:1px solid #e2e8f0;
+          border-radius:8px;
+          padding:15px;
+          margin-top:12px;
+          background:#ffffff;
+        `;
+
+        card.innerHTML = `
+          <p>
+            <strong>Job Order:</strong>
+            ${report.JobOrderNumber || "-"}
+          </p>
+
+          <p>
+            <strong>Report Date:</strong>
+            ${report.ReportDate || "-"}
+          </p>
+
+          <p>
+            <strong>Equipment:</strong>
+            ${equipmentName}
+          </p>
+
+          <p>
+            <strong>Department:</strong>
+            ${department}
+          </p>
+
+          <p>
+            <strong>Fault:</strong>
+            ${report.FaultReported || "-"}
+          </p>
+
+          <p>
+            <strong>Maintenance Status:</strong>
+            ${report.MaintenanceStatus || "-"}
+          </p>
+
+          <button
+            type="button"
+            class="openActiveMaintenanceBtn"
+            style="
+              margin-top:8px;
+              padding:10px 18px;
+              border:none;
+              border-radius:6px;
+              cursor:pointer;
+              font-weight:bold;
+            "
+          >
+            🔧 Open Maintenance Request
+          </button>
+        `;
+
+        const openButton =
+          card.querySelector(
+            ".openActiveMaintenanceBtn"
+          );
+
+        if (openButton) {
+
+          openButton.addEventListener(
+            "click",
+            async function() {
+
+              await loadIncomingMaintenanceRequest(
+                report.MaintenanceID
+              );
+
+              const panel =
+                document.getElementById(
+                  "incomingMaintenancePanel"
+                );
+
+              if (panel) {
+                panel.style.display = "block";
+
+                panel.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+              }
+
+            }
+          );
+
+        }
+
+        list.appendChild(card);
+
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Unexpected active maintenance error:",
+      error
+    );
+
+    if (loading) {
+      loading.textContent =
+        "Unable to load active maintenance requests.";
+    }
+
+  }
+
+}
 // ==========================================
 // STORE MAINTENANCE ID FOR START BUTTON
 // ==========================================
