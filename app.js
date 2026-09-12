@@ -6010,6 +6010,7 @@ async function showApp(user) {
     );
 
     await loadDashboard();
+    await loadActiveMaintenanceRequests();
 
 
     console.log(
