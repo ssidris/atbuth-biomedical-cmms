@@ -850,3 +850,324 @@ if (notificationError) {
 // ==========================================
 
 loadComplaintEquipment();
+loadDepartmentMaintenanceRequests();
+// ==========================================
+// LOAD MY MAINTENANCE REQUESTS
+// ==========================================
+
+async function loadDepartmentMaintenanceRequests() {
+
+  const loading =
+    document.getElementById("maintenanceRequestsLoading");
+
+  const list =
+    document.getElementById("maintenanceRequestsList");
+
+  if (!loading || !list) {
+    return;
+  }
+
+  loading.textContent =
+    "Loading maintenance requests...";
+
+  list.innerHTML = "";
+
+  try {
+
+    // ------------------------------------------
+    // GET LOGGED-IN DEPARTMENT
+    // ------------------------------------------
+
+    const departmentUser =
+      JSON.parse(
+        sessionStorage.getItem("departmentUser")
+      );
+
+    if (!departmentUser) {
+      loading.textContent =
+        "Department session not found.";
+      return;
+    }
+
+
+    const departmentID =
+      departmentUser.DepartmentID;
+
+    const hospitalID =
+      departmentUser.HospitalID;
+
+
+    // ------------------------------------------
+    // GET EQUIPMENT BELONGING TO THIS DEPARTMENT
+    // ------------------------------------------
+
+    const {
+      data: departmentEquipment,
+      error: equipmentError
+    } = await client
+      .from("tblEquipment")
+      .select(
+        "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model"
+      )
+      .eq("DepartmentID", departmentID)
+      .eq("HospitalID", hospitalID);
+
+
+    if (equipmentError) {
+      throw equipmentError;
+    }
+
+
+    if (
+      !departmentEquipment ||
+      departmentEquipment.length === 0
+    ) {
+
+      loading.textContent =
+        "No equipment found for this department.";
+
+      return;
+    }
+
+
+    // ------------------------------------------
+    // GET EQUIPMENT IDs
+    // ------------------------------------------
+
+    const equipmentIDs =
+      departmentEquipment.map(
+        equipment => equipment.EquipmentID
+      );
+
+
+    // ------------------------------------------
+    // GET MAINTENANCE REPORTS
+    // ------------------------------------------
+
+    const {
+      data: maintenanceReports,
+      error: maintenanceError
+    } = await client
+      .from("tblMaintenanceReport")
+      .select(`
+        MaintenanceID,
+        JobOrderNumber,
+        ReportDate,
+        EquipmentID,
+        FaultReported,
+        MaintenanceStatus,
+        StatusID,
+        Diagnosis,
+        ActionTaken,
+        RequiredPart,
+        PartUsed,
+        Remarks
+      `)
+      .in("EquipmentID", equipmentIDs)
+      .eq("HospitalID", hospitalID)
+      .order("ReportDate", {
+        ascending: false
+      });
+
+
+    if (maintenanceError) {
+      throw maintenanceError;
+    }
+
+
+    loading.style.display = "none";
+
+
+    // ------------------------------------------
+    // NO REPORTS
+    // ------------------------------------------
+
+    if (
+      !maintenanceReports ||
+      maintenanceReports.length === 0
+    ) {
+
+      list.innerHTML = `
+        <div
+          style="
+            padding:20px;
+            text-align:center;
+            color:#64748b;
+            background:#f8fafc;
+            border-radius:8px;
+          "
+        >
+          No maintenance requests submitted yet.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    // ------------------------------------------
+    // DISPLAY REPORTS
+    // ------------------------------------------
+
+    maintenanceReports.forEach(report => {
+
+      const equipment =
+        departmentEquipment.find(
+          item =>
+            item.EquipmentID === report.EquipmentID
+        );
+
+
+      const status =
+        report.MaintenanceStatus ||
+        "Submitted";
+
+
+      const card =
+        document.createElement("div");
+
+
+      card.style.cssText = `
+        border:1px solid #e2e8f0;
+        border-radius:10px;
+        padding:16px;
+        margin-bottom:15px;
+        background:#f8fafc;
+      `;
+
+
+      card.innerHTML = `
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:12px;
+          "
+        >
+
+          <strong
+            style="
+              font-size:16px;
+              color:#0f172a;
+            "
+          >
+            Job Order:
+            ${report.JobOrderNumber || "N/A"}
+          </strong>
+
+          <span
+            style="
+              padding:6px 12px;
+              border-radius:20px;
+              background:#dcfce7;
+              color:#166534;
+              font-weight:600;
+              font-size:13px;
+            "
+          >
+            ${status}
+          </span>
+
+        </div>
+
+
+        <p>
+          <strong>Date:</strong>
+          ${
+            report.ReportDate
+              ? new Date(
+                  report.ReportDate
+                ).toLocaleDateString()
+              : "N/A"
+          }
+        </p>
+
+
+        <p>
+          <strong>Equipment:</strong>
+          ${
+            equipment
+              ? equipment.BMENumber +
+                " — " +
+                equipment.EquipmentName
+              : "N/A"
+          }
+        </p>
+
+
+        <p>
+          <strong>Fault Reported:</strong>
+          ${report.FaultReported || "N/A"}
+        </p>
+
+
+        ${
+          report.Diagnosis
+            ? `
+              <p>
+                <strong>Diagnosis:</strong>
+                ${report.Diagnosis}
+              </p>
+            `
+            : ""
+        }
+
+
+        ${
+          report.ActionTaken
+            ? `
+              <p>
+                <strong>Action Taken:</strong>
+                ${report.ActionTaken}
+              </p>
+            `
+            : ""
+        }
+
+
+        ${
+          report.RequiredPart
+            ? `
+              <p>
+                <strong>Required Part:</strong>
+                ${report.RequiredPart}
+              </p>
+            `
+            : ""
+        }
+
+      `;
+
+
+      list.appendChild(card);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Error loading maintenance requests:",
+      error
+    );
+
+    loading.textContent =
+      "Unable to load maintenance requests.";
+
+    list.innerHTML = `
+      <p
+        style="
+          color:#b91c1c;
+        "
+      >
+        Error loading maintenance requests.
+        Please try again.
+      </p>
+    `;
+
+  }
+
+}
