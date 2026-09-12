@@ -851,6 +851,7 @@ if (notificationError) {
 
 loadComplaintEquipment();
 loadDepartmentMaintenanceRequests();
+
 // ==========================================
 // LOAD MY MAINTENANCE REQUESTS
 // ==========================================
@@ -858,10 +859,14 @@ loadDepartmentMaintenanceRequests();
 async function loadDepartmentMaintenanceRequests() {
 
   const loading =
-    document.getElementById("maintenanceRequestsLoading");
+    document.getElementById(
+      "maintenanceRequestsLoading"
+    );
 
   const list =
-    document.getElementById("maintenanceRequestsList");
+    document.getElementById(
+      "maintenanceRequestsList"
+    );
 
   if (!loading || !list) {
     return;
@@ -880,12 +885,16 @@ async function loadDepartmentMaintenanceRequests() {
 
     const departmentUser =
       JSON.parse(
-        sessionStorage.getItem("departmentUser")
+        sessionStorage.getItem(
+          "departmentUser"
+        )
       );
 
     if (!departmentUser) {
+
       loading.textContent =
         "Department session not found.";
+
       return;
     }
 
@@ -906,11 +915,25 @@ async function loadDepartmentMaintenanceRequests() {
       error: equipmentError
     } = await client
       .from("tblEquipment")
-      .select(
-        "EquipmentID, BMENumber, EquipmentName, Manufacturer, Model"
+      .select(`
+        EquipmentID,
+        BMENumber,
+        EquipmentName,
+        Manufacturer,
+        Model,
+        SerialNumber,
+        Location,
+        DepartmentID,
+        HospitalID
+      `)
+      .eq(
+        "DepartmentID",
+        departmentID
       )
-      .eq("DepartmentID", departmentID)
-      .eq("HospitalID", hospitalID);
+      .eq(
+        "HospitalID",
+        hospitalID
+      );
 
 
     if (equipmentError) {
@@ -936,12 +959,14 @@ async function loadDepartmentMaintenanceRequests() {
 
     const equipmentIDs =
       departmentEquipment.map(
-        equipment => equipment.EquipmentID
+        function(equipment) {
+          return equipment.EquipmentID;
+        }
       );
 
 
     // ------------------------------------------
-    // GET MAINTENANCE REPORTS
+    // GET DEPARTMENT PORTAL REQUESTS ONLY
     // ------------------------------------------
 
     const {
@@ -955,19 +980,29 @@ async function loadDepartmentMaintenanceRequests() {
         ReportDate,
         EquipmentID,
         FaultReported,
-        MaintenanceStatus,
         StatusID,
-        Diagnosis,
-        ActionTaken,
-        RequiredPart,
-        PartUsed,
+        MaintenanceStatus,
+        HospitalID,
         Remarks
       `)
-      .in("EquipmentID", equipmentIDs)
-      .eq("HospitalID", hospitalID)
-      .order("ReportDate", {
-        ascending: false
-      });
+      .in(
+        "EquipmentID",
+        equipmentIDs
+      )
+      .eq(
+        "HospitalID",
+        hospitalID
+      )
+      .like(
+        "Remarks",
+        "%through Department Portal%"
+      )
+      .order(
+        "ReportDate",
+        {
+          ascending: false
+        }
+      );
 
 
     if (maintenanceError) {
@@ -975,11 +1010,12 @@ async function loadDepartmentMaintenanceRequests() {
     }
 
 
-    loading.style.display = "none";
+    loading.style.display =
+      "none";
 
 
     // ------------------------------------------
-    // NO REPORTS
+    // NO DEPARTMENT PORTAL REQUESTS
     // ------------------------------------------
 
     if (
@@ -1006,334 +1042,363 @@ async function loadDepartmentMaintenanceRequests() {
 
 
     // ------------------------------------------
-    // DISPLAY REPORTS
+    // DISPLAY DEPARTMENT PORTAL REQUESTS
     // ------------------------------------------
 
-    maintenanceReports.forEach(report => {
+    maintenanceReports.forEach(
+      function(report) {
 
-      const equipment =
-        departmentEquipment.find(
-          item =>
-            item.EquipmentID === report.EquipmentID
-        );
-
-
-      const status =
-        report.MaintenanceStatus ||
-        "Submitted";
-
-
-      const card =
-        document.createElement("div");
+        const equipment =
+          departmentEquipment.find(
+            function(item) {
+              return (
+                item.EquipmentID ===
+                report.EquipmentID
+              );
+            }
+          );
 
 
-      card.style.cssText = `
-        border:1px solid #e2e8f0;
-        border-radius:10px;
-        padding:16px;
-        margin-bottom:15px;
-        background:#f8fafc;
-      `;
+        const status =
+          report.MaintenanceStatus ||
+          "Submitted";
 
 
-      card.innerHTML = `
+        const card =
+          document.createElement(
+            "div"
+          );
 
-        <div
-          style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-bottom:12px;
-          "
-        >
 
-          <strong
-            style="
-              font-size:16px;
-              color:#0f172a;
-            "
-          >
-            Job Order:
-            ${report.JobOrderNumber || "N/A"}
-          </strong>
+        card.style.cssText = `
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+          padding:16px;
+          margin-bottom:15px;
+          background:#f8fafc;
+        `;
+
+
+        card.innerHTML = `
 
           <div
-  style="
-    width:100%;
-    margin-top:10px;
-    padding:12px;
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:8px;
-    box-sizing:border-box;
-  "
->
+            style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              gap:10px;
+              flex-wrap:wrap;
+              margin-bottom:12px;
+            "
+          >
 
-  <div
-    style="
-      font-size:13px;
-      font-weight:600;
-      margin-bottom:10px;
-      color:#334155;
-    "
-  >
-    Maintenance Progress
-  </div>
+            <strong
+              style="
+                font-size:16px;
+                color:#0f172a;
+              "
+            >
+              Job Order:
+              ${report.JobOrderNumber || "N/A"}
+            </strong>
 
-
-  <div
-    style="
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      align-items:center;
-    "
-  >
-
-    <span
-      style="
-        padding:6px 9px;
-        border-radius:15px;
-        background:${
-          status === "Submitted"
-            ? "#166534"
-            : "#dcfce7"
-        };
-        color:${
-          status === "Submitted"
-            ? "white"
-            : "#166534"
-        };
-        font-size:12px;
-        font-weight:600;
-      "
-    >
-      ✓ Submitted
-    </span>
+          </div>
 
 
-    <span style="color:#94a3b8;">
-      →
-    </span>
+          <!-- ==================================
+               MAINTENANCE PROGRESS
+               ================================== -->
+
+          <div
+            style="
+              width:100%;
+              margin-top:10px;
+              padding:12px;
+              background:#f8fafc;
+              border:1px solid #e2e8f0;
+              border-radius:8px;
+              box-sizing:border-box;
+            "
+          >
+
+            <div
+              style="
+                font-size:13px;
+                font-weight:600;
+                margin-bottom:10px;
+                color:#334155;
+              "
+            >
+              Maintenance Progress
+            </div>
 
 
-    <span
-      style="
-        padding:6px 9px;
-        border-radius:15px;
-        background:${
-          status === "Acknowledged"
-            ? "#166534"
-            : "#e2e8f0"
-        };
-        color:${
-          status === "Acknowledged"
-            ? "white"
-            : "#64748b"
-        };
-        font-size:12px;
-        font-weight:600;
-      "
-    >
-      ${
-        status === "Acknowledged"
-          ? "✓ "
-          : ""
-      }Acknowledged
-    </span>
+            <div
+              style="
+                display:flex;
+                flex-wrap:wrap;
+                gap:6px;
+                align-items:center;
+              "
+            >
+
+              <span
+                style="
+                  padding:6px 9px;
+                  border-radius:15px;
+                  background:${
+                    status === "Submitted"
+                      ? "#166534"
+                      : "#dcfce7"
+                  };
+                  color:${
+                    status === "Submitted"
+                      ? "white"
+                      : "#166534"
+                  };
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                ✓ Submitted
+              </span>
 
 
-    <span style="color:#94a3b8;">
-      →
-    </span>
+              <span style="color:#94a3b8;">
+                →
+              </span>
 
 
-    <span
-      style="
-        padding:6px 9px;
-        border-radius:15px;
-        background:${
-          status === "Under Maintenance"
-            ? "#166534"
-            : "#e2e8f0"
-        };
-        color:${
-          status === "Under Maintenance"
-            ? "white"
-            : "#64748b"
-        };
-        font-size:12px;
-        font-weight:600;
-      "
-    >
-      ${
-        status === "Under Maintenance"
-          ? "✓ "
-          : ""
-      }Under Maintenance
-    </span>
+              <span
+                style="
+                  padding:6px 9px;
+                  border-radius:15px;
+                  background:${
+                    status === "Acknowledged"
+                      ? "#166534"
+                      : "#e2e8f0"
+                  };
+                  color:${
+                    status === "Acknowledged"
+                      ? "white"
+                      : "#64748b"
+                  };
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                ${
+                  status === "Acknowledged"
+                    ? "✓ "
+                    : ""
+                }Acknowledged
+              </span>
 
 
-    <span style="color:#94a3b8;">
-      →
-    </span>
+              <span style="color:#94a3b8;">
+                →
+              </span>
 
 
-    <span
-      style="
-        padding:6px 9px;
-        border-radius:15px;
-        background:${
-          status === "Awaiting Parts"
-            ? "#166534"
-            : "#e2e8f0"
-        };
-        color:${
-          status === "Awaiting Parts"
-            ? "white"
-            : "#64748b"
-        };
-        font-size:12px;
-        font-weight:600;
-      "
-    >
-      ${
-        status === "Awaiting Parts"
-          ? "✓ "
-          : ""
-      }Awaiting Parts
-    </span>
+              <span
+                style="
+                  padding:6px 9px;
+                  border-radius:15px;
+                  background:${
+                    status === "Under Maintenance"
+                      ? "#166534"
+                      : "#e2e8f0"
+                  };
+                  color:${
+                    status === "Under Maintenance"
+                      ? "white"
+                      : "#64748b"
+                  };
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                ${
+                  status === "Under Maintenance"
+                    ? "✓ "
+                    : ""
+                }Under Maintenance
+              </span>
 
 
-    <span style="color:#94a3b8;">
-      →
-    </span>
+              <span style="color:#94a3b8;">
+                →
+              </span>
 
 
-    <span
-      style="
-        padding:6px 9px;
-        border-radius:15px;
-        background:${
-          status === "Completed"
-            ? "#166534"
-            : "#e2e8f0"
-        };
-        color:${
-          status === "Completed"
-            ? "white"
-            : "#64748b"
-        };
-        font-size:12px;
-        font-weight:600;
-      "
-    >
-      ${
-        status === "Completed"
-          ? "✓ "
-          : ""
-      }Completed
-    </span>
-
-  </div>
-
-</div>
-
-        </div>
+              <span
+                style="
+                  padding:6px 9px;
+                  border-radius:15px;
+                  background:${
+                    status === "Awaiting Parts"
+                      ? "#166534"
+                      : "#e2e8f0"
+                  };
+                  color:${
+                    status === "Awaiting Parts"
+                      ? "white"
+                      : "#64748b"
+                  };
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                ${
+                  status === "Awaiting Parts"
+                    ? "✓ "
+                    : ""
+                }Awaiting Parts
+              </span>
 
 
-        <p>
-          <strong>Date:</strong>
-          ${
-            report.ReportDate
-              ? new Date(
-                  report.ReportDate
-                ).toLocaleDateString()
-              : "N/A"
-          }
-        </p>
+              <span style="color:#94a3b8;">
+                →
+              </span>
 
 
-        <p>
-          <strong>Equipment:</strong>
-          ${
-            equipment
-              ? equipment.BMENumber +
-                " — " +
-                equipment.EquipmentName
-              : "N/A"
-          }
-        </p>
+              <span
+                style="
+                  padding:6px 9px;
+                  border-radius:15px;
+                  background:${
+                    status === "Completed"
+                      ? "#166534"
+                      : "#e2e8f0"
+                  };
+                  color:${
+                    status === "Completed"
+                      ? "white"
+                      : "#64748b"
+                  };
+                  font-size:12px;
+                  font-weight:600;
+                "
+              >
+                ${
+                  status === "Completed"
+                    ? "✓ "
+                    : ""
+                }Completed
+              </span>
+
+            </div>
+
+          </div>
 
 
-        <p>
-  <strong>Fault Reported:</strong>
-  ${report.FaultReported || "N/A"}
-</p>
+          <!-- ==================================
+               REQUEST INFORMATION
+               ================================== -->
 
-<button
-  type="button"
-  onclick="printDepartmentMaintenanceReport(${report.MaintenanceID})"
-  style="
-    width:100%;
-    margin-top:12px;
-    padding:11px;
-    border:none;
-    border-radius:8px;
-    background:#166534;
-    color:white;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-  "
->
-  🖨️ Print Maintenance Report
-</button>
+          <p>
+            <strong>Date:</strong>
+            ${
+              report.ReportDate
+                ? new Date(
+                    report.ReportDate
+                  ).toLocaleDateString()
+                : "N/A"
+            }
+          </p>
 
 
-        ${
-          report.Diagnosis
-            ? `
-              <p>
-                <strong>Diagnosis:</strong>
-                ${report.Diagnosis}
-              </p>
-            `
-            : ""
-        }
+          <p>
+            <strong>Equipment:</strong>
+            ${
+              equipment
+                ? equipment.BMENumber +
+                  " — " +
+                  equipment.EquipmentName
+                : "N/A"
+            }
+          </p>
 
 
-        ${
-          report.ActionTaken
-            ? `
-              <p>
-                <strong>Action Taken:</strong>
-                ${report.ActionTaken}
-              </p>
-            `
-            : ""
-        }
+          <p>
+            <strong>Manufacturer:</strong>
+            ${
+              equipment
+                ? equipment.Manufacturer || "N/A"
+                : "N/A"
+            }
+          </p>
 
 
-        ${
-          report.RequiredPart
-            ? `
-              <p>
-                <strong>Required Part:</strong>
-                ${report.RequiredPart}
-              </p>
-            `
-            : ""
-        }
-
-      `;
+          <p>
+            <strong>Model:</strong>
+            ${
+              equipment
+                ? equipment.Model || "N/A"
+                : "N/A"
+            }
+          </p>
 
 
-      list.appendChild(card);
+          <p>
+            <strong>Serial Number:</strong>
+            ${
+              equipment
+                ? equipment.SerialNumber || "N/A"
+                : "N/A"
+            }
+          </p>
 
-    });
+
+          <p>
+            <strong>Location:</strong>
+            ${
+              equipment
+                ? equipment.Location || "N/A"
+                : "N/A"
+            }
+          </p>
+
+
+          <p>
+            <strong>Fault Reported:</strong>
+            ${report.FaultReported || "N/A"}
+          </p>
+
+
+          <button
+            type="button"
+            onclick="
+              printDepartmentMaintenanceReport(
+                ${report.MaintenanceID}
+              )
+            "
+            style="
+              width:100%;
+              margin-top:12px;
+              padding:11px;
+              border:none;
+              border-radius:8px;
+              background:#166534;
+              color:white;
+              font-size:15px;
+              font-weight:600;
+              cursor:pointer;
+            "
+          >
+            🖨️ Print Maintenance Report
+          </button>
+
+        `;
+
+
+        list.appendChild(
+          card
+        );
+
+      }
+    );
+
 
   } catch (error) {
 
@@ -1341,6 +1406,9 @@ async function loadDepartmentMaintenanceRequests() {
       "Error loading maintenance requests:",
       error
     );
+
+    loading.style.display =
+      "block";
 
     loading.textContent =
       "Unable to load maintenance requests.";
@@ -1359,7 +1427,7 @@ async function loadDepartmentMaintenanceRequests() {
   }
 
 }
-
+      
 // ==========================================
 // PRINT DEPARTMENT MAINTENANCE REPORT
 // ==========================================
@@ -1376,11 +1444,17 @@ async function printDepartmentMaintenanceReport(
 
     const departmentUser =
       JSON.parse(
-        sessionStorage.getItem("departmentUser")
+        sessionStorage.getItem(
+          "departmentUser"
+        )
       );
 
     if (!departmentUser) {
-      alert("Department session not found.");
+
+      alert(
+        "Department session not found."
+      );
+
       return;
     }
 
@@ -1393,7 +1467,7 @@ async function printDepartmentMaintenanceReport(
 
 
     // ------------------------------------------
-    // GET MAINTENANCE REPORT
+    // GET DEPARTMENT PORTAL REQUEST
     // ------------------------------------------
 
     const {
@@ -1408,15 +1482,21 @@ async function printDepartmentMaintenanceReport(
         EquipmentID,
         FaultReported,
         MaintenanceStatus,
-        Diagnosis,
-        ActionTaken,
-        RequiredPart,
-        PartUsed,
-        Remarks,
-        HospitalID
+        HospitalID,
+        Remarks
       `)
-      .eq("MaintenanceID", maintenanceID)
-      .eq("HospitalID", hospitalID)
+      .eq(
+        "MaintenanceID",
+        maintenanceID
+      )
+      .eq(
+        "HospitalID",
+        hospitalID
+      )
+      .like(
+        "Remarks",
+        "%through Department Portal%"
+      )
       .single();
 
 
@@ -1426,7 +1506,11 @@ async function printDepartmentMaintenanceReport(
 
 
     if (!report) {
-      alert("Maintenance report not found.");
+
+      alert(
+        "Maintenance request not found."
+      );
+
       return;
     }
 
@@ -1451,9 +1535,18 @@ async function printDepartmentMaintenanceReport(
         DepartmentID,
         HospitalID
       `)
-      .eq("EquipmentID", report.EquipmentID)
-      .eq("DepartmentID", departmentID)
-      .eq("HospitalID", hospitalID)
+      .eq(
+        "EquipmentID",
+        report.EquipmentID
+      )
+      .eq(
+        "DepartmentID",
+        departmentID
+      )
+      .eq(
+        "HospitalID",
+        hospitalID
+      )
       .single();
 
 
@@ -1463,11 +1556,43 @@ async function printDepartmentMaintenanceReport(
 
 
     if (!equipment) {
+
       alert(
         "This equipment does not belong to your department."
       );
+
       return;
     }
+
+
+    // ------------------------------------------
+    // GET DEPARTMENT NAME
+    // ------------------------------------------
+
+    const {
+      data: department,
+      error: departmentError
+    } = await client
+      .from("tblDepartment")
+      .select(
+        '"DepartmentID", "DepartmentName"'
+      )
+      .eq(
+        "DepartmentID",
+        departmentID
+      )
+      .maybeSingle();
+
+
+    if (departmentError) {
+      throw departmentError;
+    }
+
+
+    const departmentName =
+      department
+        ? department.DepartmentName
+        : "N/A";
 
 
     // ------------------------------------------
@@ -1483,9 +1608,11 @@ async function printDepartmentMaintenanceReport(
 
 
     if (!printWindow) {
+
       alert(
         "Please allow pop-ups in your browser to print the report."
       );
+
       return;
     }
 
@@ -1502,7 +1629,7 @@ async function printDepartmentMaintenanceReport(
       <head>
 
         <title>
-          Maintenance Report -
+          Maintenance Request -
           ${report.JobOrderNumber || ""}
         </title>
 
@@ -1590,15 +1717,19 @@ async function printDepartmentMaintenanceReport(
           </h1>
 
           <h2>
-            Biomedical Equipment Maintenance Report
+            Biomedical Maintenance Request
           </h2>
 
           <p>
-            Department Maintenance Request
+            Department Portal
           </p>
 
         </div>
 
+
+        <!-- ==================================
+             REQUEST INFORMATION
+             ================================== -->
 
         <div class="section">
 
@@ -1631,7 +1762,10 @@ async function printDepartmentMaintenanceReport(
             <tr>
               <td>Maintenance Status</td>
               <td class="status">
-                ${report.MaintenanceStatus || "Submitted"}
+                ${
+                  report.MaintenanceStatus ||
+                  "Submitted"
+                }
               </td>
             </tr>
 
@@ -1639,6 +1773,10 @@ async function printDepartmentMaintenanceReport(
 
         </div>
 
+
+        <!-- ==================================
+             DEPARTMENT INFORMATION
+             ================================== -->
 
         <div class="section">
 
@@ -1651,7 +1789,7 @@ async function printDepartmentMaintenanceReport(
             <tr>
               <td>Department</td>
               <td>
-                ${departmentUser.FullName || departmentUser.Username || "N/A"}
+                ${departmentName}
               </td>
             </tr>
 
@@ -1666,6 +1804,10 @@ async function printDepartmentMaintenanceReport(
 
         </div>
 
+
+        <!-- ==================================
+             EQUIPMENT INFORMATION
+             ================================== -->
 
         <div class="section">
 
@@ -1722,6 +1864,10 @@ async function printDepartmentMaintenanceReport(
         </div>
 
 
+        <!-- ==================================
+             FAULT / COMPLAINT
+             ================================== -->
+
         <div class="section">
 
           <div class="section-title">
@@ -1742,114 +1888,15 @@ async function printDepartmentMaintenanceReport(
         </div>
 
 
-        ${
-          report.Diagnosis ||
-          report.ActionTaken ||
-          report.RequiredPart ||
-          report.PartUsed
-            ? `
-
-              <div class="section">
-
-                <div class="section-title">
-                  Maintenance Details
-                </div>
-
-                <table>
-
-                  ${
-                    report.Diagnosis
-                      ? `
-                        <tr>
-                          <td>Diagnosis</td>
-                          <td>
-                            ${report.Diagnosis}
-                          </td>
-                        </tr>
-                      `
-                      : ""
-                  }
-
-                  ${
-                    report.ActionTaken
-                      ? `
-                        <tr>
-                          <td>Action Taken</td>
-                          <td>
-                            ${report.ActionTaken}
-                          </td>
-                        </tr>
-                      `
-                      : ""
-                  }
-
-                  ${
-                    report.RequiredPart
-                      ? `
-                        <tr>
-                          <td>Required Part</td>
-                          <td>
-                            ${report.RequiredPart}
-                          </td>
-                        </tr>
-                      `
-                      : ""
-                  }
-
-                  ${
-                    report.PartUsed
-                      ? `
-                        <tr>
-                          <td>Part Used</td>
-                          <td>
-                            ${report.PartUsed}
-                          </td>
-                        </tr>
-                      `
-                      : ""
-                  }
-
-                </table>
-
-              </div>
-
-            `
-            : ""
-        }
-
-
-        ${
-          report.Remarks
-            ? `
-
-              <div class="section">
-
-                <div class="section-title">
-                  Remarks
-                </div>
-
-                <table>
-
-                  <tr>
-                    <td>Remarks</td>
-                    <td>
-                      ${report.Remarks}
-                    </td>
-                  </tr>
-
-                </table>
-
-              </div>
-
-            `
-            : ""
-        }
-
+        <!-- ==================================
+             FOOTER
+             ================================== -->
 
         <div class="footer">
 
           <p>
-            ATBUTH Biomedical Equipment Maintenance Management System
+            ATBUTH Biomedical Equipment
+            Maintenance Management System
           </p>
 
           <p>
@@ -1876,7 +1923,9 @@ async function printDepartmentMaintenanceReport(
 
     setTimeout(
       function() {
+
         printWindow.print();
+
       },
       500
     );
@@ -1885,17 +1934,18 @@ async function printDepartmentMaintenanceReport(
   } catch (error) {
 
     console.error(
-      "Error printing maintenance report:",
+      "Error printing maintenance request:",
       error
     );
 
     alert(
-      "Unable to print the maintenance report."
+      "Unable to print the maintenance request."
     );
 
   }
 
 }
+            
 
 // ==========================================
 // AUTOMATIC MAINTENANCE REQUEST REFRESH
@@ -1905,5 +1955,5 @@ setInterval(
   function() {
     loadDepartmentMaintenanceRequests();
   },
-  30000
+  50000
 );
