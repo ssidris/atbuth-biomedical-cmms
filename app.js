@@ -957,8 +957,7 @@ if (continueMaintenanceBtn) {
 // LOAD ACTIVE MAINTENANCE REQUESTS
 // ==========================================
 
-async function loadActiveMaintenanceRequests() {
-
+window.loadActiveMaintenanceRequests = async function() {
   const list =
     document.getElementById(
       "activeMaintenanceList"
