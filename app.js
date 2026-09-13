@@ -14071,7 +14071,133 @@ if (clearStoreInventorySearchBtn) {
 // ==========================================
 // NOTIFICATION SYSTEM
 // ==========================================
+// ==========================================
+// NOTIFICATION SOUND SYSTEM
+// ==========================================
 
+let notificationSoundReady = false;
+let knownNotificationIDs = new Set();
+
+function prepareNotificationSound() {
+
+  if (notificationSoundReady) {
+    return;
+  }
+
+  try {
+
+    const AudioContext =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if (!AudioContext) {
+      return;
+    }
+
+    window.notificationAudioContext =
+      new AudioContext();
+
+    if (
+      window.notificationAudioContext.state ===
+      "suspended"
+    ) {
+      window.notificationAudioContext.resume();
+    }
+
+    notificationSoundReady = true;
+
+  } catch (error) {
+
+    console.error(
+      "Notification sound preparation error:",
+      error
+    );
+
+  }
+
+}
+
+
+// Prepare sound after user interaction
+document.addEventListener(
+  "click",
+  prepareNotificationSound,
+  {
+    once: true
+  }
+);
+
+
+function playNotificationSound() {
+
+  try {
+
+    const audioContext =
+      window.notificationAudioContext;
+
+    if (!audioContext) {
+      return;
+    }
+
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const oscillator =
+      audioContext.createOscillator();
+
+    const gainNode =
+      audioContext.createGain();
+
+    oscillator.type =
+      "sine";
+
+    oscillator.frequency.setValueAtTime(
+      880,
+      audioContext.currentTime
+    );
+
+    oscillator.frequency.setValueAtTime(
+      660,
+      audioContext.currentTime + 0.15
+    );
+
+    gainNode.gain.setValueAtTime(
+      0.0001,
+      audioContext.currentTime
+    );
+
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.25,
+      audioContext.currentTime + 0.02
+    );
+
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + 0.4
+    );
+
+    oscillator.connect(gainNode);
+    gainNode.connect(
+      audioContext.destination
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+      audioContext.currentTime + 0.4
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Notification sound error:",
+      error
+    );
+
+  }
+
+}
 async function loadNotifications() {
 
   const notificationCount =
@@ -14118,6 +14244,47 @@ async function loadNotifications() {
 
     const notificationData =
       notifications || [];
+    // ==========================================
+// DETECT NEW NOTIFICATIONS
+// ==========================================
+
+const currentNotificationIDs =
+  new Set(
+    notificationData.map(
+      notification =>
+        notification.NotificationID
+    )
+  );
+
+let hasNewNotification = false;
+
+currentNotificationIDs.forEach(
+  notificationID => {
+
+    if (
+      !knownNotificationIDs.has(
+        notificationID
+      )
+    ) {
+
+      hasNewNotification = true;
+
+    }
+
+  }
+);
+
+if (
+  hasNewNotification &&
+  knownNotificationIDs.size > 0
+) {
+
+  playNotificationSound();
+
+}
+
+knownNotificationIDs =
+  currentNotificationIDs;
 
     // ==========================================
     // UPDATE NOTIFICATION COUNTER
