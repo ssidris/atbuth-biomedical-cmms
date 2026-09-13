@@ -3913,7 +3913,12 @@ async function loadDashboardRecentReports() {
         "vwMaintenanceReport"
       )
       .select(
-  "MaintenanceID, ReportDate, BMENumber, EquipmentName, DepartmentName, EngineerName, StatusName"
+  "MaintenanceID, ReportDate, BMENumber, EquipmentName, DepartmentName, EngineerName, StatusName, Remarks"
+)
+      .not(
+  "Remarks",
+  "like",
+  "%through Department Portal%"
 )
       .order(
         "ReportDate",
