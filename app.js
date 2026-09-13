@@ -7153,10 +7153,8 @@ async function loadDashboard() {
         .from(
   "tblMaintenanceReport"
 )
-.not(
-  "Remarks",
-  "like",
-  "%through Department Portal%"
+.or(
+  "Remarks.is.null,Remarks.not.like.%25through%20Department%20Portal%25"
 )
 .select(
   "*",
