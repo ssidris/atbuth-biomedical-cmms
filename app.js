@@ -7151,15 +7151,20 @@ async function loadDashboard() {
         error
       } = await client
         .from(
-          "tblMaintenanceReport"
-        )
-        .select(
-          "*",
-          {
-            count: "exact",
-            head: true
-          }
-        );
+  "tblMaintenanceReport"
+)
+.not(
+  "Remarks",
+  "like",
+  "%through Department Portal%"
+)
+.select(
+  "*",
+  {
+    count: "exact",
+    head: true
+  }
+);
 
 
       if (error) {
