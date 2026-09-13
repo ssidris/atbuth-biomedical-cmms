@@ -5868,6 +5868,19 @@ async function showApp(user) {
     );
 
     await loadFormData();
+    // ==========================================
+// AUTOMATIC NOTIFICATION CHECK
+// CHECK FOR NEW NOTIFICATIONS EVERY 50 SECONDS
+// ==========================================
+
+setInterval(
+  function() {
+
+    loadNotifications();
+
+  },
+  10000
+);
 
 
     // --------------------------------------
