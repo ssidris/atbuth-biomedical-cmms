@@ -7792,19 +7792,29 @@ const {
 
 workingEquipment.textContent =
   workingEquipmentCount || 0;
-    // Total Maintenance Reports
+    // ==========================================
+// TOTAL MAINTENANCE REPORTS
+// COUNT ONLY CMMS ENGINEERING REPORTS
+// ==========================================
 
 const {
-  count: maintenanceCount
+  count: maintenanceCount,
+  error: maintenanceCountError
 } = await client
   .from("tblMaintenanceReport")
-  .select("*", {
+  .select("MaintenanceID", {
     count: "exact",
     head: true
-  });
+  })
+  .eq("ReportSource", "CMMS");
+
+if (maintenanceCountError) {
+  throw maintenanceCountError;
+}
 
 totalMaintenance.textContent =
   maintenanceCount || 0;
+
     // Under Repair Equipment
 
 const {
