@@ -735,13 +735,16 @@ if (departmentComplaintForm) {
       null,
 
     // Maintenance job workflow status
-    MaintenanceStatus:
-      "Submitted",
+MaintenanceStatus:
+  "Submitted",
 
-    Remarks:
-      "Reported by " +
-      departmentUser.UserID +
-      " through Department Portal.",
+ReportSource:
+  "Department Portal",
+
+Remarks:
+  "Reported by " +
+  departmentUser.UserID +
+  " through Department Portal.",
 
     PartStatusID:
       null,
