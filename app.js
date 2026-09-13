@@ -7136,12 +7136,12 @@ async function loadDashboard() {
 
   }
 
+// ==========================================
+// MAINTENANCE REPORTS COUNTER
+// COUNT ONLY CMMS ENGINEERING REPORTS
+// ==========================================
 
-  // ----------------------------------------
-  // MAINTENANCE REPORT COUNTER
-  // ----------------------------------------
-
-  const maintenanceCounter =
+const maintenanceCounter =
   document.getElementById(
     "totalMaintenanceReports"
   );
@@ -7151,38 +7151,30 @@ if (maintenanceCounter) {
   try {
 
     const {
-      data,
+      count,
       error
     } = await client
       .from(
         "tblMaintenanceReport"
       )
       .select(
-        "MaintenanceID, EngineerID, MaintenanceStatus, Remarks"
+        "MaintenanceID",
+        {
+          count: "exact",
+          head: true
+        }
       )
-      .not(
-        "EngineerID",
-        "is",
-        null
+      .eq(
+        "ReportSource",
+        "CMMS"
       );
 
     if (error) {
       throw error;
     }
 
-    const count =
-      data ? data.length : 0;
-
     maintenanceCounter.textContent =
-      count;
-
-    alert(
-      "CMMS Maintenance Reports Count: " +
-      count +
-      "\n\nRecords found: " +
-      (data ? data.length : 0) +
-      "\n\nDepartment Portal requests should NOT be included."
-    );
+      count || 0;
 
   }
 
@@ -7196,16 +7188,9 @@ if (maintenanceCounter) {
     maintenanceCounter.textContent =
       "0";
 
-    alert(
-      "Maintenance counter error:\n" +
-      error.message
-    );
-
   }
 
 }
-  
-
 
   // ----------------------------------------
   // PM COUNTER
