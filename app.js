@@ -7142,61 +7142,69 @@ async function loadDashboard() {
   // ----------------------------------------
 
   const maintenanceCounter =
-    document.getElementById(
-      "totalMaintenanceReports"
-    );
+  document.getElementById(
+    "totalMaintenanceReports"
+  );
 
+if (maintenanceCounter) {
 
-  if (maintenanceCounter) {
+  try {
 
-    try {
-
-      const {
-        count,
-        error
-      } = await client
-        .from(
-  "tblMaintenanceReport"
-)
-.not(
-  "EngineerID",
-  "is",
-  null
-)
-.select(
-  "*",
-  {
-    count: "exact",
-    head: true
-  }
-);
-
-
-      if (error) {
-
-        throw error;
-
-      }
-
-
-      maintenanceCounter.textContent =
-        count || 0;
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Maintenance counter error:",
-        error
+    const {
+      data,
+      error
+    } = await client
+      .from(
+        "tblMaintenanceReport"
+      )
+      .select(
+        "MaintenanceID, EngineerID, MaintenanceStatus, Remarks"
+      )
+      .not(
+        "EngineerID",
+        "is",
+        null
       );
 
-      maintenanceCounter.textContent =
-        "0";
-
+    if (error) {
+      throw error;
     }
 
+    const count =
+      data ? data.length : 0;
+
+    maintenanceCounter.textContent =
+      count;
+
+    alert(
+      "CMMS Maintenance Reports Count: " +
+      count +
+      "\n\nRecords found: " +
+      (data ? data.length : 0) +
+      "\n\nDepartment Portal requests should NOT be included."
+    );
+
   }
+
+  catch (error) {
+
+    console.error(
+      "Maintenance counter error:",
+      error
+    );
+
+    maintenanceCounter.textContent =
+      "0";
+
+    alert(
+      "Maintenance counter error:\n" +
+      error.message
+    );
+
+  }
+
+}
+  
 
 
   // ----------------------------------------
