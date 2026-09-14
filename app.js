@@ -14152,76 +14152,68 @@ function playNotificationSound() {
       return;
     }
 
-    if (
-      audioContext.state ===
-      "suspended"
+    const playBell = function(
+      frequency,
+      startDelay
     ) {
-      audioContext.resume();
-    }
 
-    const now =
-      audioContext.currentTime;
+      const oscillator =
+        audioContext.createOscillator();
+
+      const gainNode =
+        audioContext.createGain();
+
+      oscillator.type =
+        "sine";
+
+      oscillator.frequency.value =
+        frequency;
+
+      oscillator.connect(
+        gainNode
+      );
+
+      gainNode.connect(
+        audioContext.destination
+      );
+
+      const startTime =
+        audioContext.currentTime +
+        startDelay;
+
+      gainNode.gain.setValueAtTime(
+        0.0001,
+        startTime
+      );
+
+      gainNode.gain.linearRampToValueAtTime(
+        0.8,
+        startTime + 0.03
+      );
+
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        startTime + 0.9
+      );
+
+      oscillator.start(
+        startTime
+      );
+
+      oscillator.stop(
+        startTime + 0.9
+      );
+
+    };
 
 
     // ==========================================
-    // CREATE BELL TONE
+    // FIRST BELL RING
     // ==========================================
 
-    const frequencies = [
+    playBell(
       880,
-      1174.66,
-      1760
-    ];
-
-    frequencies.forEach(
-      frequency => {
-
-        const oscillator =
-          audioContext.createOscillator();
-
-        const gainNode =
-          audioContext.createGain();
-
-        oscillator.type =
-          "sine";
-
-        oscillator.frequency.setValueAtTime(
-          frequency,
-          now
-        );
-
-        gainNode.gain.setValueAtTime(
-          0.0001,
-          now
-        );
-
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.6,
-          now + 0.02
-        );
-
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.0001,
-          now + 1.2
-        );
-
-        oscillator.connect(
-          gainNode
-        );
-
-        gainNode.connect(
-          audioContext.destination
-        );
-
-        oscillator.start(
-          now
-        );
-
-        oscillator.stop(
-          now + 1.2
-        );
-
-      }
+      0
     );
 
 
@@ -14229,63 +14221,14 @@ function playNotificationSound() {
     // SECOND BELL RING
     // ==========================================
 
-    setTimeout(
-      function() {
-
-        const secondNow =
-          audioContext.currentTime;
-
-        const oscillator =
-          audioContext.createOscillator();
-
-        const gainNode =
-          audioContext.createGain();
-
-        oscillator.type =
-          "sine";
-
-        oscillator.frequency.setValueAtTime(
-          1046.50,
-          secondNow
-        );
-
-        gainNode.gain.setValueAtTime(
-          0.0001,
-          secondNow
-        );
-
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.6,
-          secondNow + 0.02
-        );
-
-        gainNode.gain.exponentialRampToValueAtTime(
-          0.0001,
-          secondNow + 1.0
-        );
-
-        oscillator.connect(
-          gainNode
-        );
-
-        gainNode.connect(
-          audioContext.destination
-        );
-
-        oscillator.start(
-          secondNow
-        );
-
-        oscillator.stop(
-          secondNow + 1.0
-        );
-
-      },
-      350
+    playBell(
+      660,
+      0.35
     );
 
+  }
 
-  } catch (error) {
+  catch (error) {
 
     console.error(
       "Notification bell sound error:",
