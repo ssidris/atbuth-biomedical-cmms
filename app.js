@@ -4565,6 +4565,8 @@ if (requiredPart) {
 
           ReportDate:
             new Date().toISOString(),
+          ReportSource:
+  "CMMS",
 
           EquipmentID:
             Number(
