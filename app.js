@@ -14092,7 +14092,7 @@ if (clearStoreInventorySearchBtn) {
 
 let notificationSoundReady = false;
 let knownNotificationIDs = new Set();
-
+let notificationsInitialized = false;
 function prepareNotificationSound() {
 
   if (notificationSoundReady) {
