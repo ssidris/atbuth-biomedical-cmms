@@ -14154,9 +14154,20 @@ function playNotificationSound() {
       return;
     }
 
+    // Make sure the audio context is active
+    if (
+      audioContext.state ===
+      "suspended"
+    ) {
+
+      audioContext.resume();
+
+    }
+
     const playBell = function(
       frequency,
-      startDelay
+      startDelay,
+      volume
     ) {
 
       const oscillator =
@@ -14189,13 +14200,13 @@ function playNotificationSound() {
       );
 
       gainNode.gain.linearRampToValueAtTime(
-        0.8,
+        volume,
         startTime + 0.03
       );
 
       gainNode.gain.exponentialRampToValueAtTime(
         0.0001,
-        startTime + 0.9
+        startTime + 1.1
       );
 
       oscillator.start(
@@ -14203,29 +14214,42 @@ function playNotificationSound() {
       );
 
       oscillator.stop(
-        startTime + 0.9
+        startTime + 1.1
       );
 
     };
 
 
     // ==========================================
-    // FIRST BELL RING
+    // FIRST LOUD BELL RING
     // ==========================================
 
     playBell(
       880,
-      0
+      0,
+      1.0
     );
 
 
     // ==========================================
-    // SECOND BELL RING
+    // SECOND LOUD BELL RING
     // ==========================================
 
     playBell(
       660,
-      0.35
+      0.4,
+      1.0
+    );
+
+
+    // ==========================================
+    // THIRD LIGHT BELL RING
+    // ==========================================
+
+    playBell(
+      880,
+      0.8,
+      0.75
     );
 
   }
