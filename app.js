@@ -14343,12 +14343,13 @@ currentNotificationIDs.forEach(
 
 if (
   hasNewNotification &&
-  knownNotificationIDs.size > 0
+  notificationsInitialized
 ) {
 
   playNotificationSound();
 
 }
+notificationsInitialized = true;    
 
 knownNotificationIDs =
   currentNotificationIDs;
