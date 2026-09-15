@@ -14638,3 +14638,29 @@ if (closeNotificationBtn) {
 
 loadNotifications();
 
+// ==========================================
+// REAL-TIME NOTIFICATION LISTENER
+// DETECT NEW DEPARTMENT PORTAL REQUESTS
+// ==========================================
+
+client
+  .channel("cmms-notifications")
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
+      schema: "public",
+      table: "tblNotifications"
+    },
+    function (payload) {
+
+      console.log(
+        "New notification received:",
+        payload.new
+      );
+
+      loadNotifications();
+
+    }
+  )
+  .subscribe();
