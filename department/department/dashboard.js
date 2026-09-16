@@ -686,7 +686,12 @@ const { data: jobOrderNumber, error: jobOrderError } =
 
 if (jobOrderError) {
   console.error("Job Order Number generation error:", jobOrderError);
-  alert("Unable to generate Job Order Number. Please try again.");
+
+  alert(
+    "Job Order Number Error:\n\n" +
+    (jobOrderError.message || "Unknown error")
+  );
+
   return;
 }
         const {
