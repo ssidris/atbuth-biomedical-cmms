@@ -1075,9 +1075,12 @@ async function loadDepartmentMaintenanceRequests() {
 
 
         const card =
-          document.createElement(
-            "div"
-          );
+  document.createElement(
+    "div"
+  );
+
+card.dataset.maintenanceId =
+  report.MaintenanceID;
 
 
         card.style.cssText = `
@@ -1144,6 +1147,7 @@ async function loadDepartmentMaintenanceRequests() {
 
 
             <div
+            data-maintenance-progress
               style="
                 display:flex;
                 flex-wrap:wrap;
@@ -1976,17 +1980,194 @@ client
   .on(
     "postgres_changes",
     {
-      event: "*",
+      event: "UPDATE",
       schema: "public",
       table: "tblMaintenanceReport"
     },
     function(payload) {
+
       console.log(
         "Maintenance report updated:",
         payload
       );
 
-      loadDepartmentMaintenanceRequests();
+      const updatedReport =
+        payload.new;
+
+      if (
+        !updatedReport ||
+        !updatedReport.MaintenanceID
+      ) {
+        return;
+      }
+
+      const card =
+        document.querySelector(
+          `[data-maintenance-id="${updatedReport.MaintenanceID}"]`
+        );
+
+      if (!card) {
+        return;
+      }
+
+      const progress =
+        card.querySelector(
+          "[data-maintenance-progress]"
+        );
+
+      if (!progress) {
+        return;
+      }
+
+      const status =
+        updatedReport.MaintenanceStatus ||
+        "Submitted";
+
+      progress.innerHTML = `
+
+        <span
+          style="
+            padding:6px 9px;
+            border-radius:15px;
+            background:${
+              status === "Submitted"
+                ? "#166534"
+                : "#dcfce7"
+            };
+            color:${
+              status === "Submitted"
+                ? "white"
+                : "#166534"
+            };
+            font-size:12px;
+            font-weight:600;
+          "
+        >
+          ✓ Submitted
+        </span>
+
+        <span style="color:#94a3b8;">
+          →
+        </span>
+
+        <span
+          style="
+            padding:6px 9px;
+            border-radius:15px;
+            background:${
+              status === "Acknowledged"
+                ? "#166534"
+                : "#e2e8f0"
+            };
+            color:${
+              status === "Acknowledged"
+                ? "white"
+                : "#64748b"
+            };
+            font-size:12px;
+            font-weight:600;
+          "
+        >
+          ${
+            status === "Acknowledged"
+              ? "✓ "
+              : ""
+          }Acknowledged
+        </span>
+
+        <span style="color:#94a3b8;">
+          →
+        </span>
+
+        <span
+          style="
+            padding:6px 9px;
+            border-radius:15px;
+            background:${
+              status === "Under Maintenance"
+                ? "#166534"
+                : "#e2e8f0"
+            };
+            color:${
+              status === "Under Maintenance"
+                ? "white"
+                : "#64748b"
+            };
+            font-size:12px;
+            font-weight:600;
+          "
+        >
+          ${
+            status === "Under Maintenance"
+              ? "✓ "
+              : ""
+          }Under Maintenance
+        </span>
+
+        <span style="color:#94a3b8;">
+          →
+        </span>
+
+        <span
+          style="
+            padding:6px 9px;
+            border-radius:15px;
+            background:${
+              status === "Awaiting Parts"
+                ? "#166534"
+                : "#e2e8f0"
+            };
+            color:${
+              status === "Awaiting Parts"
+                ? "white"
+                : "#64748b"
+            };
+            font-size:12px;
+            font-weight:600;
+          "
+        >
+          ${
+            status === "Awaiting Parts"
+              ? "✓ "
+              : ""
+          }Awaiting Parts
+        </span>
+
+        <span style="color:#94a3b8;">
+          →
+        </span>
+
+        <span
+          style="
+            padding:6px 9px;
+            border-radius:15px;
+            background:${
+              status === "Completed"
+                ? "#166534"
+                : "#e2e8f0"
+            };
+            color:${
+              status === "Completed"
+                ? "white"
+                : "#64748b"
+            };
+            font-size:12px;
+            font-weight:600;
+          "
+        >
+          ${
+            status === "Completed"
+              ? "✓ "
+              : ""
+          }Completed
+        </span>
+
+      `;
+
+      console.log(
+        "Maintenance status updated immediately:",
+        status
+      );
     }
   )
   .subscribe();
