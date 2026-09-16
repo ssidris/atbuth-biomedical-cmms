@@ -1967,3 +1967,26 @@ setInterval(
   },
   50000
 );
+// ==========================================
+// REAL-TIME MAINTENANCE STATUS UPDATES
+// ==========================================
+
+client
+  .channel("department-maintenance-updates")
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "tblMaintenanceReport"
+    },
+    function(payload) {
+      console.log(
+        "Maintenance report updated:",
+        payload
+      );
+
+      loadDepartmentMaintenanceRequests();
+    }
+  )
+  .subscribe();
