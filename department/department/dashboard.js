@@ -681,7 +681,14 @@ if (departmentComplaintForm) {
         // ========================================
         // CREATE MAINTENANCE REPORT
         // ========================================
+const { data: jobOrderNumber, error: jobOrderError } =
+  await client.rpc("get_next_department_job_order");
 
+if (jobOrderError) {
+  console.error("Job Order Number generation error:", jobOrderError);
+  alert("Unable to generate Job Order Number. Please try again.");
+  return;
+}
         const {
           data: maintenanceReport,
           error: maintenanceError
@@ -692,7 +699,7 @@ if (departmentComplaintForm) {
   {
 
     JobOrderNumber:
-      Date.now(),
+  jobOrderNumber,
 
     ReportDate:
       new Date()
