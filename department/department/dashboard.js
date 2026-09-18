@@ -1959,18 +1959,7 @@ async function printDepartmentMaintenanceReport(
   }
 
 }
-            
 
-// ==========================================
-// AUTOMATIC MAINTENANCE REQUEST REFRESH
-// ==========================================
-
-setInterval(
-  function() {
-    loadDepartmentMaintenanceRequests();
-  },
-  50000
-);
 // ==========================================
 // REAL-TIME MAINTENANCE STATUS UPDATES
 // ==========================================
